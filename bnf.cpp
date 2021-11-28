@@ -82,10 +82,7 @@ void bnf(){
 		};
 		auto addNonTerminalOpt=[&result](const string& str, vector<string>&production){
 			string strOptRule=str+"-opt";
-			if (!result.contains(strOptRule)){
-				vector<vector<string>> optRules{{"%empty"}, {str}};
-				result.insert(make_pair(strOptRule, optRules));
-			}
+
 			production.push_back(strOptRule);
 		};
 		auto addTerminalOpt=[&result, alphaToken,getTerminalStr](const string& str, vector<string>& production){
@@ -105,6 +102,7 @@ void bnf(){
 			}
 			production.push_back(strOptRule);
 		};
+
 		bool bDebug=false;
 		while (std::getline(in, str)){
 			trim(str);
@@ -121,25 +119,46 @@ void bnf(){
 			}
 			stringstream ss(str);
 			string token;
-			vector<string> production;
+			vector<vector<string>> optProductions;
 			while (ss>>token){
 				trim(token);
+				bool bOpt=false;
 				if (token.size()>=4 && token.substr(token.size()-3)=="opt"){
-					string strToken=token.substr(0, token.size()-3);
-					if (!isTerminal(strToken)){
-						addNonTerminalOpt(strToken, production);
+					token=token.substr(0, token.size()-3);
+					bOpt=true;
+				}
+				if (isTerminal(token)){
+					token=getTerminalStr(token);
+				}
+				if (bOpt){
+					vector<vector<string>> dup;
+					if (optProductions.empty()){
+						optProductions.push_back(vector<string>{token});
+						optProductions.push_back(vector<string>{});
 					}else{
-						addTerminalOpt(strToken, production);
+						for (auto v:optProductions){
+							v.push_back(token);
+							dup.push_back(v);
+						}
+						for (auto v:dup){
+							optProductions.push_back(v);
+						}
 					}
 				}else{
-					if (isTerminal(token)){
-						production.push_back(getTerminalStr(token));
+					if (optProductions.empty()){
+						optProductions.push_back(vector<string>{token});
 					}else{
-						production.push_back(token);
+						for (auto& v: optProductions){
+							v.push_back(token);
+						}
 					}
 				}
 			}
-			productions.push_back(production);
+			for (auto v:optProductions){
+				if (!v.empty()){
+					productions.push_back(v);
+				}
+			}
 		}
 		result.insert(make_pair(ruleName, productions));
 		return result;
@@ -191,26 +210,26 @@ void bnf(){
 		outputRules(rules);
 	};
 	outputBisonInput(rules);
-	cout<<"=================print all terminals======================"<<endl;
-	set<string> terminals=[](auto rules){
-		set<string> result;
-		for (auto r:rules){
-			for (auto p:r.second){
-				for (auto s:p){
-					if (!rules.contains(s)){
-						result.insert(s);
-					}
-				}
-			}
-		}
-		return result;
-	}(rules);
-	auto printTerminals=[](auto s){
-		for (auto item: s){
-			cout<<item<<endl;
-		}
-	};
-	//printTerminals(terminals);
+//	cout<<"=================print all terminals======================"<<endl;
+//	set<string> terminals=[](auto rules){
+//		set<string> result;
+//		for (auto r:rules){
+//			for (auto p:r.second){
+//				for (auto s:p){
+//					if (!rules.contains(s)){
+//						result.insert(s);
+//					}
+//				}
+//			}
+//		}
+//		return result;
+//	}(rules);
+//	auto printTerminals=[](auto s){
+//		for (auto item: s){
+//			cout<<item<<endl;
+//		}
+//	};
+//	printTerminals(terminals);
 }
 int main(){
 	bnf();
