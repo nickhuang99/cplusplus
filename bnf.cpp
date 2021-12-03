@@ -9,6 +9,83 @@
 
 using namespace std;
 
+// copy from cpplib.h
+#define TTYPE_TABLE							\
+  OP(EQ,		"=")						\
+  OP(NOT,		"!")						\
+  OP(GREATER,		">")	/* compare */				\
+  OP(LESS,		"<")						\
+  OP(PLUS,		"+")	/* math */				\
+  OP(MINUS,		"-")						\
+  OP(MULT,		"*")						\
+  OP(DIV,		"/")						\
+  OP(MOD,		"%")						\
+  OP(AND,		"&")	/* bit ops */				\
+  OP(OR,		"|")						\
+  OP(XOR,		"^")						\
+  OP(RSHIFT,		">>")						\
+  OP(LSHIFT,		"<<")						\
+									\
+  OP(COMPL,		"~")						\
+  OP(AND_AND,		"&&")	/* logical */				\
+  OP(OR_OR,		"||")						\
+  OP(QUERY,		"?")						\
+  OP(COLON,		":")						\
+  OP(COMMA,		",")	/* grouping */				\
+  OP(OPEN_PAREN,	"(")						\
+  OP(CLOSE_PAREN,	")")						\
+  OP(EQ_EQ,		"==")	/* compare */				\
+  OP(NOT_EQ,		"!=")						\
+  OP(GREATER_EQ,	">=")						\
+  OP(LESS_EQ,		"<=")						\
+  OP(SPACESHIP,		"<=>")						\
+									\
+  /* These two are unary + / - in preprocessor expressions.  */		\
+  OP(PLUS_EQ,		"+=")	/* math */				\
+  OP(MINUS_EQ,		"-=")						\
+									\
+  OP(MULT_EQ,		"*=")						\
+  OP(DIV_EQ,		"/=")						\
+  OP(MOD_EQ,		"%=")						\
+  OP(AND_EQ,		"&=")	/* bit ops */				\
+  OP(OR_EQ,		"|=")						\
+  OP(XOR_EQ,		"^=")						\
+  OP(RSHIFT_EQ,		">>=")						\
+  OP(LSHIFT_EQ,		"<<=")						\
+  /* Digraphs together, beginning with CPP_FIRST_DIGRAPH.  */		\
+  OP(HASH,		"#")	/* digraphs */				\
+  OP(PASTE,		"##")						\
+  OP(OPEN_SQUARE,	"[")						\
+  OP(CLOSE_SQUARE,	"]")						\
+  OP(OPEN_BRACE,	"{")						\
+  OP(CLOSE_BRACE,	"}")						\
+  /* The remainder of the punctuation.	Order is not significant.  */	\
+  OP(SEMICOLON,		";")	/* structure */				\
+  OP(ELLIPSIS,		"...")						\
+  OP(PLUS_PLUS,		"++")	/* increment */				\
+  OP(MINUS_MINUS,	"--")						\
+  OP(DEREF,		"->")	/* accessors */				\
+  OP(DOT,		".")						\
+  OP(SCOPE,		"::")						\
+  OP(DEREF_STAR,	"->*")						\
+  OP(DOT_STAR,		".*")				\
+  OP(SINGLE_QUOTE,      "'")	\
+  OP(DOUBLE_QUOTE,      "\"")
+
+
+#define ALIAS_OPERATOR \
+  	  	OP("and",	AND_AND) \
+		OP("and_eq",	AND_EQ)\
+		OP("bitand",	AND)\
+		OP("bitor",	OR)\
+		OP("compl",	COMPL)\
+		OP("not",	NOT)\
+		OP("not_eq",	NOT_EQ)\
+		OP("or",	OR_OR)\
+		OP("or_eq",	OR_EQ)\
+		OP("xor",	XOR)\
+		OP("xor_eq",	XOR_EQ)
+
 void bnf(){
 	auto trim=[](string& str){
 		while (!str.empty() && (std::isspace(str[str.size()-1], std::locale("C"))
@@ -42,34 +119,33 @@ void bnf(){
 //		}
 //	}(non_terminals);
 	map<string, vector<vector<string> > > rules;
-	auto getProduction=[&non_terminals,trim, bnfFile](){
+	map<string, string> terminalTokens;
+ 	auto getProduction=[&non_terminals,trim, bnfFile, &terminalTokens](){
 		string str;
 		string ruleName;
 		vector<vector<string>> productions;
 		map<string, vector<vector<string> > > result;
 		ifstream in(bnfFile);
 		auto alphaToken=[](const string& str)->string{
-			if (str=="..."){
-				return "eclipse";
-			}else if(str =="::"){
-				return "scope";
-			}else if(str==","){
-				return "comma";
-			}else if (str==";"){
-				return "semicolon";
-			}else if (str=="!"){
-				return "exclamation";
-			}else if (str=="'"){
-				return "apostrophe";
+			string token;
+#define OP(name, literals) if (str==literals) token= "\"" #name "\"" ;
+			// convert operator to token name
+			TTYPE_TABLE
+#undef OP
+			if (token.empty()){
+				cout<<"unknown operator:["<<str<<"]"<<endl;
+				assert(!token.empty());
+			}else{ // debug
+				//cout<<"token="<<token<<endl;
 			}
-			cout<<"unknown alpha:"<<str<<endl;
-			assert(false);
+
+			return token;
 		};
 		auto isTerminal=[&non_terminals](const string& str)->bool{
-			if (str.size()<4 || std::isupper(str[0], std::locale("C"))
-				|| !std::isalpha(str[0], std::locale("C"))){
-				return true;
-			}
+//			if (str.size()<3 || std::isupper(str[0], std::locale("C"))
+//				|| !std::isalpha(str[0], std::locale("C"))){
+//				return true;
+//			}
 			return !non_terminals.contains(str);
 		};
 		auto getTerminalStr=[](const string& str)->string{
@@ -80,30 +156,100 @@ void bnf(){
 			ss_token<<quoted(str, str.size()==1?'\'':'"');
 			return ss_token.str();
 		};
-		auto addNonTerminalOpt=[&result](const string& str, vector<string>&production){
-			string strOptRule=str+"-opt";
-
-			production.push_back(strOptRule);
+//		auto addNonTerminalOpt=[&result](const string& str, vector<string>&production){
+//			string strOptRule=str+"-opt";
+//			production.push_back(strOptRule);
+//		};
+//		auto addTerminalOpt=[&result, alphaToken,getTerminalStr](const string& str, vector<string>& production){
+//			string strOptRule=str;
+//			// case of "opt ,opt or constexpropt or IDENTIFIEROPT
+//			if (!std::isalpha(str[0], std::locale("C"))){
+//				strOptRule=alphaToken(str);
+//			} else if (str.size()>=4 && std::isupper(str[0], std::locale("C"))){
+//				std::transform(str.begin(), str.end(), strOptRule.begin(), [](auto c){
+//					return std::tolower(c, std::locale("C"));
+//				});
+//			}
+//			strOptRule += "-opt";
+//			if (!result.contains(strOptRule)){
+//				vector<vector<string>> optRules{{"%empty"}, {getTerminalStr(str)}};
+//				result.insert(make_pair(strOptRule, optRules));
+//			}
+//			production.push_back(strOptRule);
+//		};
+		auto quoteString=[](const string& str){
+			return "\""+str+"\"";
 		};
-		auto addTerminalOpt=[&result, alphaToken,getTerminalStr](const string& str, vector<string>& production){
-			string strOptRule=str;
-			// case of "opt ,opt or constexpropt or IDENTIFIEROPT
-			if (!std::isalpha(str[0], std::locale("C"))){
-				strOptRule=alphaToken(str);
-			} else if (str.size()>=4 && std::isupper(str[0], std::locale("C"))){
-				std::transform(str.begin(), str.end(), strOptRule.begin(), [](auto c){
-					return std::tolower(c, std::locale("C"));
+
+		auto getTerminalToken=[quoteString,alphaToken,getTerminalStr,&terminalTokens]
+							   (const string& str)->string{
+			string token;
+			if (str.size() == 1 && std::isalnum(str[0], std::locale("C"))){
+				token="'"+str+"'";
+				// "R": 'R'
+				terminalTokens.insert(make_pair(token, token));
+				//return token; //'R'
+			}else if (str=="ll"){
+				token="LONG_LONG_L";
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}
+			else if (str=="LL"){
+				token="LONG_LONG_H";
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}
+			else if (str=="u8"){
+				token="UNICODE_8";
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}
+			else if (str[0]=='\\'){
+				token="ESCAPE";
+				if (str=="\\"){
+					//
+				}else if (str=="\\x"){
+					token+="_LX";
+				}else if (str=="\\u"){
+					token+="_LU";
+				}else if (str=="\\U"){
+					token+="_HU";
+				}
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}else if(str[0]=='0'){
+				token="ZERO";
+				if (str=="0b"){
+					token+="_LB";
+				}else if (str=="0B"){
+					token+="_HB";
+				}else if (str=="0x"){
+					token+="_LX";
+				}else if (str=="0X"){
+					token+="_HX";
+				}
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}
+			else if(std::isupper(str[0], std::locale("C"))){
+				terminalTokens.insert(make_pair(str, str));
+				token=str;
+			}else if (!std::isalnum(str[0], std::locale("C"))){
+				token=alphaToken(str);
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}else if (str=="import-keyword"){
+				token="IMPORT";
+				terminalTokens.insert(make_pair(token, quoteString("import")));
+			}else if (str=="export-keyword"){
+				token="EXPORT";
+				terminalTokens.insert(make_pair(token, quoteString("export")));
+			}else if (str=="module-keyword"){
+				token="MODULE";
+				terminalTokens.insert(make_pair(token, quoteString("module")));
+			}else{
+				std::transform(str.begin(), str.end(), back_inserter(token), [](auto c){
+					return std::toupper(c, std::locale("C"));
 				});
-			}
-			strOptRule += "-opt";
-			if (!result.contains(strOptRule)){
-				vector<vector<string>> optRules{{"%empty"}, {getTerminalStr(str)}};
-				result.insert(make_pair(strOptRule, optRules));
-			}
-			production.push_back(strOptRule);
-		};
 
-		bool bDebug=false;
+				terminalTokens.insert(make_pair(token, quoteString(str)));
+			}
+			return token;
+		};
 		while (std::getline(in, str)){
 			trim(str);
 			if (str.empty()){
@@ -128,7 +274,11 @@ void bnf(){
 					bOpt=true;
 				}
 				if (isTerminal(token)){
-					token=getTerminalStr(token);
+					string dup=token;
+					token=getTerminalToken(token);
+					if (token.empty()){
+						cout<<dup<<" is empty!"<<endl;
+					}
 				}
 				if (bOpt){
 					vector<vector<string>> dup;
@@ -210,26 +360,32 @@ void bnf(){
 		outputRules(rules);
 	};
 	outputBisonInput(rules);
+
+
 //	cout<<"=================print all terminals======================"<<endl;
-//	set<string> terminals=[](auto rules){
-//		set<string> result;
-//		for (auto r:rules){
-//			for (auto p:r.second){
-//				for (auto s:p){
-//					if (!rules.contains(s)){
-//						result.insert(s);
-//					}
-//				}
-//			}
-//		}
-//		return result;
-//	}(rules);
+	set<string> terminals=[](auto rules){
+		set<string> result;
+		for (auto r:rules){
+			for (auto p:r.second){
+				for (auto s:p){
+					if (!rules.contains(s)){
+						result.insert(s);
+					}
+				}
+			}
+		}
+		return result;
+	}(rules);
 //	auto printTerminals=[](auto s){
 //		for (auto item: s){
 //			cout<<item<<endl;
 //		}
 //	};
 //	printTerminals(terminals);
+	auto outputFlexInput=[](auto const& terminals){
+		ofstream out("scanner.l");
+
+	};
 }
 int main(){
 	bnf();

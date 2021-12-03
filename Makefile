@@ -14,4 +14,4 @@ cplusplus.y: bnf.txt bnf.cpp
 	./bnf.exe
 	
 cplusplus.c: cplusplus.y
-	${BISON} -d -t -v -g --html=cplusplus.html --report-file=cplusplus.output cplusplus.y -o cplusplus.c		
+#	${BISON} -d -t -v -g --html=cplusplus.html --report-file=cplusplus.output cplusplus.y -o cplusplus.c		

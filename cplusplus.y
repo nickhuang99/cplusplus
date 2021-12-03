@@ -1,13 +1,109 @@
+%token  PRIVATE
+%token  PROTECTED
+%token  PUBLIC
+%token  USING
 %token  IDENTIFIER
+%token  ALIGNAS
+%token  ASM
+%token  CO_AWAIT
 %token  ANY_TOKEN_OTHER_THAN_PARENTHESIS_BRACKET_BRACE
+%token  VIRTUAL
 %token  EXCEPT_THE_APOSTROPHE_REVERSE_SOLIDUS_OR_NEW_LINE_CHARACTER
 %token  EXCEPT_THE_QUOTATION_MARK_REVERSE_SOLIDUS_OR_NEW_LINE_CHARACTER
+%token  ZERO_LB
+%token  ZERO_HB
+%token  FALSE
+%token  TRUE
+%token  CLASS
+%token  STRUCT
+%token  UNION
+%token  TEMPLATE
+%token  FINAL
+%token  NOEXCEPT
+%token  CONCEPT
+%token  ESCAPE
 %token  NOT_AN_OCTAL_DIGIT_A_SIMPLE_ESCAPE_SEQUENCE_CHAR_OR_THE_CHARACTERS_U_U_OR_X
+%token  OPERATOR
+%token  CO_RETURN
+%token  CONST
+%token  VOLATILE
 %token  EXCEPT_SPACE_PARENTHESIS_REVERSE_SOLIDUS_TABULATION_LINE_TABULATION_FORM_FEED_AND_NEW_LINE
+%token  FRIEND
+%token  TYPEDEF
+%token  CONSTEXPR
+%token  CONSTEVAL
+%token  CONSTINIT
+%token  INLINE
+%token  DECLTYPE
+%token  DELETE
+%token  ENUM
+%token  UNICODE_8
+%token  EXTERN
+%token  EXPLICIT
+%token  EXPORT
+%token  DEFAULT
+%token  TRY
+%token  MODULE
 %token  EXCEPT_NEW_LINE_AND_GREATER_THAN_SIGN
-%token  LL
+%token  CATCH
+%token  H-CHAR-SEQUENCE
+%token  H-CHAR-SEQUENCE:
+%token  ESCAPE_LX
+%token  ZERO_LX
+%token  ZERO_HX
+%token  WHILE
+%token  DO
+%token  FOR
+%token  BREAK
+%token  CONTINUE
+%token  RETURN
+%token  GOTO
+%token  CASE
+%token  LONG_LONG_L
+%token  LONG_LONG_H
+%token  IMPORT
+%token  NAMESPACE
+%token  REQUIRES
+%token  NEW
+%token  THIS
+%token  AUTO
+%token  NULLPTR
+%token  DYNAMIC_CAST
+%token  STATIC_CAST
+%token  REINTERPRET_CAST
+%token  CONST_CAST
+%token  TYPEID
 %token  EXCEPT_NEW_LINE_AND_QUOTATION_MARK
 %token  EXCEPT_RIGHT_PARENTHESIS_FOLLOWED_BY_THE_INITIAL_D_CHAR_SEQUENCE_FOLLOWED_BY_QUOTATION_MARK
+%token  IF
+%token  ELSE
+%token  SWITCH
+%token  CHAR
+%token  CHAR8_T
+%token  CHAR16_T
+%token  CHAR32_T
+%token  WCHAR_T
+%token  BOOL
+%token  SHORT
+%token  INT
+%token  LONG
+%token  SIGNED
+%token  UNSIGNED
+%token  FLOAT
+%token  DOUBLE
+%token  VOID
+%token  STATIC_ASSERT
+%token  STATIC
+%token  THREAD_LOCAL
+%token  MUTABLE
+%token  THROW
+%token  TYPENAME
+%token  SIZEOF
+%token  ALIGNOF
+%token  ESCAPE_LU
+%token  ESCAPE_HU
+%token  OVERRIDE
+%token  CO_YIELD
 %glr-parser
 %%
 %start  translation-unit;
@@ -22,32 +118,32 @@ abstract-pack-declarator:
 	|	ptr-operator	abstract-pack-declarator
 	;
 access-specifier:
-	"private"
-	|	"protected"
-	|	"public"
+	PRIVATE
+	|	PROTECTED
+	|	PUBLIC
 	;
 additive-expression:
 	multiplicative-expression
-	|	additive-expression	'+'	multiplicative-expression
-	|	additive-expression	'-'	multiplicative-expression
+	|	additive-expression	"PLUS"	multiplicative-expression
+	|	additive-expression	"MINUS"	multiplicative-expression
 	;
 alias-declaration:
-	"using"	IDENTIFIER	'='	defining-type-id	';'
-	|	"using"	IDENTIFIER	attribute-specifier-seq	'='	defining-type-id	';'
+	USING	IDENTIFIER	"EQ"	defining-type-id	"SEMICOLON"
+	|	USING	IDENTIFIER	attribute-specifier-seq	"EQ"	defining-type-id	"SEMICOLON"
 	;
 alignment-specifier:
-	"alignas"	'('	type-id	')'
-	|	"alignas"	'('	type-id	"..."	')'
-	|	"alignas"	'('	constant-expression	')'
-	|	"alignas"	'('	constant-expression	"..."	')'
+	ALIGNAS	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	ALIGNAS	"OPEN_PAREN"	type-id	"ELLIPSIS"	"CLOSE_PAREN"
+	|	ALIGNAS	"OPEN_PAREN"	constant-expression	"CLOSE_PAREN"
+	|	ALIGNAS	"OPEN_PAREN"	constant-expression	"ELLIPSIS"	"CLOSE_PAREN"
 	;
 and-expression:
 	equality-expression
-	|	and-expression	'&'	equality-expression
+	|	and-expression	"AND"	equality-expression
 	;
 asm-declaration:
-	attribute-specifier-seq	"asm"	'('	string-literal	')'	';'
-	|	"asm"	'('	string-literal	')'	';'
+	attribute-specifier-seq	ASM	"OPEN_PAREN"	string-literal	"CLOSE_PAREN"	"SEMICOLON"
+	|	ASM	"OPEN_PAREN"	string-literal	"CLOSE_PAREN"	"SEMICOLON"
 	;
 assignment-expression:
 	conditional-expression
@@ -56,45 +152,45 @@ assignment-expression:
 	|	logical-or-expression	assignment-operator	initializer-clause
 	;
 assignment-operator:
-	'='
-	|	"*="
-	|	"/="
-	|	"%="
-	|	"+="
-	|	"-="
-	|	">>="
-	|	"<<="
-	|	"&="
-	|	"^="
-	|	"|="
+	"EQ"
+	|	"MULT_EQ"
+	|	"DIV_EQ"
+	|	"MOD_EQ"
+	|	"PLUS_EQ"
+	|	"MINUS_EQ"
+	|	"RSHIFT_EQ"
+	|	"LSHIFT_EQ"
+	|	"AND_EQ"
+	|	"XOR_EQ"
+	|	"OR_EQ"
 	;
 attribute:
 	attribute-token
 	|	attribute-token	attribute-argument-clause
 	;
 attribute-argument-clause:
-	'('	')'
-	|	'('	balanced-token-seq	')'
+	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	balanced-token-seq	"CLOSE_PAREN"
 	;
 attribute-declaration:
-	attribute-specifier-seq	';'
+	attribute-specifier-seq	"SEMICOLON"
 	;
 attribute-list:
 	attribute
-	|	attribute-list	','
-	|	attribute-list	','	attribute
-	|	attribute	"..."
-	|	attribute-list	','	attribute	"..."
+	|	attribute-list	"COMMA"
+	|	attribute-list	"COMMA"	attribute
+	|	attribute	"ELLIPSIS"
+	|	attribute-list	"COMMA"	attribute	"ELLIPSIS"
 	;
 attribute-namespace:
 	IDENTIFIER
 	;
 attribute-scoped-token:
-	attribute-namespace	"::"	IDENTIFIER
+	attribute-namespace	"SCOPE"	IDENTIFIER
 	;
 attribute-specifier:
-	'['	'['	attribute-list	']'	']'
-	|	'['	'['	attribute-using-prefix	attribute-list	']'	']'
+	"OPEN_SQUARE"	"OPEN_SQUARE"	attribute-list	"CLOSE_SQUARE"	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	"OPEN_SQUARE"	attribute-using-prefix	attribute-list	"CLOSE_SQUARE"	"CLOSE_SQUARE"
 	|	alignment-specifier
 	;
 attribute-specifier-seq:
@@ -106,18 +202,18 @@ attribute-token:
 	|	attribute-scoped-token
 	;
 attribute-using-prefix:
-	"using"	attribute-namespace	':'
+	USING	attribute-namespace	"COLON"
 	;
 await-expression:
-	"co_await"	cast-expression
+	CO_AWAIT	cast-expression
 	;
 balanced-token:
-	'('	')'
-	|	'('	balanced-token-seq	')'
-	|	'['	']'
-	|	'['	balanced-token-seq	']'
-	|	'{'	'}'
-	|	'{'	balanced-token-seq	'}'
+	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	balanced-token-seq	"CLOSE_PAREN"
+	|	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	balanced-token-seq	"CLOSE_SQUARE"
+	|	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	balanced-token-seq	"CLOSE_BRACE"
 	|	ANY_TOKEN_OTHER_THAN_PARENTHESIS_BRACKET_BRACE
 	;
 balanced-token-seq:
@@ -125,25 +221,25 @@ balanced-token-seq:
 	|	balanced-token-seq	balanced-token
 	;
 base-clause:
-	':'	base-specifier-list
+	"COLON"	base-specifier-list
 	;
 base-specifier:
 	attribute-specifier-seq	class-or-decltype
 	|	class-or-decltype
-	|	attribute-specifier-seq	"virtual"	class-or-decltype
-	|	"virtual"	class-or-decltype
-	|	attribute-specifier-seq	"virtual"	access-specifier	class-or-decltype
-	|	"virtual"	access-specifier	class-or-decltype
+	|	attribute-specifier-seq	VIRTUAL	class-or-decltype
+	|	VIRTUAL	class-or-decltype
+	|	attribute-specifier-seq	VIRTUAL	access-specifier	class-or-decltype
+	|	VIRTUAL	access-specifier	class-or-decltype
 	|	attribute-specifier-seq	access-specifier	class-or-decltype
 	|	access-specifier	class-or-decltype
-	|	attribute-specifier-seq	access-specifier	"virtual"	class-or-decltype
-	|	access-specifier	"virtual"	class-or-decltype
+	|	attribute-specifier-seq	access-specifier	VIRTUAL	class-or-decltype
+	|	access-specifier	VIRTUAL	class-or-decltype
 	;
 base-specifier-list:
 	base-specifier
-	|	base-specifier	"..."
-	|	base-specifier-list	','	base-specifier
-	|	base-specifier-list	','	base-specifier	"..."
+	|	base-specifier	"ELLIPSIS"
+	|	base-specifier-list	"COMMA"	base-specifier
+	|	base-specifier-list	"COMMA"	base-specifier	"ELLIPSIS"
 	;
 basic-c-char:
 	EXCEPT_THE_APOSTROPHE_REVERSE_SOLIDUS_OR_NEW_LINE_CHARACTER
@@ -162,10 +258,10 @@ binary-exponent-part:
 	|	'P'	sign	digit-sequence
 	;
 binary-literal:
-	"0b"	binary-digit
-	|	"0B"	binary-digit
+	ZERO_LB	binary-digit
+	|	ZERO_HB	binary-digit
 	|	binary-literal	binary-digit
-	|	binary-literal	'\''	binary-digit
+	|	binary-literal	"SINGLE_QUOTE"	binary-digit
 	;
 block-declaration:
 	simple-declaration
@@ -179,19 +275,19 @@ block-declaration:
 	|	opaque-enum-declaration
 	;
 boolean-literal:
-	"false"
-	|	"true"
+	FALSE
+	|	TRUE
 	;
 brace-or-equal-initializer:
-	'='	initializer-clause
+	"EQ"	initializer-clause
 	|	braced-init-list
 	;
 braced-init-list:
-	'{'	initializer-list	'}'
-	|	'{'	initializer-list	','	'}'
-	|	'{'	designated-initializer-list	'}'
-	|	'{'	designated-initializer-list	','	'}'
-	|	'{'	'}'
+	"OPEN_BRACE"	initializer-list	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	initializer-list	"COMMA"	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	designated-initializer-list	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	designated-initializer-list	"COMMA"	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	"CLOSE_BRACE"
 	;
 c-char:
 	basic-c-char
@@ -207,20 +303,20 @@ capture:
 	|	init-capture
 	;
 capture-default:
-	'&'
-	|	'='
+	"AND"
+	|	"EQ"
 	;
 capture-list:
 	capture
-	|	capture-list	','	capture
+	|	capture-list	"COMMA"	capture
 	;
 cast-expression:
 	unary-expression
-	|	'('	type-id	')'	cast-expression
+	|	"OPEN_PAREN"	type-id	"CLOSE_PAREN"	cast-expression
 	;
 character-literal:
-	encoding-prefix	'\''	c-char-sequence	'\''
-	|	'\''	c-char-sequence	'\''
+	encoding-prefix	"SINGLE_QUOTE"	c-char-sequence	"SINGLE_QUOTE"
+	|	"SINGLE_QUOTE"	c-char-sequence	"SINGLE_QUOTE"
 	;
 class-head:
 	class-key	class-head-name
@@ -241,9 +337,9 @@ class-head-name:
 	|	class-name
 	;
 class-key:
-	"class"
-	|	"struct"
-	|	"union"
+	CLASS
+	|	STRUCT
+	|	UNION
 	;
 class-name:
 	IDENTIFIER
@@ -252,32 +348,32 @@ class-name:
 class-or-decltype:
 	nested-name-specifier	type-name
 	|	type-name
-	|	nested-name-specifier	"template"	simple-template-id
+	|	nested-name-specifier	TEMPLATE	simple-template-id
 	|	decltype-specifier
 	;
 class-specifier:
-	class-head	'{'	'}'
-	|	class-head	'{'	member-specification	'}'
+	class-head	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	class-head	"OPEN_BRACE"	member-specification	"CLOSE_BRACE"
 	;
 class-virt-specifier:
-	"final"
+	FINAL
 	;
 compare-expression:
 	shift-expression
-	|	compare-expression	"<=>"	shift-expression
+	|	compare-expression	"SPACESHIP"	shift-expression
 	;
 compound-requirement:
-	'{'	expression	'}'	';'
-	|	'{'	expression	'}'	"noexcept"	';'
-	|	'{'	expression	'}'	return-type-requirement	';'
-	|	'{'	expression	'}'	"noexcept"	return-type-requirement	';'
+	"OPEN_BRACE"	expression	"CLOSE_BRACE"	"SEMICOLON"
+	|	"OPEN_BRACE"	expression	"CLOSE_BRACE"	NOEXCEPT	"SEMICOLON"
+	|	"OPEN_BRACE"	expression	"CLOSE_BRACE"	return-type-requirement	"SEMICOLON"
+	|	"OPEN_BRACE"	expression	"CLOSE_BRACE"	NOEXCEPT	return-type-requirement	"SEMICOLON"
 	;
 compound-statement:
-	'{'	'}'
-	|	'{'	statement-seq	'}'
+	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	"OPEN_BRACE"	statement-seq	"CLOSE_BRACE"
 	;
 concept-definition:
-	"concept"	concept-name	'='	constraint-expression	';'
+	CONCEPT	concept-name	"EQ"	constraint-expression	"SEMICOLON"
 	;
 concept-name:
 	IDENTIFIER
@@ -288,14 +384,14 @@ condition:
 	|	decl-specifier-seq	declarator	brace-or-equal-initializer
 	;
 conditional-escape-sequence:
-	'\\'	conditional-escape-sequence-char
+	ESCAPE	conditional-escape-sequence-char
 	;
 conditional-escape-sequence-char:
 	NOT_AN_OCTAL_DIGIT_A_SIMPLE_ESCAPE_SEQUENCE_CHAR_OR_THE_CHARACTERS_U_U_OR_X
 	;
 conditional-expression:
 	logical-or-expression
-	|	logical-or-expression	'?'	expression	':'	assignment-expression
+	|	logical-or-expression	"QUERY"	expression	"COLON"	assignment-expression
 	;
 constant-expression:
 	conditional-expression
@@ -305,33 +401,33 @@ constraint-expression:
 	;
 constraint-logical-and-expression:
 	primary-expression
-	|	constraint-logical-and-expression	"&&"	primary-expression
+	|	constraint-logical-and-expression	"AND_AND"	primary-expression
 	;
 constraint-logical-or-expression:
 	constraint-logical-and-expression
-	|	constraint-logical-or-expression	"||"	constraint-logical-and-expression
+	|	constraint-logical-or-expression	"OR_OR"	constraint-logical-and-expression
 	;
 conversion-declarator:
 	ptr-operator
 	|	ptr-operator	conversion-declarator
 	;
 conversion-function-id:
-	"operator"	conversion-type-id
+	OPERATOR	conversion-type-id
 	;
 conversion-type-id:
 	type-specifier-seq
 	|	type-specifier-seq	conversion-declarator
 	;
 coroutine-return-statement:
-	"co_return"	';'
-	|	"co_return"	expr-or-braced-init-list	';'
+	CO_RETURN	"SEMICOLON"
+	|	CO_RETURN	expr-or-braced-init-list	"SEMICOLON"
 	;
 ctor-initializer:
-	':'	mem-initializer-list
+	"COLON"	mem-initializer-list
 	;
 cv-qualifier:
-	"const"
-	|	"volatile"
+	CONST
+	|	VOLATILE
 	;
 cv-qualifier-seq:
 	cv-qualifier
@@ -355,18 +451,18 @@ decimal-floating-point-literal:
 decimal-literal:
 	nonzero-digit
 	|	decimal-literal	digit
-	|	decimal-literal	'\''	digit
+	|	decimal-literal	"SINGLE_QUOTE"	digit
 	;
 decl-specifier:
 	storage-class-specifier
 	|	defining-type-specifier
 	|	function-specifier
-	|	"friend"
-	|	"typedef"
-	|	"constexpr"
-	|	"consteval"
-	|	"constinit"
-	|	"inline"
+	|	FRIEND
+	|	TYPEDEF
+	|	CONSTEXPR
+	|	CONSTEVAL
+	|	CONSTINIT
+	|	INLINE
 	;
 decl-specifier-seq:
 	decl-specifier
@@ -400,15 +496,15 @@ declarator:
 	|	noptr-declarator	parameters-and-qualifiers	trailing-return-type
 	;
 declarator-id:
-	"..."	id-expression
+	"ELLIPSIS"	id-expression
 	|	id-expression
 	;
 decltype-specifier:
-	"decltype"	'('	expression	')'
+	DECLTYPE	"OPEN_PAREN"	expression	"CLOSE_PAREN"
 	;
 deduction-guide:
-	explicit-specifier	template-name	'('	parameter-declaration-clause	')'	"->"	simple-template-id	';'
-	|	template-name	'('	parameter-declaration-clause	')'	"->"	simple-template-id	';'
+	explicit-specifier	template-name	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	"DEREF"	simple-template-id	"SEMICOLON"
+	|	template-name	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	"DEREF"	simple-template-id	"SEMICOLON"
 	;
 defining-type-id:
 	defining-type-specifier-seq
@@ -425,20 +521,20 @@ defining-type-specifier-seq:
 	|	defining-type-specifier	defining-type-specifier-seq
 	;
 delete-expression:
-	"::"	"delete"	cast-expression
-	|	"delete"	cast-expression
-	|	"::"	"delete"	'['	']'	cast-expression
-	|	"delete"	'['	']'	cast-expression
+	"SCOPE"	DELETE	cast-expression
+	|	DELETE	cast-expression
+	|	"SCOPE"	DELETE	"OPEN_SQUARE"	"CLOSE_SQUARE"	cast-expression
+	|	DELETE	"OPEN_SQUARE"	"CLOSE_SQUARE"	cast-expression
 	;
 designated-initializer-clause:
 	designator	brace-or-equal-initializer
 	;
 designated-initializer-list:
 	designated-initializer-clause
-	|	designated-initializer-list	','	designated-initializer-clause
+	|	designated-initializer-list	"COMMA"	designated-initializer-clause
 	;
 designator:
-	'.'	IDENTIFIER
+	"DOT"	IDENTIFIER
 	;
 digit:
 	'0'
@@ -455,11 +551,11 @@ digit:
 digit-sequence:
 	digit
 	|	digit-sequence	digit
-	|	digit-sequence	'\''	digit
+	|	digit-sequence	"SINGLE_QUOTE"	digit
 	;
 elaborated-enum-specifier:
-	"enum"	IDENTIFIER
-	|	"enum"	nested-name-specifier	IDENTIFIER
+	ENUM	IDENTIFIER
+	|	ENUM	nested-name-specifier	IDENTIFIER
 	;
 elaborated-type-specifier:
 	class-key	IDENTIFIER
@@ -468,25 +564,25 @@ elaborated-type-specifier:
 	|	class-key	attribute-specifier-seq	nested-name-specifier	IDENTIFIER
 	|	class-key	simple-template-id
 	|	class-key	nested-name-specifier	simple-template-id
-	|	class-key	nested-name-specifier	"template"	simple-template-id
+	|	class-key	nested-name-specifier	TEMPLATE	simple-template-id
 	|	elaborated-enum-specifier
 	;
 empty-declaration:
-	';'
+	"SEMICOLON"
 	;
 enclosing-namespace-specifier:
 	IDENTIFIER
-	|	enclosing-namespace-specifier	"::"	IDENTIFIER
-	|	enclosing-namespace-specifier	"::"	"inline"	IDENTIFIER
+	|	enclosing-namespace-specifier	"SCOPE"	IDENTIFIER
+	|	enclosing-namespace-specifier	"SCOPE"	INLINE	IDENTIFIER
 	;
 encoding-prefix:
-	"u8"
+	UNICODE_8
 	|	'u'
 	|	'U'
 	|	'L'
 	;
 enum-base:
-	':'	type-specifier-seq
+	"COLON"	type-specifier-seq
 	;
 enum-head:
 	enum-key
@@ -503,17 +599,17 @@ enum-head-name:
 	|	IDENTIFIER
 	;
 enum-key:
-	"enum"
-	|	"enum"	"class"
-	|	"enum"	"struct"
+	ENUM
+	|	ENUM	CLASS
+	|	ENUM	STRUCT
 	;
 enum-name:
 	IDENTIFIER
 	;
 enum-specifier:
-	enum-head	'{'	'}'
-	|	enum-head	'{'	enumerator-list	'}'
-	|	enum-head	'{'	enumerator-list	','	'}'
+	enum-head	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	enum-head	"OPEN_BRACE"	enumerator-list	"CLOSE_BRACE"
+	|	enum-head	"OPEN_BRACE"	enumerator-list	"COMMA"	"CLOSE_BRACE"
 	;
 enumerator:
 	IDENTIFIER
@@ -521,16 +617,16 @@ enumerator:
 	;
 enumerator-definition:
 	enumerator
-	|	enumerator	'='	constant-expression
+	|	enumerator	"EQ"	constant-expression
 	;
 enumerator-list:
 	enumerator-definition
-	|	enumerator-list	','	enumerator-definition
+	|	enumerator-list	"COMMA"	enumerator-definition
 	;
 equality-expression:
 	relational-expression
-	|	equality-expression	"=="	relational-expression
-	|	equality-expression	"!="	relational-expression
+	|	equality-expression	"EQ_EQ"	relational-expression
+	|	equality-expression	"NOT_EQ"	relational-expression
 	;
 escape-sequence:
 	simple-escape-sequence
@@ -544,22 +640,22 @@ exception-declaration:
 	|	type-specifier-seq
 	|	attribute-specifier-seq	type-specifier-seq	abstract-declarator
 	|	type-specifier-seq	abstract-declarator
-	|	"..."
+	|	"ELLIPSIS"
 	;
 exclusive-or-expression:
 	and-expression
-	|	exclusive-or-expression	'^'	and-expression
+	|	exclusive-or-expression	"XOR"	and-expression
 	;
 explicit-instantiation:
-	"extern"	"template"	declaration
-	|	"template"	declaration
+	EXTERN	TEMPLATE	declaration
+	|	TEMPLATE	declaration
 	;
 explicit-specialization:
-	"template"	'<'	'>'	declaration
+	TEMPLATE	"LESS"	"GREATER"	declaration
 	;
 explicit-specifier:
-	"explicit"	'('	constant-expression	')'
-	|	"explicit"
+	EXPLICIT	"OPEN_PAREN"	constant-expression	"CLOSE_PAREN"
+	|	EXPLICIT
 	;
 exponent-part:
 	'e'	digit-sequence
@@ -568,10 +664,10 @@ exponent-part:
 	|	'E'	sign	digit-sequence
 	;
 export-declaration:
-	"export"	declaration
-	|	"export"	'{'	'}'
-	|	"export"	'{'	declaration-seq	'}'
-	|	"export-keyword"	module-import-declaration
+	EXPORT	declaration
+	|	EXPORT	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	EXPORT	"OPEN_BRACE"	declaration-seq	"CLOSE_BRACE"
+	|	EXPORT	module-import-declaration
 	;
 expr-or-braced-init-list:
 	expression
@@ -579,14 +675,14 @@ expr-or-braced-init-list:
 	;
 expression:
 	assignment-expression
-	|	expression	','	assignment-expression
+	|	expression	"COMMA"	assignment-expression
 	;
 expression-list:
 	initializer-list
 	;
 expression-statement:
-	expression	';'
-	|	';'
+	expression	"SEMICOLON"
+	|	"SEMICOLON"
 	;
 floating-point-literal:
 	decimal-floating-point-literal
@@ -599,66 +695,66 @@ floating-point-suffix:
 	|	'L'
 	;
 fold-expression:
-	'('	cast-expression	fold-operator	"..."	')'
-	|	'('	"..."	fold-operator	cast-expression	')'
-	|	'('	cast-expression	fold-operator	"..."	fold-operator	cast-expression	')'
+	"OPEN_PAREN"	cast-expression	fold-operator	"ELLIPSIS"	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	"ELLIPSIS"	fold-operator	cast-expression	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	cast-expression	fold-operator	"ELLIPSIS"	fold-operator	cast-expression	"CLOSE_PAREN"
 	;
 fold-operator:
-	'+'
-	|	'-'
-	|	'*'
-	|	'/'
-	|	'%'
-	|	'^'
-	|	'&'
-	|	'|'
-	|	"<<"
-	|	">>"
-	|	"+="
-	|	"-="
-	|	"*="
-	|	"/="
-	|	"%="
-	|	"^="
-	|	"&="
-	|	"|="
-	|	"<<="
-	|	">>="
-	|	'='
-	|	"=="
-	|	"!="
-	|	'<'
-	|	'>'
-	|	"<="
-	|	">="
-	|	"&&"
-	|	"||"
-	|	','
-	|	".*"
-	|	"->*"
+	"PLUS"
+	|	"MINUS"
+	|	"MULT"
+	|	"DIV"
+	|	"MOD"
+	|	"XOR"
+	|	"AND"
+	|	"OR"
+	|	"LSHIFT"
+	|	"RSHIFT"
+	|	"PLUS_EQ"
+	|	"MINUS_EQ"
+	|	"MULT_EQ"
+	|	"DIV_EQ"
+	|	"MOD_EQ"
+	|	"XOR_EQ"
+	|	"AND_EQ"
+	|	"OR_EQ"
+	|	"LSHIFT_EQ"
+	|	"RSHIFT_EQ"
+	|	"EQ"
+	|	"EQ_EQ"
+	|	"NOT_EQ"
+	|	"LESS"
+	|	"GREATER"
+	|	"LESS_EQ"
+	|	"GREATER_EQ"
+	|	"AND_AND"
+	|	"OR_OR"
+	|	"COMMA"
+	|	"DOT_STAR"
+	|	"DEREF_STAR"
 	;
 for-range-declaration:
 	attribute-specifier-seq	decl-specifier-seq	declarator
 	|	decl-specifier-seq	declarator
-	|	attribute-specifier-seq	decl-specifier-seq	'['	identifier-list	']'
-	|	decl-specifier-seq	'['	identifier-list	']'
-	|	attribute-specifier-seq	decl-specifier-seq	ref-qualifier	'['	identifier-list	']'
-	|	decl-specifier-seq	ref-qualifier	'['	identifier-list	']'
+	|	attribute-specifier-seq	decl-specifier-seq	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"
+	|	decl-specifier-seq	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"
+	|	attribute-specifier-seq	decl-specifier-seq	ref-qualifier	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"
+	|	decl-specifier-seq	ref-qualifier	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"
 	;
 for-range-initializer:
 	expr-or-braced-init-list
 	;
 fractional-constant:
-	digit-sequence	'.'	digit-sequence
-	|	'.'	digit-sequence
-	|	digit-sequence	'.'
+	digit-sequence	"DOT"	digit-sequence
+	|	"DOT"	digit-sequence
+	|	digit-sequence	"DOT"
 	;
 function-body:
 	ctor-initializer	compound-statement
 	|	compound-statement
 	|	function-try-block
-	|	'='	"default"	';'
-	|	'='	"delete"	';'
+	|	"EQ"	DEFAULT	"SEMICOLON"
+	|	"EQ"	DELETE	"SEMICOLON"
 	;
 function-definition:
 	attribute-specifier-seq	declarator	function-body
@@ -675,33 +771,33 @@ function-definition:
 	|	decl-specifier-seq	declarator	requires-clause	function-body
 	;
 function-specifier:
-	"virtual"
+	VIRTUAL
 	|	explicit-specifier
 	;
 function-try-block:
-	"try"	compound-statement	handler-seq
-	|	"try"	ctor-initializer	compound-statement	handler-seq
+	TRY	compound-statement	handler-seq
+	|	TRY	ctor-initializer	compound-statement	handler-seq
 	;
 global-module-fragment:
-	"module-keyword"	';'
-	|	"module-keyword"	';'	declaration-seq
+	MODULE	"SEMICOLON"
+	|	MODULE	"SEMICOLON"	declaration-seq
 	;
 h-char:
 	EXCEPT_NEW_LINE_AND_GREATER_THAN_SIGN
 	;
 handler:
-	"catch"	'('	exception-declaration	')'	compound-statement
+	CATCH	"OPEN_PAREN"	exception-declaration	"CLOSE_PAREN"	compound-statement
 	;
 handler-seq:
 	handler
 	|	handler	handler-seq
 	;
 header-name:
-	'<'	"h-char-sequence"	'>'
-	|	'"'	q-char-sequence	'"'
-	|	"h-char-sequence:"
+	"LESS"	H-CHAR-SEQUENCE	"GREATER"
+	|	"DOUBLE_QUOTE"	q-char-sequence	"DOUBLE_QUOTE"
+	|	H-CHAR-SEQUENCE:
 	|	h-char
-	|	"h-char-sequence"	h-char
+	|	H-CHAR-SEQUENCE	h-char
 	;
 hex-quad:
 	hexadecimal-digit	hexadecimal-digit	hexadecimal-digit	hexadecimal-digit
@@ -733,10 +829,10 @@ hexadecimal-digit:
 hexadecimal-digit-sequence:
 	hexadecimal-digit
 	|	hexadecimal-digit-sequence	hexadecimal-digit
-	|	hexadecimal-digit-sequence	'\''	hexadecimal-digit
+	|	hexadecimal-digit-sequence	"SINGLE_QUOTE"	hexadecimal-digit
 	;
 hexadecimal-escape-sequence:
-	"\\x"	hexadecimal-digit
+	ESCAPE_LX	hexadecimal-digit
 	|	hexadecimal-escape-sequence	hexadecimal-digit
 	;
 hexadecimal-floating-point-literal:
@@ -746,16 +842,16 @@ hexadecimal-floating-point-literal:
 	|	hexadecimal-prefix	hexadecimal-digit-sequence	binary-exponent-part	floating-point-suffix
 	;
 hexadecimal-fractional-constant:
-	hexadecimal-digit-sequence	'.'	hexadecimal-digit-sequence
-	|	'.'	hexadecimal-digit-sequence
-	|	hexadecimal-digit-sequence	'.'
+	hexadecimal-digit-sequence	"DOT"	hexadecimal-digit-sequence
+	|	"DOT"	hexadecimal-digit-sequence
+	|	hexadecimal-digit-sequence	"DOT"
 	;
 hexadecimal-literal:
 	hexadecimal-prefix	hexadecimal-digit-sequence
 	;
 hexadecimal-prefix:
-	"0x"
-	|	"0X"
+	ZERO_LX
+	|	ZERO_HX
 	;
 id-expression:
 	unqualified-id
@@ -763,17 +859,17 @@ id-expression:
 	;
 identifier-list:
 	IDENTIFIER
-	|	identifier-list	','	IDENTIFIER
+	|	identifier-list	"COMMA"	IDENTIFIER
 	;
 inclusive-or-expression:
 	exclusive-or-expression
-	|	inclusive-or-expression	'|'	exclusive-or-expression
+	|	inclusive-or-expression	"OR"	exclusive-or-expression
 	;
 init-capture:
-	"..."	IDENTIFIER	initializer
+	"ELLIPSIS"	IDENTIFIER	initializer
 	|	IDENTIFIER	initializer
-	|	'&'	IDENTIFIER	initializer
-	|	'&'	"..."	IDENTIFIER	initializer
+	|	"AND"	IDENTIFIER	initializer
+	|	"AND"	"ELLIPSIS"	IDENTIFIER	initializer
 	;
 init-declarator:
 	declarator
@@ -782,7 +878,7 @@ init-declarator:
 	;
 init-declarator-list:
 	init-declarator
-	|	init-declarator-list	','	init-declarator
+	|	init-declarator-list	"COMMA"	init-declarator
 	;
 init-statement:
 	expression-statement
@@ -791,7 +887,7 @@ init-statement:
 	;
 initializer:
 	brace-or-equal-initializer
-	|	'('	expression-list	')'
+	|	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
 	;
 initializer-clause:
 	assignment-expression
@@ -799,9 +895,9 @@ initializer-clause:
 	;
 initializer-list:
 	initializer-clause
-	|	initializer-clause	"..."
-	|	initializer-list	','	initializer-clause
-	|	initializer-list	','	initializer-clause	"..."
+	|	initializer-clause	"ELLIPSIS"
+	|	initializer-list	"COMMA"	initializer-clause
+	|	initializer-list	"COMMA"	initializer-clause	"ELLIPSIS"
 	;
 integer-literal:
 	binary-literal
@@ -828,49 +924,49 @@ integer-suffix:
 	|	size-suffix	unsigned-suffix
 	;
 iteration-statement:
-	"while"	'('	condition	')'	statement
-	|	"do"	statement	"while"	'('	expression	')'	';'
-	|	"for"	'('	init-statement	';'	')'	statement
-	|	"for"	'('	init-statement	condition	';'	')'	statement
-	|	"for"	'('	init-statement	';'	expression	')'	statement
-	|	"for"	'('	init-statement	condition	';'	expression	')'	statement
-	|	"for"	'('	for-range-declaration	':'	for-range-initializer	')'	statement
-	|	"for"	'('	init-statement	for-range-declaration	':'	for-range-initializer	')'	statement
+	WHILE	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement
+	|	DO	statement	WHILE	"OPEN_PAREN"	expression	"CLOSE_PAREN"	"SEMICOLON"
+	|	FOR	"OPEN_PAREN"	init-statement	"SEMICOLON"	"CLOSE_PAREN"	statement
+	|	FOR	"OPEN_PAREN"	init-statement	condition	"SEMICOLON"	"CLOSE_PAREN"	statement
+	|	FOR	"OPEN_PAREN"	init-statement	"SEMICOLON"	expression	"CLOSE_PAREN"	statement
+	|	FOR	"OPEN_PAREN"	init-statement	condition	"SEMICOLON"	expression	"CLOSE_PAREN"	statement
+	|	FOR	"OPEN_PAREN"	for-range-declaration	"COLON"	for-range-initializer	"CLOSE_PAREN"	statement
+	|	FOR	"OPEN_PAREN"	init-statement	for-range-declaration	"COLON"	for-range-initializer	"CLOSE_PAREN"	statement
 	;
 jump-statement:
-	"break"	';'
-	|	"continue"	';'
-	|	"return"	';'
-	|	"return"	expr-or-braced-init-list	';'
+	BREAK	"SEMICOLON"
+	|	CONTINUE	"SEMICOLON"
+	|	RETURN	"SEMICOLON"
+	|	RETURN	expr-or-braced-init-list	"SEMICOLON"
 	|	coroutine-return-statement
-	|	"goto"	IDENTIFIER	';'
+	|	GOTO	IDENTIFIER	"SEMICOLON"
 	;
 labeled-statement:
-	attribute-specifier-seq	IDENTIFIER	':'	statement
-	|	IDENTIFIER	':'	statement
-	|	attribute-specifier-seq	"case"	constant-expression	':'	statement
-	|	"case"	constant-expression	':'	statement
-	|	attribute-specifier-seq	"default"	':'	statement
-	|	"default"	':'	statement
+	attribute-specifier-seq	IDENTIFIER	"COLON"	statement
+	|	IDENTIFIER	"COLON"	statement
+	|	attribute-specifier-seq	CASE	constant-expression	"COLON"	statement
+	|	CASE	constant-expression	"COLON"	statement
+	|	attribute-specifier-seq	DEFAULT	"COLON"	statement
+	|	DEFAULT	"COLON"	statement
 	;
 lambda-capture:
 	capture-default
 	|	capture-list
-	|	capture-default	','	capture-list
+	|	capture-default	"COMMA"	capture-list
 	;
 lambda-declarator:
 	lambda-specifiers
-	|	'('	parameter-declaration-clause	')'	lambda-specifiers
-	|	'('	parameter-declaration-clause	')'	lambda-specifiers	requires-clause
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	lambda-specifiers
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	lambda-specifiers	requires-clause
 	;
 lambda-expression:
 	lambda-introducer	lambda-declarator	compound-statement
-	|	lambda-introducer	'<'	template-parameter-list	'>'	lambda-declarator	compound-statement
-	|	lambda-introducer	'<'	template-parameter-list	'>'	requires-clause	lambda-declarator	compound-statement
+	|	lambda-introducer	"LESS"	template-parameter-list	"GREATER"	lambda-declarator	compound-statement
+	|	lambda-introducer	"LESS"	template-parameter-list	"GREATER"	requires-clause	lambda-declarator	compound-statement
 	;
 lambda-introducer:
-	'['	']'
-	|	'['	lambda-capture	']'
+	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	lambda-capture	"CLOSE_SQUARE"
 	;
 lambda-specifiers:
 	decl-specifier-seq
@@ -890,9 +986,9 @@ lambda-specifiers:
 	|	noexcept-specifier	attribute-specifier-seq	trailing-return-type
 	;
 linkage-specification:
-	"extern"	string-literal	'{'	'}'
-	|	"extern"	string-literal	'{'	declaration-seq	'}'
-	|	"extern"	string-literal	declaration
+	EXTERN	string-literal	"OPEN_BRACE"	"CLOSE_BRACE"
+	|	EXTERN	string-literal	"OPEN_BRACE"	declaration-seq	"CLOSE_BRACE"
+	|	EXTERN	string-literal	declaration
 	;
 literal:
 	integer-literal
@@ -904,28 +1000,28 @@ literal:
 	|	user-defined-literal
 	;
 literal-operator-id:
-	"operator"	string-literal	IDENTIFIER
-	|	"operator"	user-defined-string-literal
+	OPERATOR	string-literal	IDENTIFIER
+	|	OPERATOR	user-defined-string-literal
 	;
 logical-and-expression:
 	inclusive-or-expression
-	|	logical-and-expression	"&&"	inclusive-or-expression
+	|	logical-and-expression	"AND_AND"	inclusive-or-expression
 	;
 logical-or-expression:
 	logical-and-expression
-	|	logical-or-expression	"||"	logical-and-expression
+	|	logical-or-expression	"OR_OR"	logical-and-expression
 	;
 long-long-suffix:
-	"ll"
-	|	LL
+	LONG_LONG_L
+	|	LONG_LONG_H
 	;
 long-suffix:
 	'l'
 	|	'L'
 	;
 mem-initializer:
-	mem-initializer-id	'('	')'
-	|	mem-initializer-id	'('	expression-list	')'
+	mem-initializer-id	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	mem-initializer-id	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
 	|	mem-initializer-id	braced-init-list
 	;
 mem-initializer-id:
@@ -934,19 +1030,19 @@ mem-initializer-id:
 	;
 mem-initializer-list:
 	mem-initializer
-	|	mem-initializer	"..."
-	|	mem-initializer-list	','	mem-initializer
-	|	mem-initializer-list	','	mem-initializer	"..."
+	|	mem-initializer	"ELLIPSIS"
+	|	mem-initializer-list	"COMMA"	mem-initializer
+	|	mem-initializer-list	"COMMA"	mem-initializer	"ELLIPSIS"
 	;
 member-declaration:
-	attribute-specifier-seq	';'
-	|	';'
-	|	attribute-specifier-seq	decl-specifier-seq	';'
-	|	decl-specifier-seq	';'
-	|	attribute-specifier-seq	member-declarator-list	';'
-	|	member-declarator-list	';'
-	|	attribute-specifier-seq	decl-specifier-seq	member-declarator-list	';'
-	|	decl-specifier-seq	member-declarator-list	';'
+	attribute-specifier-seq	"SEMICOLON"
+	|	"SEMICOLON"
+	|	attribute-specifier-seq	decl-specifier-seq	"SEMICOLON"
+	|	decl-specifier-seq	"SEMICOLON"
+	|	attribute-specifier-seq	member-declarator-list	"SEMICOLON"
+	|	member-declarator-list	"SEMICOLON"
+	|	attribute-specifier-seq	decl-specifier-seq	member-declarator-list	"SEMICOLON"
+	|	decl-specifier-seq	member-declarator-list	"SEMICOLON"
 	|	function-definition
 	|	using-declaration
 	|	using-enum-declaration
@@ -966,72 +1062,72 @@ member-declarator:
 	|	declarator	requires-clause
 	|	declarator
 	|	declarator	brace-or-equal-initializer
-	|	IDENTIFIER	':'	constant-expression
-	|	':'	constant-expression
-	|	IDENTIFIER	attribute-specifier-seq	':'	constant-expression
-	|	attribute-specifier-seq	':'	constant-expression
-	|	IDENTIFIER	':'	constant-expression	brace-or-equal-initializer
-	|	':'	constant-expression	brace-or-equal-initializer
-	|	IDENTIFIER	attribute-specifier-seq	':'	constant-expression	brace-or-equal-initializer
-	|	attribute-specifier-seq	':'	constant-expression	brace-or-equal-initializer
+	|	IDENTIFIER	"COLON"	constant-expression
+	|	"COLON"	constant-expression
+	|	IDENTIFIER	attribute-specifier-seq	"COLON"	constant-expression
+	|	attribute-specifier-seq	"COLON"	constant-expression
+	|	IDENTIFIER	"COLON"	constant-expression	brace-or-equal-initializer
+	|	"COLON"	constant-expression	brace-or-equal-initializer
+	|	IDENTIFIER	attribute-specifier-seq	"COLON"	constant-expression	brace-or-equal-initializer
+	|	attribute-specifier-seq	"COLON"	constant-expression	brace-or-equal-initializer
 	;
 member-declarator-list:
 	member-declarator
-	|	member-declarator-list	','	member-declarator
+	|	member-declarator-list	"COMMA"	member-declarator
 	;
 member-specification:
 	member-declaration
 	|	member-declaration	member-specification
-	|	access-specifier	':'
-	|	access-specifier	':'	member-specification
+	|	access-specifier	"COLON"
+	|	access-specifier	"COLON"	member-specification
 	;
 module-declaration:
-	"export-keyword"	"module-keyword"	module-name	';'
-	|	"module-keyword"	module-name	';'
-	|	"export-keyword"	"module-keyword"	module-name	module-partition	';'
-	|	"module-keyword"	module-name	module-partition	';'
-	|	"export-keyword"	"module-keyword"	module-name	attribute-specifier-seq	';'
-	|	"module-keyword"	module-name	attribute-specifier-seq	';'
-	|	"export-keyword"	"module-keyword"	module-name	module-partition	attribute-specifier-seq	';'
-	|	"module-keyword"	module-name	module-partition	attribute-specifier-seq	';'
+	EXPORT	MODULE	module-name	"SEMICOLON"
+	|	MODULE	module-name	"SEMICOLON"
+	|	EXPORT	MODULE	module-name	module-partition	"SEMICOLON"
+	|	MODULE	module-name	module-partition	"SEMICOLON"
+	|	EXPORT	MODULE	module-name	attribute-specifier-seq	"SEMICOLON"
+	|	MODULE	module-name	attribute-specifier-seq	"SEMICOLON"
+	|	EXPORT	MODULE	module-name	module-partition	attribute-specifier-seq	"SEMICOLON"
+	|	MODULE	module-name	module-partition	attribute-specifier-seq	"SEMICOLON"
 	;
 module-import-declaration:
-	"import-keyword"	module-name	';'
-	|	"import-keyword"	module-name	attribute-specifier-seq	';'
-	|	"import-keyword"	module-partition	';'
-	|	"import-keyword"	module-partition	attribute-specifier-seq	';'
-	|	"import-keyword"	header-name	';'
-	|	"import-keyword"	header-name	attribute-specifier-seq	';'
+	IMPORT	module-name	"SEMICOLON"
+	|	IMPORT	module-name	attribute-specifier-seq	"SEMICOLON"
+	|	IMPORT	module-partition	"SEMICOLON"
+	|	IMPORT	module-partition	attribute-specifier-seq	"SEMICOLON"
+	|	IMPORT	header-name	"SEMICOLON"
+	|	IMPORT	header-name	attribute-specifier-seq	"SEMICOLON"
 	;
 module-name:
 	module-name-qualifier	IDENTIFIER
 	|	IDENTIFIER
 	;
 module-name-qualifier:
-	IDENTIFIER	'.'
-	|	module-name-qualifier	IDENTIFIER	'.'
+	IDENTIFIER	"DOT"
+	|	module-name-qualifier	IDENTIFIER	"DOT"
 	;
 module-partition:
-	':'	IDENTIFIER
-	|	':'	module-name-qualifier	IDENTIFIER
+	"COLON"	IDENTIFIER
+	|	"COLON"	module-name-qualifier	IDENTIFIER
 	;
 multiplicative-expression:
 	pm-expression
-	|	multiplicative-expression	'*'	pm-expression
-	|	multiplicative-expression	'/'	pm-expression
-	|	multiplicative-expression	'%'	pm-expression
+	|	multiplicative-expression	"MULT"	pm-expression
+	|	multiplicative-expression	"DIV"	pm-expression
+	|	multiplicative-expression	"MOD"	pm-expression
 	;
 named-namespace-definition:
-	"inline"	"namespace"	IDENTIFIER	'{'	namespace-body	'}'
-	|	"namespace"	IDENTIFIER	'{'	namespace-body	'}'
-	|	"inline"	"namespace"	attribute-specifier-seq	IDENTIFIER	'{'	namespace-body	'}'
-	|	"namespace"	attribute-specifier-seq	IDENTIFIER	'{'	namespace-body	'}'
+	INLINE	NAMESPACE	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	NAMESPACE	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	INLINE	NAMESPACE	attribute-specifier-seq	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	NAMESPACE	attribute-specifier-seq	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
 	;
 namespace-alias:
 	IDENTIFIER
 	;
 namespace-alias-definition:
-	"namespace"	IDENTIFIER	'='	qualified-namespace-specifier	';'
+	NAMESPACE	IDENTIFIER	"EQ"	qualified-namespace-specifier	"SEMICOLON"
 	;
 namespace-body:
 	declaration-seq
@@ -1046,20 +1142,20 @@ namespace-name:
 	|	namespace-alias
 	;
 nested-name-specifier:
-	"::"
-	|	type-name	"::"
-	|	namespace-name	"::"
-	|	decltype-specifier	"::"
-	|	nested-name-specifier	IDENTIFIER	"::"
-	|	nested-name-specifier	simple-template-id	"::"
-	|	nested-name-specifier	"template"	simple-template-id	"::"
+	"SCOPE"
+	|	type-name	"SCOPE"
+	|	namespace-name	"SCOPE"
+	|	decltype-specifier	"SCOPE"
+	|	nested-name-specifier	IDENTIFIER	"SCOPE"
+	|	nested-name-specifier	simple-template-id	"SCOPE"
+	|	nested-name-specifier	TEMPLATE	simple-template-id	"SCOPE"
 	;
 nested-namespace-definition:
-	"namespace"	enclosing-namespace-specifier	"::"	IDENTIFIER	'{'	namespace-body	'}'
-	|	"namespace"	enclosing-namespace-specifier	"::"	"inline"	IDENTIFIER	'{'	namespace-body	'}'
+	NAMESPACE	enclosing-namespace-specifier	"SCOPE"	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	NAMESPACE	enclosing-namespace-specifier	"SCOPE"	INLINE	IDENTIFIER	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
 	;
 nested-requirement:
-	"requires"	constraint-expression	';'
+	REQUIRES	constraint-expression	"SEMICOLON"
 	;
 new-declarator:
 	ptr-operator
@@ -1067,45 +1163,45 @@ new-declarator:
 	|	noptr-new-declarator
 	;
 new-expression:
-	"::"	"new"	new-type-id
-	|	"new"	new-type-id
-	|	"::"	"new"	new-placement	new-type-id
-	|	"new"	new-placement	new-type-id
-	|	"::"	"new"	new-type-id	new-initializer
-	|	"new"	new-type-id	new-initializer
-	|	"::"	"new"	new-placement	new-type-id	new-initializer
-	|	"new"	new-placement	new-type-id	new-initializer
-	|	"::"	"new"	'('	type-id	')'
-	|	"new"	'('	type-id	')'
-	|	"::"	"new"	new-placement	'('	type-id	')'
-	|	"new"	new-placement	'('	type-id	')'
-	|	"::"	"new"	'('	type-id	')'	new-initializer
-	|	"new"	'('	type-id	')'	new-initializer
-	|	"::"	"new"	new-placement	'('	type-id	')'	new-initializer
-	|	"new"	new-placement	'('	type-id	')'	new-initializer
+	"SCOPE"	NEW	new-type-id
+	|	NEW	new-type-id
+	|	"SCOPE"	NEW	new-placement	new-type-id
+	|	NEW	new-placement	new-type-id
+	|	"SCOPE"	NEW	new-type-id	new-initializer
+	|	NEW	new-type-id	new-initializer
+	|	"SCOPE"	NEW	new-placement	new-type-id	new-initializer
+	|	NEW	new-placement	new-type-id	new-initializer
+	|	"SCOPE"	NEW	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	NEW	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	"SCOPE"	NEW	new-placement	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	NEW	new-placement	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	"SCOPE"	NEW	"OPEN_PAREN"	type-id	"CLOSE_PAREN"	new-initializer
+	|	NEW	"OPEN_PAREN"	type-id	"CLOSE_PAREN"	new-initializer
+	|	"SCOPE"	NEW	new-placement	"OPEN_PAREN"	type-id	"CLOSE_PAREN"	new-initializer
+	|	NEW	new-placement	"OPEN_PAREN"	type-id	"CLOSE_PAREN"	new-initializer
 	;
 new-initializer:
-	'('	')'
-	|	'('	expression-list	')'
+	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
 	|	braced-init-list
 	;
 new-placement:
-	'('	expression-list	')'
+	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
 	;
 new-type-id:
 	type-specifier-seq
 	|	type-specifier-seq	new-declarator
 	;
 nodeclspec-function-declaration:
-	attribute-specifier-seq	declarator	';'
-	|	declarator	';'
+	attribute-specifier-seq	declarator	"SEMICOLON"
+	|	declarator	"SEMICOLON"
 	;
 noexcept-expression:
-	"noexcept"	'('	expression	')'
+	NOEXCEPT	"OPEN_PAREN"	expression	"CLOSE_PAREN"
 	;
 noexcept-specifier:
-	"noexcept"	'('	constant-expression	')'
-	|	"noexcept"
+	NOEXCEPT	"OPEN_PAREN"	constant-expression	"CLOSE_PAREN"
+	|	NOEXCEPT
 	;
 nonzero-digit:
 	'1'
@@ -1121,41 +1217,41 @@ nonzero-digit:
 noptr-abstract-declarator:
 	noptr-abstract-declarator	parameters-and-qualifiers
 	|	parameters-and-qualifiers
-	|	noptr-abstract-declarator	'['	']'
-	|	'['	']'
-	|	noptr-abstract-declarator	'['	constant-expression	']'
-	|	'['	constant-expression	']'
-	|	noptr-abstract-declarator	'['	']'	attribute-specifier-seq
-	|	'['	']'	attribute-specifier-seq
-	|	noptr-abstract-declarator	'['	constant-expression	']'	attribute-specifier-seq
-	|	'['	constant-expression	']'	attribute-specifier-seq
-	|	'('	ptr-abstract-declarator	')'
+	|	noptr-abstract-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	noptr-abstract-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"
+	|	noptr-abstract-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"OPEN_SQUARE"	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	noptr-abstract-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"OPEN_PAREN"	ptr-abstract-declarator	"CLOSE_PAREN"
 	;
 noptr-abstract-pack-declarator:
 	noptr-abstract-pack-declarator	parameters-and-qualifiers
-	|	noptr-abstract-pack-declarator	'['	']'
-	|	noptr-abstract-pack-declarator	'['	constant-expression	']'
-	|	noptr-abstract-pack-declarator	'['	']'	attribute-specifier-seq
-	|	noptr-abstract-pack-declarator	'['	constant-expression	']'	attribute-specifier-seq
-	|	"..."
+	|	noptr-abstract-pack-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	noptr-abstract-pack-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"
+	|	noptr-abstract-pack-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	noptr-abstract-pack-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"ELLIPSIS"
 	;
 noptr-declarator:
 	declarator-id
 	|	declarator-id	attribute-specifier-seq
 	|	noptr-declarator	parameters-and-qualifiers
-	|	noptr-declarator	'['	']'
-	|	noptr-declarator	'['	constant-expression	']'
-	|	noptr-declarator	'['	']'	attribute-specifier-seq
-	|	noptr-declarator	'['	constant-expression	']'	attribute-specifier-seq
-	|	'('	ptr-declarator	')'
+	|	noptr-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	noptr-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"
+	|	noptr-declarator	"OPEN_SQUARE"	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	noptr-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"OPEN_PAREN"	ptr-declarator	"CLOSE_PAREN"
 	;
 noptr-new-declarator:
-	'['	']'
-	|	'['	expression	']'
-	|	'['	']'	attribute-specifier-seq
-	|	'['	expression	']'	attribute-specifier-seq
-	|	noptr-new-declarator	'['	constant-expression	']'
-	|	noptr-new-declarator	'['	constant-expression	']'	attribute-specifier-seq
+	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	expression	"CLOSE_SQUARE"
+	|	"OPEN_SQUARE"	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	"OPEN_SQUARE"	expression	"CLOSE_SQUARE"	attribute-specifier-seq
+	|	noptr-new-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"
+	|	noptr-new-declarator	"OPEN_SQUARE"	constant-expression	"CLOSE_SQUARE"	attribute-specifier-seq
 	;
 numeric-escape-sequence:
 	octal-escape-sequence
@@ -1172,177 +1268,177 @@ octal-digit:
 	|	'7'
 	;
 octal-escape-sequence:
-	'\\'	octal-digit
-	|	'\\'	octal-digit	octal-digit
-	|	'\\'	octal-digit	octal-digit	octal-digit
+	ESCAPE	octal-digit
+	|	ESCAPE	octal-digit	octal-digit
+	|	ESCAPE	octal-digit	octal-digit	octal-digit
 	;
 octal-literal:
 	'0'
 	|	octal-literal	octal-digit
-	|	octal-literal	'\''	octal-digit
+	|	octal-literal	"SINGLE_QUOTE"	octal-digit
 	;
 opaque-enum-declaration:
-	enum-key	enum-head-name	';'
-	|	enum-key	attribute-specifier-seq	enum-head-name	';'
-	|	enum-key	enum-head-name	enum-base	';'
-	|	enum-key	attribute-specifier-seq	enum-head-name	enum-base	';'
+	enum-key	enum-head-name	"SEMICOLON"
+	|	enum-key	attribute-specifier-seq	enum-head-name	"SEMICOLON"
+	|	enum-key	enum-head-name	enum-base	"SEMICOLON"
+	|	enum-key	attribute-specifier-seq	enum-head-name	enum-base	"SEMICOLON"
 	;
 operator-function-id:
-	"operator"	overloadable-operator
-	|	"operator"	overloadable-operator	'<'	'>'
-	|	"operator"	overloadable-operator	'<'	template-argument-list	'>'
+	OPERATOR	overloadable-operator
+	|	OPERATOR	overloadable-operator	"LESS"	"GREATER"
+	|	OPERATOR	overloadable-operator	"LESS"	template-argument-list	"GREATER"
 	;
 overloadable-operator:
-	"new"
-	|	"delete"
-	|	"new"	'['	']'
-	|	"delete"	'['	']'
-	|	"co_await"
-	|	'('	')'
-	|	'['	']'
-	|	"->"
-	|	"->*"
-	|	'~'
-	|	'!'
-	|	'+'
-	|	'-'
-	|	'*'
-	|	'/'
-	|	'%'
-	|	'^'
-	|	'&'
-	|	'|'
-	|	'='
-	|	"+="
-	|	"-="
-	|	"*="
-	|	"/="
-	|	"%="
-	|	"^="
-	|	"&="
-	|	"|="
-	|	"=="
-	|	"!="
-	|	'<'
-	|	'>'
-	|	"<="
-	|	">="
-	|	"<=>"
-	|	"&&"
-	|	"||"
-	|	"<<"
-	|	">>"
-	|	"<<="
-	|	">>="
-	|	"++"
-	|	"--"
-	|	','
+	NEW
+	|	DELETE
+	|	NEW	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	DELETE	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	CO_AWAIT
+	|	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	"DEREF"
+	|	"DEREF_STAR"
+	|	"COMPL"
+	|	"NOT"
+	|	"PLUS"
+	|	"MINUS"
+	|	"MULT"
+	|	"DIV"
+	|	"MOD"
+	|	"XOR"
+	|	"AND"
+	|	"OR"
+	|	"EQ"
+	|	"PLUS_EQ"
+	|	"MINUS_EQ"
+	|	"MULT_EQ"
+	|	"DIV_EQ"
+	|	"MOD_EQ"
+	|	"XOR_EQ"
+	|	"AND_EQ"
+	|	"OR_EQ"
+	|	"EQ_EQ"
+	|	"NOT_EQ"
+	|	"LESS"
+	|	"GREATER"
+	|	"LESS_EQ"
+	|	"GREATER_EQ"
+	|	"SPACESHIP"
+	|	"AND_AND"
+	|	"OR_OR"
+	|	"LSHIFT"
+	|	"RSHIFT"
+	|	"LSHIFT_EQ"
+	|	"RSHIFT_EQ"
+	|	"PLUS_PLUS"
+	|	"MINUS_MINUS"
+	|	"COMMA"
 	;
 parameter-declaration:
 	attribute-specifier-seq	decl-specifier-seq	declarator
 	|	decl-specifier-seq	declarator
-	|	attribute-specifier-seq	"this"	decl-specifier-seq	declarator
-	|	"this"	decl-specifier-seq	declarator
-	|	attribute-specifier-seq	decl-specifier-seq	declarator	'='	initializer-clause
-	|	decl-specifier-seq	declarator	'='	initializer-clause
-	|	attribute-specifier-seq	"this"	decl-specifier-seq	declarator	'='	initializer-clause
-	|	"this"	decl-specifier-seq	declarator	'='	initializer-clause
+	|	attribute-specifier-seq	THIS	decl-specifier-seq	declarator
+	|	THIS	decl-specifier-seq	declarator
+	|	attribute-specifier-seq	decl-specifier-seq	declarator	"EQ"	initializer-clause
+	|	decl-specifier-seq	declarator	"EQ"	initializer-clause
+	|	attribute-specifier-seq	THIS	decl-specifier-seq	declarator	"EQ"	initializer-clause
+	|	THIS	decl-specifier-seq	declarator	"EQ"	initializer-clause
 	|	attribute-specifier-seq	decl-specifier-seq
 	|	decl-specifier-seq
-	|	attribute-specifier-seq	"this"	decl-specifier-seq
-	|	"this"	decl-specifier-seq
+	|	attribute-specifier-seq	THIS	decl-specifier-seq
+	|	THIS	decl-specifier-seq
 	|	attribute-specifier-seq	decl-specifier-seq	abstract-declarator
 	|	decl-specifier-seq	abstract-declarator
-	|	attribute-specifier-seq	"this"	decl-specifier-seq	abstract-declarator
-	|	"this"	decl-specifier-seq	abstract-declarator
-	|	attribute-specifier-seq	decl-specifier-seq	'='	initializer-clause
-	|	decl-specifier-seq	'='	initializer-clause
-	|	attribute-specifier-seq	"this"	decl-specifier-seq	'='	initializer-clause
-	|	"this"	decl-specifier-seq	'='	initializer-clause
-	|	attribute-specifier-seq	decl-specifier-seq	abstract-declarator	'='	initializer-clause
-	|	decl-specifier-seq	abstract-declarator	'='	initializer-clause
-	|	attribute-specifier-seq	"this"	decl-specifier-seq	abstract-declarator	'='	initializer-clause
-	|	"this"	decl-specifier-seq	abstract-declarator	'='	initializer-clause
+	|	attribute-specifier-seq	THIS	decl-specifier-seq	abstract-declarator
+	|	THIS	decl-specifier-seq	abstract-declarator
+	|	attribute-specifier-seq	decl-specifier-seq	"EQ"	initializer-clause
+	|	decl-specifier-seq	"EQ"	initializer-clause
+	|	attribute-specifier-seq	THIS	decl-specifier-seq	"EQ"	initializer-clause
+	|	THIS	decl-specifier-seq	"EQ"	initializer-clause
+	|	attribute-specifier-seq	decl-specifier-seq	abstract-declarator	"EQ"	initializer-clause
+	|	decl-specifier-seq	abstract-declarator	"EQ"	initializer-clause
+	|	attribute-specifier-seq	THIS	decl-specifier-seq	abstract-declarator	"EQ"	initializer-clause
+	|	THIS	decl-specifier-seq	abstract-declarator	"EQ"	initializer-clause
 	;
 parameter-declaration-clause:
 	parameter-declaration-list
-	|	parameter-declaration-list	"..."
-	|	"..."
-	|	parameter-declaration-list	','	"..."
+	|	parameter-declaration-list	"ELLIPSIS"
+	|	"ELLIPSIS"
+	|	parameter-declaration-list	"COMMA"	"ELLIPSIS"
 	;
 parameter-declaration-list:
 	parameter-declaration
-	|	parameter-declaration-list	','	parameter-declaration
+	|	parameter-declaration-list	"COMMA"	parameter-declaration
 	;
 parameters-and-qualifiers:
-	'('	parameter-declaration-clause	')'
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq
-	|	'('	parameter-declaration-clause	')'	ref-qualifier
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	ref-qualifier
-	|	'('	parameter-declaration-clause	')'	noexcept-specifier
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	noexcept-specifier
-	|	'('	parameter-declaration-clause	')'	ref-qualifier	noexcept-specifier
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	ref-qualifier	noexcept-specifier
-	|	'('	parameter-declaration-clause	')'	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	ref-qualifier	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	ref-qualifier	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	noexcept-specifier	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	noexcept-specifier	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	ref-qualifier	noexcept-specifier	attribute-specifier-seq
-	|	'('	parameter-declaration-clause	')'	cv-qualifier-seq	ref-qualifier	noexcept-specifier	attribute-specifier-seq
+	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	ref-qualifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	ref-qualifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	noexcept-specifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	noexcept-specifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	ref-qualifier	noexcept-specifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	ref-qualifier	noexcept-specifier
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	ref-qualifier	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	ref-qualifier	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	noexcept-specifier	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	noexcept-specifier	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	ref-qualifier	noexcept-specifier	attribute-specifier-seq
+	|	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"	cv-qualifier-seq	ref-qualifier	noexcept-specifier	attribute-specifier-seq
 	;
 placeholder-type-specifier:
-	type-constraint	"auto"
-	|	"auto"
-	|	type-constraint	"decltype"	'('	"auto"	')'
-	|	"decltype"	'('	"auto"	')'
+	type-constraint	AUTO
+	|	AUTO
+	|	type-constraint	DECLTYPE	"OPEN_PAREN"	AUTO	"CLOSE_PAREN"
+	|	DECLTYPE	"OPEN_PAREN"	AUTO	"CLOSE_PAREN"
 	;
 pm-expression:
 	cast-expression
-	|	pm-expression	".*"	cast-expression
-	|	pm-expression	"->*"	cast-expression
+	|	pm-expression	"DOT_STAR"	cast-expression
+	|	pm-expression	"DEREF_STAR"	cast-expression
 	;
 pointer-literal:
-	"nullptr"
+	NULLPTR
 	;
 postfix-expression:
 	primary-expression
-	|	postfix-expression	'['	']'
-	|	postfix-expression	'['	expression-list	']'
-	|	postfix-expression	'('	')'
-	|	postfix-expression	'('	expression-list	')'
-	|	simple-type-specifier	'('	')'
-	|	simple-type-specifier	'('	expression-list	')'
-	|	typename-specifier	'('	')'
-	|	typename-specifier	'('	expression-list	')'
+	|	postfix-expression	"OPEN_SQUARE"	"CLOSE_SQUARE"
+	|	postfix-expression	"OPEN_SQUARE"	expression-list	"CLOSE_SQUARE"
+	|	postfix-expression	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	postfix-expression	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
+	|	simple-type-specifier	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	simple-type-specifier	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
+	|	typename-specifier	"OPEN_PAREN"	"CLOSE_PAREN"
+	|	typename-specifier	"OPEN_PAREN"	expression-list	"CLOSE_PAREN"
 	|	simple-type-specifier	braced-init-list
 	|	typename-specifier	braced-init-list
-	|	postfix-expression	'.'	id-expression
-	|	postfix-expression	'.'	"template"	id-expression
-	|	postfix-expression	"->"	id-expression
-	|	postfix-expression	"->"	"template"	id-expression
-	|	postfix-expression	"++"
-	|	postfix-expression	"--"
-	|	"dynamic_cast"	'<'	type-id	'>'	'('	expression	')'
-	|	"static_cast"	'<'	type-id	'>'	'('	expression	')'
-	|	"reinterpret_cast"	'<'	type-id	'>'	'('	expression	')'
-	|	"const_cast"	'<'	type-id	'>'	'('	expression	')'
-	|	"typeid"	'('	expression	')'
-	|	"typeid"	'('	type-id	')'
+	|	postfix-expression	"DOT"	id-expression
+	|	postfix-expression	"DOT"	TEMPLATE	id-expression
+	|	postfix-expression	"DEREF"	id-expression
+	|	postfix-expression	"DEREF"	TEMPLATE	id-expression
+	|	postfix-expression	"PLUS_PLUS"
+	|	postfix-expression	"MINUS_MINUS"
+	|	DYNAMIC_CAST	"LESS"	type-id	"GREATER"	"OPEN_PAREN"	expression	"CLOSE_PAREN"
+	|	STATIC_CAST	"LESS"	type-id	"GREATER"	"OPEN_PAREN"	expression	"CLOSE_PAREN"
+	|	REINTERPRET_CAST	"LESS"	type-id	"GREATER"	"OPEN_PAREN"	expression	"CLOSE_PAREN"
+	|	CONST_CAST	"LESS"	type-id	"GREATER"	"OPEN_PAREN"	expression	"CLOSE_PAREN"
+	|	TYPEID	"OPEN_PAREN"	expression	"CLOSE_PAREN"
+	|	TYPEID	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
 	;
 primary-expression:
 	literal
-	|	"this"
-	|	'('	expression	')'
+	|	THIS
+	|	"OPEN_PAREN"	expression	"CLOSE_PAREN"
 	|	id-expression
 	|	lambda-expression
 	|	fold-expression
 	|	requires-expression
 	;
 private-module-fragment:
-	"module-keyword"	':'	"private"	';'
-	|	"module-keyword"	':'	"private"	';'	declaration-seq
+	MODULE	"COLON"	PRIVATE	"SEMICOLON"
+	|	MODULE	"COLON"	PRIVATE	"SEMICOLON"	declaration-seq
 	;
 ptr-abstract-declarator:
 	noptr-abstract-declarator
@@ -1354,21 +1450,21 @@ ptr-declarator:
 	|	ptr-operator	ptr-declarator
 	;
 ptr-operator:
-	'*'
-	|	'*'	attribute-specifier-seq
-	|	'*'	cv-qualifier-seq
-	|	'*'	attribute-specifier-seq	cv-qualifier-seq
-	|	'&'
-	|	'&'	attribute-specifier-seq
-	|	"&&"
-	|	"&&"	attribute-specifier-seq
-	|	nested-name-specifier	'*'
-	|	nested-name-specifier	'*'	attribute-specifier-seq
-	|	nested-name-specifier	'*'	cv-qualifier-seq
-	|	nested-name-specifier	'*'	attribute-specifier-seq	cv-qualifier-seq
+	"MULT"
+	|	"MULT"	attribute-specifier-seq
+	|	"MULT"	cv-qualifier-seq
+	|	"MULT"	attribute-specifier-seq	cv-qualifier-seq
+	|	"AND"
+	|	"AND"	attribute-specifier-seq
+	|	"AND_AND"
+	|	"AND_AND"	attribute-specifier-seq
+	|	nested-name-specifier	"MULT"
+	|	nested-name-specifier	"MULT"	attribute-specifier-seq
+	|	nested-name-specifier	"MULT"	cv-qualifier-seq
+	|	nested-name-specifier	"MULT"	attribute-specifier-seq	cv-qualifier-seq
 	;
 pure-specifier:
-	'='	'0'
+	"EQ"	'0'
 	;
 q-char:
 	EXCEPT_NEW_LINE_AND_QUOTATION_MARK
@@ -1379,7 +1475,7 @@ q-char-sequence:
 	;
 qualified-id:
 	nested-name-specifier	unqualified-id
-	|	nested-name-specifier	"template"	unqualified-id
+	|	nested-name-specifier	TEMPLATE	unqualified-id
 	;
 qualified-namespace-specifier:
 	nested-name-specifier	namespace-name
@@ -1393,25 +1489,25 @@ r-char-sequence:
 	|	r-char-sequence	r-char
 	;
 raw-string:
-	'"'	'('	')'	'"'
-	|	'"'	d-char-sequence	'('	')'	'"'
-	|	'"'	'('	r-char-sequence	')'	'"'
-	|	'"'	d-char-sequence	'('	r-char-sequence	')'	'"'
-	|	'"'	'('	')'	d-char-sequence	'"'
-	|	'"'	d-char-sequence	'('	')'	d-char-sequence	'"'
-	|	'"'	'('	r-char-sequence	')'	d-char-sequence	'"'
-	|	'"'	d-char-sequence	'('	r-char-sequence	')'	d-char-sequence	'"'
+	"DOUBLE_QUOTE"	"OPEN_PAREN"	"CLOSE_PAREN"	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	d-char-sequence	"OPEN_PAREN"	"CLOSE_PAREN"	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	"OPEN_PAREN"	r-char-sequence	"CLOSE_PAREN"	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	d-char-sequence	"OPEN_PAREN"	r-char-sequence	"CLOSE_PAREN"	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	"OPEN_PAREN"	"CLOSE_PAREN"	d-char-sequence	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	d-char-sequence	"OPEN_PAREN"	"CLOSE_PAREN"	d-char-sequence	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	"OPEN_PAREN"	r-char-sequence	"CLOSE_PAREN"	d-char-sequence	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	d-char-sequence	"OPEN_PAREN"	r-char-sequence	"CLOSE_PAREN"	d-char-sequence	"DOUBLE_QUOTE"
 	;
 ref-qualifier:
-	'&'
-	|	"&&"
+	"AND"
+	|	"AND_AND"
 	;
 relational-expression:
 	compare-expression
-	|	relational-expression	'<'	compare-expression
-	|	relational-expression	'>'	compare-expression
-	|	relational-expression	"<="	compare-expression
-	|	relational-expression	">="	compare-expression
+	|	relational-expression	"LESS"	compare-expression
+	|	relational-expression	"GREATER"	compare-expression
+	|	relational-expression	"LESS_EQ"	compare-expression
+	|	relational-expression	"GREATER_EQ"	compare-expression
 	;
 requirement:
 	simple-requirement
@@ -1420,24 +1516,24 @@ requirement:
 	|	nested-requirement
 	;
 requirement-body:
-	'{'	requirement-seq	'}'
+	"OPEN_BRACE"	requirement-seq	"CLOSE_BRACE"
 	;
 requirement-parameter-list:
-	'('	parameter-declaration-clause	')'
+	"OPEN_PAREN"	parameter-declaration-clause	"CLOSE_PAREN"
 	;
 requirement-seq:
 	requirement
 	|	requirement-seq	requirement
 	;
 requires-clause:
-	"requires"	constraint-logical-or-expression
+	REQUIRES	constraint-logical-or-expression
 	;
 requires-expression:
-	"requires"	requirement-body
-	|	"requires"	requirement-parameter-list	requirement-body
+	REQUIRES	requirement-body
+	|	REQUIRES	requirement-parameter-list	requirement-body
 	;
 return-type-requirement:
-	"->"	type-constraint
+	"DEREF"	type-constraint
 	;
 s-char:
 	basic-s-char
@@ -1449,55 +1545,55 @@ s-char-sequence:
 	|	s-char-sequence	s-char
 	;
 selection-statement:
-	"if"	'('	condition	')'	statement
-	|	"if"	"constexpr"	'('	condition	')'	statement
-	|	"if"	'('	init-statement	condition	')'	statement
-	|	"if"	"constexpr"	'('	init-statement	condition	')'	statement
-	|	"if"	'('	condition	')'	statement	"else"	statement
-	|	"if"	"constexpr"	'('	condition	')'	statement	"else"	statement
-	|	"if"	'('	init-statement	condition	')'	statement	"else"	statement
-	|	"if"	"constexpr"	'('	init-statement	condition	')'	statement	"else"	statement
-	|	"if"	"consteval"	compound-statement
-	|	"if"	'!'	"consteval"	compound-statement
-	|	"if"	"consteval"	compound-statement	"else"	statement
-	|	"if"	'!'	"consteval"	compound-statement	"else"	statement
-	|	"switch"	'('	condition	')'	statement
-	|	"switch"	'('	init-statement	condition	')'	statement
+	IF	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement
+	|	IF	CONSTEXPR	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement
+	|	IF	"OPEN_PAREN"	init-statement	condition	"CLOSE_PAREN"	statement
+	|	IF	CONSTEXPR	"OPEN_PAREN"	init-statement	condition	"CLOSE_PAREN"	statement
+	|	IF	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement	ELSE	statement
+	|	IF	CONSTEXPR	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement	ELSE	statement
+	|	IF	"OPEN_PAREN"	init-statement	condition	"CLOSE_PAREN"	statement	ELSE	statement
+	|	IF	CONSTEXPR	"OPEN_PAREN"	init-statement	condition	"CLOSE_PAREN"	statement	ELSE	statement
+	|	IF	CONSTEVAL	compound-statement
+	|	IF	"NOT"	CONSTEVAL	compound-statement
+	|	IF	CONSTEVAL	compound-statement	ELSE	statement
+	|	IF	"NOT"	CONSTEVAL	compound-statement	ELSE	statement
+	|	SWITCH	"OPEN_PAREN"	condition	"CLOSE_PAREN"	statement
+	|	SWITCH	"OPEN_PAREN"	init-statement	condition	"CLOSE_PAREN"	statement
 	;
 shift-expression:
 	additive-expression
-	|	shift-expression	"<<"	additive-expression
-	|	shift-expression	">>"	additive-expression
+	|	shift-expression	"LSHIFT"	additive-expression
+	|	shift-expression	"RSHIFT"	additive-expression
 	;
 sign:
-	'+'
-	|	'-'
+	"PLUS"
+	|	"MINUS"
 	;
 simple-capture:
 	IDENTIFIER
-	|	IDENTIFIER	"..."
-	|	'&'	IDENTIFIER
-	|	'&'	IDENTIFIER	"..."
-	|	"this"
-	|	'*'	"this"
+	|	IDENTIFIER	"ELLIPSIS"
+	|	"AND"	IDENTIFIER
+	|	"AND"	IDENTIFIER	"ELLIPSIS"
+	|	THIS
+	|	"MULT"	THIS
 	;
 simple-declaration:
-	decl-specifier-seq	';'
-	|	decl-specifier-seq	init-declarator-list	';'
-	|	attribute-specifier-seq	decl-specifier-seq	init-declarator-list	';'
-	|	attribute-specifier-seq	decl-specifier-seq	'['	identifier-list	']'	initializer	';'
-	|	decl-specifier-seq	'['	identifier-list	']'	initializer	';'
-	|	attribute-specifier-seq	decl-specifier-seq	ref-qualifier	'['	identifier-list	']'	initializer	';'
-	|	decl-specifier-seq	ref-qualifier	'['	identifier-list	']'	initializer	';'
+	decl-specifier-seq	"SEMICOLON"
+	|	decl-specifier-seq	init-declarator-list	"SEMICOLON"
+	|	attribute-specifier-seq	decl-specifier-seq	init-declarator-list	"SEMICOLON"
+	|	attribute-specifier-seq	decl-specifier-seq	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"	initializer	"SEMICOLON"
+	|	decl-specifier-seq	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"	initializer	"SEMICOLON"
+	|	attribute-specifier-seq	decl-specifier-seq	ref-qualifier	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"	initializer	"SEMICOLON"
+	|	decl-specifier-seq	ref-qualifier	"OPEN_SQUARE"	identifier-list	"CLOSE_SQUARE"	initializer	"SEMICOLON"
 	;
 simple-escape-sequence:
-	'\\'	simple-escape-sequence-char
+	ESCAPE	simple-escape-sequence-char
 	;
 simple-escape-sequence-char:
-	'\''
-	|	'"'
-	|	'?'
-	|	'\\'
+	"SINGLE_QUOTE"
+	|	"DOUBLE_QUOTE"
+	|	"QUERY"
+	|	ESCAPE
 	|	'a'
 	|	'b'
 	|	'f'
@@ -1507,34 +1603,34 @@ simple-escape-sequence-char:
 	|	'v'
 	;
 simple-requirement:
-	expression	';'
+	expression	"SEMICOLON"
 	;
 simple-template-id:
-	template-name	'<'	'>'
-	|	template-name	'<'	template-argument-list	'>'
+	template-name	"LESS"	"GREATER"
+	|	template-name	"LESS"	template-argument-list	"GREATER"
 	;
 simple-type-specifier:
 	nested-name-specifier	type-name
 	|	type-name
-	|	nested-name-specifier	"template"	simple-template-id
+	|	nested-name-specifier	TEMPLATE	simple-template-id
 	|	decltype-specifier
 	|	placeholder-type-specifier
 	|	nested-name-specifier	template-name
 	|	template-name
-	|	"char"
-	|	"char8_t"
-	|	"char16_t"
-	|	"char32_t"
-	|	"wchar_t"
-	|	"bool"
-	|	"short"
-	|	"int"
-	|	"long"
-	|	"signed"
-	|	"unsigned"
-	|	"float"
-	|	"double"
-	|	"void"
+	|	CHAR
+	|	CHAR8_T
+	|	CHAR16_T
+	|	CHAR32_T
+	|	WCHAR_T
+	|	BOOL
+	|	SHORT
+	|	INT
+	|	LONG
+	|	SIGNED
+	|	UNSIGNED
+	|	FLOAT
+	|	DOUBLE
+	|	VOID
 	;
 size-suffix:
 	'z'
@@ -1561,20 +1657,20 @@ statement-seq:
 	|	statement-seq	statement
 	;
 static_assert-declaration:
-	"static_assert"	'('	constant-expression	')'	';'
-	|	"static_assert"	'('	constant-expression	','	string-literal	')'	';'
+	STATIC_ASSERT	"OPEN_PAREN"	constant-expression	"CLOSE_PAREN"	"SEMICOLON"
+	|	STATIC_ASSERT	"OPEN_PAREN"	constant-expression	"COMMA"	string-literal	"CLOSE_PAREN"	"SEMICOLON"
 	;
 storage-class-specifier:
-	"static"
-	|	"thread_local"
-	|	"extern"
-	|	"mutable"
+	STATIC
+	|	THREAD_LOCAL
+	|	EXTERN
+	|	MUTABLE
 	;
 string-literal:
-	encoding-prefix	'"'	'"'
-	|	'"'	'"'
-	|	encoding-prefix	'"'	s-char-sequence	'"'
-	|	'"'	s-char-sequence	'"'
+	encoding-prefix	"DOUBLE_QUOTE"	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	"DOUBLE_QUOTE"
+	|	encoding-prefix	"DOUBLE_QUOTE"	s-char-sequence	"DOUBLE_QUOTE"
+	|	"DOUBLE_QUOTE"	s-char-sequence	"DOUBLE_QUOTE"
 	|	encoding-prefix	'R'	raw-string
 	|	'R'	raw-string
 	;
@@ -1585,24 +1681,24 @@ template-argument:
 	;
 template-argument-list:
 	template-argument
-	|	template-argument	"..."
-	|	template-argument-list	','	template-argument
-	|	template-argument-list	','	template-argument	"..."
+	|	template-argument	"ELLIPSIS"
+	|	template-argument-list	"COMMA"	template-argument
+	|	template-argument-list	"COMMA"	template-argument	"ELLIPSIS"
 	;
 template-declaration:
 	template-head	declaration
 	|	template-head	concept-definition
 	;
 template-head:
-	"template"	'<'	template-parameter-list	'>'
-	|	"template"	'<'	template-parameter-list	'>'	requires-clause
+	TEMPLATE	"LESS"	template-parameter-list	"GREATER"
+	|	TEMPLATE	"LESS"	template-parameter-list	"GREATER"	requires-clause
 	;
 template-id:
 	simple-template-id
-	|	operator-function-id	'<'	'>'
-	|	operator-function-id	'<'	template-argument-list	'>'
-	|	literal-operator-id	'<'	'>'
-	|	literal-operator-id	'<'	template-argument-list	'>'
+	|	operator-function-id	"LESS"	"GREATER"
+	|	operator-function-id	"LESS"	template-argument-list	"GREATER"
+	|	literal-operator-id	"LESS"	"GREATER"
+	|	literal-operator-id	"LESS"	template-argument-list	"GREATER"
 	;
 template-name:
 	IDENTIFIER
@@ -1613,14 +1709,14 @@ template-parameter:
 	;
 template-parameter-list:
 	template-parameter
-	|	template-parameter-list	','	template-parameter
+	|	template-parameter-list	"COMMA"	template-parameter
 	;
 throw-expression:
-	"throw"
-	|	"throw"	assignment-expression
+	THROW
+	|	THROW	assignment-expression
 	;
 trailing-return-type:
-	"->"	type-id
+	"DEREF"	type-id
 	;
 translation-unit:
 	declaration-seq
@@ -1634,15 +1730,15 @@ translation-unit:
 	|	module-declaration	declaration-seq	private-module-fragment
 	;
 try-block:
-	"try"	compound-statement	handler-seq
+	TRY	compound-statement	handler-seq
 	;
 type-constraint:
 	nested-name-specifier	concept-name
 	|	concept-name
-	|	nested-name-specifier	concept-name	'<'	'>'
-	|	concept-name	'<'	'>'
-	|	nested-name-specifier	concept-name	'<'	template-argument-list	'>'
-	|	concept-name	'<'	template-argument-list	'>'
+	|	nested-name-specifier	concept-name	"LESS"	"GREATER"
+	|	concept-name	"LESS"	"GREATER"
+	|	nested-name-specifier	concept-name	"LESS"	template-argument-list	"GREATER"
+	|	concept-name	"LESS"	template-argument-list	"GREATER"
 	;
 type-id:
 	type-specifier-seq
@@ -1655,31 +1751,31 @@ type-name:
 	;
 type-parameter:
 	type-parameter-key
-	|	type-parameter-key	"..."
+	|	type-parameter-key	"ELLIPSIS"
 	|	type-parameter-key	IDENTIFIER
-	|	type-parameter-key	"..."	IDENTIFIER
-	|	type-parameter-key	'='	type-id
-	|	type-parameter-key	IDENTIFIER	'='	type-id
+	|	type-parameter-key	"ELLIPSIS"	IDENTIFIER
+	|	type-parameter-key	"EQ"	type-id
+	|	type-parameter-key	IDENTIFIER	"EQ"	type-id
 	|	type-constraint
-	|	type-constraint	"..."
+	|	type-constraint	"ELLIPSIS"
 	|	type-constraint	IDENTIFIER
-	|	type-constraint	"..."	IDENTIFIER
-	|	type-constraint	'='	type-id
-	|	type-constraint	IDENTIFIER	'='	type-id
+	|	type-constraint	"ELLIPSIS"	IDENTIFIER
+	|	type-constraint	"EQ"	type-id
+	|	type-constraint	IDENTIFIER	"EQ"	type-id
 	|	template-head	type-parameter-key
-	|	template-head	type-parameter-key	"..."
+	|	template-head	type-parameter-key	"ELLIPSIS"
 	|	template-head	type-parameter-key	IDENTIFIER
-	|	template-head	type-parameter-key	"..."	IDENTIFIER
-	|	template-head	type-parameter-key	'='	id-expression
-	|	template-head	type-parameter-key	IDENTIFIER	'='	id-expression
+	|	template-head	type-parameter-key	"ELLIPSIS"	IDENTIFIER
+	|	template-head	type-parameter-key	"EQ"	id-expression
+	|	template-head	type-parameter-key	IDENTIFIER	"EQ"	id-expression
 	;
 type-parameter-key:
-	"class"
-	|	"typename"
+	CLASS
+	|	TYPENAME
 	;
 type-requirement:
-	"typename"	type-name	';'
-	|	"typename"	nested-name-specifier	type-name	';'
+	TYPENAME	type-name	"SEMICOLON"
+	|	TYPENAME	nested-name-specifier	type-name	"SEMICOLON"
 	;
 type-specifier:
 	simple-type-specifier
@@ -1697,9 +1793,9 @@ typedef-name:
 	|	simple-template-id
 	;
 typename-specifier:
-	"typename"	nested-name-specifier	IDENTIFIER
-	|	"typename"	nested-name-specifier	simple-template-id
-	|	"typename"	nested-name-specifier	"template"	simple-template-id
+	TYPENAME	nested-name-specifier	IDENTIFIER
+	|	TYPENAME	nested-name-specifier	simple-template-id
+	|	TYPENAME	nested-name-specifier	TEMPLATE	simple-template-id
 	;
 ud-suffix:
 	IDENTIFIER
@@ -1707,42 +1803,42 @@ ud-suffix:
 unary-expression:
 	postfix-expression
 	|	unary-operator	cast-expression
-	|	"++"	cast-expression
-	|	"--"	cast-expression
+	|	"PLUS_PLUS"	cast-expression
+	|	"MINUS_MINUS"	cast-expression
 	|	await-expression
-	|	"sizeof"	unary-expression
-	|	"sizeof"	'('	type-id	')'
-	|	"sizeof"	"..."	'('	IDENTIFIER	')'
-	|	"alignof"	'('	type-id	')'
+	|	SIZEOF	unary-expression
+	|	SIZEOF	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
+	|	SIZEOF	"ELLIPSIS"	"OPEN_PAREN"	IDENTIFIER	"CLOSE_PAREN"
+	|	ALIGNOF	"OPEN_PAREN"	type-id	"CLOSE_PAREN"
 	|	noexcept-expression
 	|	new-expression
 	|	delete-expression
 	;
 unary-operator:
-	'*'
-	|	'&'
-	|	'+'
-	|	'-'
-	|	'!'
-	|	'~'
+	"MULT"
+	|	"AND"
+	|	"PLUS"
+	|	"MINUS"
+	|	"NOT"
+	|	"COMPL"
 	;
 universal-character-name:
-	"\\u"	hex-quad
-	|	"\\U"	hex-quad	hex-quad
+	ESCAPE_LU	hex-quad
+	|	ESCAPE_HU	hex-quad	hex-quad
 	;
 unnamed-namespace-definition:
-	"inline"	"namespace"	'{'	namespace-body	'}'
-	|	"namespace"	'{'	namespace-body	'}'
-	|	"inline"	"namespace"	attribute-specifier-seq	'{'	namespace-body	'}'
-	|	"namespace"	attribute-specifier-seq	'{'	namespace-body	'}'
+	INLINE	NAMESPACE	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	NAMESPACE	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	INLINE	NAMESPACE	attribute-specifier-seq	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
+	|	NAMESPACE	attribute-specifier-seq	"OPEN_BRACE"	namespace-body	"CLOSE_BRACE"
 	;
 unqualified-id:
 	IDENTIFIER
 	|	operator-function-id
 	|	conversion-function-id
 	|	literal-operator-id
-	|	'~'	type-name
-	|	'~'	decltype-specifier
+	|	"COMPL"	type-name
+	|	"COMPL"	decltype-specifier
 	|	template-id
 	;
 unsigned-suffix:
@@ -1775,36 +1871,36 @@ user-defined-string-literal:
 	string-literal	ud-suffix
 	;
 using-declaration:
-	"using"	using-declarator-list	';'
+	USING	using-declarator-list	"SEMICOLON"
 	;
 using-declarator:
-	"typename"	nested-name-specifier	unqualified-id
+	TYPENAME	nested-name-specifier	unqualified-id
 	|	nested-name-specifier	unqualified-id
 	;
 using-declarator-list:
 	using-declarator
-	|	using-declarator	"..."
-	|	using-declarator-list	','	using-declarator
-	|	using-declarator-list	','	using-declarator	"..."
+	|	using-declarator	"ELLIPSIS"
+	|	using-declarator-list	"COMMA"	using-declarator
+	|	using-declarator-list	"COMMA"	using-declarator	"ELLIPSIS"
 	;
 using-directive:
-	attribute-specifier-seq	"using"	"namespace"	namespace-name	';'
-	|	"using"	"namespace"	namespace-name	';'
-	|	attribute-specifier-seq	"using"	"namespace"	nested-name-specifier	namespace-name	';'
-	|	"using"	"namespace"	nested-name-specifier	namespace-name	';'
+	attribute-specifier-seq	USING	NAMESPACE	namespace-name	"SEMICOLON"
+	|	USING	NAMESPACE	namespace-name	"SEMICOLON"
+	|	attribute-specifier-seq	USING	NAMESPACE	nested-name-specifier	namespace-name	"SEMICOLON"
+	|	USING	NAMESPACE	nested-name-specifier	namespace-name	"SEMICOLON"
 	;
 using-enum-declaration:
-	"using"	elaborated-enum-specifier	';'
+	USING	elaborated-enum-specifier	"SEMICOLON"
 	;
 virt-specifier:
-	"override"
-	|	"final"
+	OVERRIDE
+	|	FINAL
 	;
 virt-specifier-seq:
 	virt-specifier
 	|	virt-specifier-seq	virt-specifier
 	;
 yield-expression:
-	"co_yield"	assignment-expression
-	|	"co_yield"	braced-init-list
+	CO_YIELD	assignment-expression
+	|	CO_YIELD	braced-init-list
 	;
