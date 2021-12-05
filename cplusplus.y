@@ -1,3 +1,11 @@
+
+%{
+#include <stdio.h>
+extern int lineno;
+static void yyerror(const char *s);
+extern int yylex (void);
+%}
+
 %token  PRIVATE
 %token  PROTECTED
 %token  PUBLIC
@@ -57,7 +65,6 @@
 %token  CO_RETURN
 %token  CONST
 %token  VOLATILE
-%token  D_CHAR
 %token  FRIEND
 %token  TYPEDEF
 %token  CONSTEXPR
@@ -124,7 +131,6 @@
 %token  CONST_CAST
 %token  TYPEID
 %token  Q_CHAR
-%token  R_CHAR
 %token  IF
 %token  ELSE
 %token  SWITCH
@@ -155,8 +161,8 @@
 %token  OVERRIDE
 %token  CO_YIELD
 %glr-parser
-%%
 %start  translation-unit;
+%%
 abstract-declarator:
 	ptr-abstract-declarator
 	|	noptr-abstract-declarator	parameters-and-qualifiers	trailing-return-type
@@ -482,13 +488,6 @@ cv-qualifier:
 cv-qualifier-seq:
 	cv-qualifier
 	|	cv-qualifier	cv-qualifier-seq
-	;
-d-char:
-	D_CHAR
-	;
-d-char-sequence:
-	d-char
-	|	d-char-sequence	d-char
 	;
 decimal-floating-point-literal:
 	fractional-constant
@@ -1532,22 +1531,8 @@ qualified-namespace-specifier:
 	nested-name-specifier	namespace-name
 	|	namespace-name
 	;
-r-char:
-	R_CHAR
-	;
-r-char-sequence:
-	r-char
-	|	r-char-sequence	r-char
-	;
 raw-string:
-	DOUBLE_QUOTE	OPEN_PAREN	CLOSE_PAREN	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	d-char-sequence	OPEN_PAREN	CLOSE_PAREN	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	OPEN_PAREN	r-char-sequence	CLOSE_PAREN	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	d-char-sequence	OPEN_PAREN	r-char-sequence	CLOSE_PAREN	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	OPEN_PAREN	CLOSE_PAREN	d-char-sequence	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	d-char-sequence	OPEN_PAREN	CLOSE_PAREN	d-char-sequence	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	OPEN_PAREN	r-char-sequence	CLOSE_PAREN	d-char-sequence	DOUBLE_QUOTE
-	|	DOUBLE_QUOTE	d-char-sequence	OPEN_PAREN	r-char-sequence	CLOSE_PAREN	d-char-sequence	DOUBLE_QUOTE
+	BASIC_S_CHAR
 	;
 ref-qualifier:
 	AND
@@ -1955,3 +1940,32 @@ yield-expression:
 	CO_YIELD	assignment-expression
 	|	CO_YIELD	braced-init-list
 	;
+
+%%
+static void yyerror(const char *s)
+{
+	fprintf(stderr, "%d: %s\n", lineno, s);
+}
+int main(int argc, char**argv){
+	lineno = 1;
+	extern FILE *yyin;
+	if (argc!=2){
+		fprintf(stderr, "usage: %s <source>\n", argv[0]);
+		return -1;
+	}
+	yyin=fopen(argv[1], "r");
+	if (yyin){	
+		if (yyparse()==0){
+				printf("success!\n");
+			}else{
+				printf("failure\n");
+			}
+			fclose(yyin);
+		}else{
+			perror(argv[1]);
+		return -2;
+	}
+	return 0;
+}
+
+

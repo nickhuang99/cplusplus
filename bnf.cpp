@@ -122,8 +122,8 @@ void bnf(){
 	map<string, string> terminalTokens;
 	auto quoteString=[](const string& str){
 		stringstream ss;
-		ss<<quoted(str, str.size()==1?'\'':'"');
-		//ss<<quoted(str);
+		//ss<<quoted(str, str.size()==1?'\'':'"');
+		ss<<quoted(str);
 		return ss.str();
 	};
  	auto getProduction=[&non_terminals,trim, bnfFile,quoteString, &terminalTokens](){
@@ -191,7 +191,7 @@ void bnf(){
 			if (str.size() == 1 && std::isalnum(str[0], std::locale("C"))){
 				token="'"+str+"'";
 				// "R": 'R'
-				terminalTokens.insert(make_pair(token, quoteString(token)));
+				terminalTokens.insert(make_pair(token, quoteString(str)));
 				//return token; //'R'
 			}else if (str=="ll"){
 				token="LONG_LONG_L";
@@ -320,6 +320,7 @@ void bnf(){
 	//cout<<"===================print rules====================="<<endl;
 	ofstream out("cplusplus.y");
 	auto outputBisonDeclaration=[&out](auto rules){
+
 		set<string> tokenSet=[&out](auto rules)->set<string>{
 			set<string> result;
 			for (auto r:rules){
@@ -336,9 +337,6 @@ void bnf(){
 			}
 			return result;
 		}(rules);
-		out<<"%glr-parser"<<endl;
-		//out<<"%expect-rr 6307"<<endl;
-		out<<"%%"<<endl<<"%start  translation-unit;"<<endl;
 	};
 	auto outputRules=[&out](auto& rules){
 		for (auto r: rules){
@@ -357,10 +355,56 @@ void bnf(){
 			}
 			out<<"\t;"<<endl;
 		}
+
 	};
 	auto outputBisonInput=[&out, outputBisonDeclaration, outputRules](auto rules){
+		string strPrologue=R"delim(
+%{
+#include <stdio.h>
+extern int lineno;
+static void yyerror(const char *s);
+extern int yylex (void);
+%}
+)delim";
+
+		string strEpilogue=R"delim(
+%%
+static void yyerror(const char *s)
+{
+	fprintf(stderr, "%d: %s\n", lineno, s);
+}
+int main(int argc, char**argv){
+	lineno = 1;
+	extern FILE *yyin;
+	if (argc!=2){
+		fprintf(stderr, "usage: %s <source>\n", argv[0]);
+		return -1;
+	}
+	yyin=fopen(argv[1], "r");
+	if (yyin){	
+		if (yyparse()==0){
+				printf("success!\n");
+			}else{
+				printf("failure\n");
+			}
+			fclose(yyin);
+		}else{
+			perror(argv[1]);
+		return -2;
+	}
+	return 0;
+}
+
+)delim";
+		out<<strPrologue<<endl;
 		outputBisonDeclaration(rules);
+
+		out<<"%glr-parser"<<endl;
+		//out<<"%expect-rr 6307"<<endl;
+		out<<"%start  translation-unit;"<<endl<<"%%"<<endl;
+
 		outputRules(rules);
+		out<<strEpilogue<<endl;
 	};
 	outputBisonInput(rules);
 
@@ -386,60 +430,80 @@ void bnf(){
 //	};
 //	printTerminals(terminals);
 
-	string strPrologue=R"delim(
+
+	auto outputFlexInput=[](map<string, string> terminalTokens){
+		ofstream out("scanner.l");
+		string strPrologue=R"delim(
 %{
-
 #include "cplusplus.h"
-
+int lineno;
+static int yywrap(void);
+extern int yylex (void);
 %}
 
 %%
-
+"\n"					{ ++lineno; }
 )delim";
 
-	string strEpilogue=R"delim(
+		string strEpilogue=R"delim(
 %%
-
+static int yywrap(void)
+{
+	return 1;
+}
 )delim";
-	auto outputFlexInput=[quoteString,&strEpilogue, &strPrologue](map<string, string> terminalTokens){
-		ofstream out("scanner.l");
 		out<<strPrologue<<endl;
-
+		auto quoteEscapeStr=[](const string& str){
+			stringstream ss;
+			ss<<quoted(str, str.size()==1?'\'':'"');
+			return ss.str();
+		};
 		for (auto m: terminalTokens){
 			if (m.first=="BALANCED_TOKEN"){
-				out<<"[^(){}<>]";
+				continue;
+//				out<<"[^(){}<>]";
 			}else if (m.first=="BASIC_C_CHAR"){
-				out<<"[^\\\\ ' \\n]";
+				continue;
+//				out<<"[^\\\\ ' \\n]";
 			}else if (m.first=="H_CHAR"){
-				out<<"[^\\n>]";
+				continue;
+//				out<<"[^\\n>]";
 			}else if(m.first=="Q_CHAR"){
-				out<<"[^\\n\"]";
+				continue;
+//				out<<"[^\\n\"]";
 			}else if(m.first=="R_CHAR"){
-				out<<".";
+				continue;
+//				out<<".";
 			}else if(m.first=="D_CHAR"){
-				out<<"[^\\s ( ) \\\\ \\t \\| \\f \\n]";
+				continue;
+//				out<<"[^\\s ( ) \\\\ \\t \\| \\f \\n]";
 			}else if (m.first=="CONDITIONAL_ESCAPE_SEQUENCE_CHAR"){
-				out<<"[^0  1  2  3  4  5  6  7 '  \"  ?  \\\\ a  b  f  n  r  t  v]";
+				continue;
+//				out<<"[^0-7 '  \"  ?  \\\\ a  b  f  n  r  t  v]";
+			}else if (m.first=="BASIC_S_CHAR"){
+//				out<<"[^\"\\\\\\n]";
+				continue;
 			}else{
-				if (m.second.size()==3&&m.second[0]==m.second[2]&& m.second[0]=='\''){
-					switch (m.second[1]){
-					case '*':
-					case '[':
-					case ']':
-					case '(':
-					case ')':
-					case '"':
-					case '\\':
-					case '{':
-					case '}':
-						out<<"'\\"<<m.second[1]<<'\'';
-						break;
-					default:
-						out<<m.second;
-					}
-				}else{
-					out<<m.second;
-				}
+//				if (m.second.size()==3&&m.second[0]==m.second[2]&& m.second[0]=='"'){
+//					switch (m.second[1]){
+//					case '*':
+//					case '[':
+//					case ']':
+//					case '(':
+//					case ')':
+//					case '"':
+//					case '\\':
+//					case '{':
+//					case '}':
+//						out<<"'\\"<<m.second[1]<<'\'';
+//						break;
+//					default:
+//						out<<m.second;
+//					}
+//				}else{
+//					out<<m.second;
+//				}
+				out<<m.second;
 			}
 			out<<"\t\t{ return ";
 			out<<m.first;

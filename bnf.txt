@@ -1126,21 +1126,10 @@ s-char:
 basic-s-char:
 	BASIC_S_CHAR
 raw-string:
-	" d-char-sequenceopt ( r-char-sequenceopt ) d-char-sequenceopt "
-r-char-sequence:
-	r-char
-	r-char-sequence r-char
-r-char:
-	R_CHAR
-d-char-sequence:
-	d-char
-	d-char-sequence d-char
-d-char:
-	D_CHAR
+	BASIC_S_CHAR
 
 boolean-literal:
 	false
 	true
 pointer-literal:
 	nullptr
-
