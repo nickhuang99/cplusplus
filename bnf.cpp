@@ -120,7 +120,13 @@ void bnf(){
 //	}(non_terminals);
 	map<string, vector<vector<string> > > rules;
 	map<string, string> terminalTokens;
- 	auto getProduction=[&non_terminals,trim, bnfFile, &terminalTokens](){
+	auto quoteString=[](const string& str){
+		stringstream ss;
+		ss<<quoted(str, str.size()==1?'\'':'"');
+		//ss<<quoted(str);
+		return ss.str();
+	};
+ 	auto getProduction=[&non_terminals,trim, bnfFile,quoteString, &terminalTokens](){
 		string str;
 		string ruleName;
 		vector<vector<string>> productions;
@@ -128,7 +134,7 @@ void bnf(){
 		ifstream in(bnfFile);
 		auto alphaToken=[](const string& str)->string{
 			string token;
-#define OP(name, literals) if (str==literals) token= "\"" #name "\"" ;
+#define OP(name, literals) if (str==literals) token=  #name  ;
 			// convert operator to token name
 			TTYPE_TABLE
 #undef OP
@@ -177,9 +183,7 @@ void bnf(){
 //			}
 //			production.push_back(strOptRule);
 //		};
-		auto quoteString=[](const string& str){
-			return "\""+str+"\"";
-		};
+
 
 		auto getTerminalToken=[quoteString,alphaToken,getTerminalStr,&terminalTokens]
 							   (const string& str)->string{
@@ -187,7 +191,7 @@ void bnf(){
 			if (str.size() == 1 && std::isalnum(str[0], std::locale("C"))){
 				token="'"+str+"'";
 				// "R": 'R'
-				terminalTokens.insert(make_pair(token, token));
+				terminalTokens.insert(make_pair(token, quoteString(token)));
 				//return token; //'R'
 			}else if (str=="ll"){
 				token="LONG_LONG_L";
@@ -245,7 +249,6 @@ void bnf(){
 				std::transform(str.begin(), str.end(), back_inserter(token), [](auto c){
 					return std::toupper(c, std::locale("C"));
 				});
-
 				terminalTokens.insert(make_pair(token, quoteString(str)));
 			}
 			return token;
@@ -382,10 +385,69 @@ void bnf(){
 //		}
 //	};
 //	printTerminals(terminals);
-	auto outputFlexInput=[](auto const& terminals){
-		ofstream out("scanner.l");
 
+	string strPrologue=R"delim(
+%{
+
+#include "cplusplus.h"
+
+%}
+
+%%
+
+)delim";
+
+	string strEpilogue=R"delim(
+%%
+
+)delim";
+	auto outputFlexInput=[quoteString,&strEpilogue, &strPrologue](map<string, string> terminalTokens){
+		ofstream out("scanner.l");
+		out<<strPrologue<<endl;
+
+		for (auto m: terminalTokens){
+			if (m.first=="BALANCED_TOKEN"){
+				out<<"[^(){}<>]";
+			}else if (m.first=="BASIC_C_CHAR"){
+				out<<"[^\\\\ ' \\n]";
+			}else if (m.first=="H_CHAR"){
+				out<<"[^\\n>]";
+			}else if(m.first=="Q_CHAR"){
+				out<<"[^\\n\"]";
+			}else if(m.first=="R_CHAR"){
+				out<<".";
+			}else if(m.first=="D_CHAR"){
+				out<<"[^\\s ( ) \\\\ \\t \\| \\f \\n]";
+			}else if (m.first=="CONDITIONAL_ESCAPE_SEQUENCE_CHAR"){
+				out<<"[^0  1  2  3  4  5  6  7 '  \"  ?  \\\\ a  b  f  n  r  t  v]";
+			}else{
+				if (m.second.size()==3&&m.second[0]==m.second[2]&& m.second[0]=='\''){
+					switch (m.second[1]){
+					case '*':
+					case '[':
+					case ']':
+					case '(':
+					case ')':
+					case '"':
+					case '\\':
+					case '{':
+					case '}':
+						out<<"'\\"<<m.second[1]<<'\'';
+						break;
+					default:
+						out<<m.second;
+					}
+				}else{
+					out<<m.second;
+				}
+			}
+			out<<"\t\t{ return ";
+			out<<m.first;
+			out<<";}\n";
+		}
+		out<<strEpilogue<<endl;
 	};
+	outputFlexInput(terminalTokens);
 }
 int main(){
 	bnf();

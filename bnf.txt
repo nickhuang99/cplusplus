@@ -657,7 +657,7 @@ balanced-token:
 	( balanced-token-seqopt )
 	[ balanced-token-seqopt ]
 	{ balanced-token-seqopt }
-	ANY_TOKEN_OTHER_THAN_PARENTHESIS_BRACKET_BRACE	
+	BALANCED_TOKEN	
 
 module-declaration:
 	export-keywordopt module-keyword module-name module-partitionopt attribute-specifier-seqopt ;
@@ -927,18 +927,16 @@ universal-character-name:
 header-name:
 	< h-char-sequence >
 	" q-char-sequence "
-	h-char-sequence:
+h-char-sequence:
 	h-char
 	h-char-sequence h-char
 h-char:
-	EXCEPT_NEW_LINE_AND_GREATER_THAN_SIGN
+	H_CHAR
 q-char-sequence:
 	q-char
 	q-char-sequence q-char
 q-char:
-	EXCEPT_NEW_LINE_AND_QUOTATION_MARK
-
-
+	Q_CHAR
 
 literal:
 	integer-literal
@@ -1050,7 +1048,7 @@ c-char:
 	escape-sequence
 	universal-character-name
 basic-c-char:
-	EXCEPT_THE_APOSTROPHE_REVERSE_SOLIDUS_OR_NEW_LINE_CHARACTER
+	BASIC_C_CHAR
 escape-sequence:
 	simple-escape-sequence
 	numeric-escape-sequence
@@ -1082,7 +1080,7 @@ hexadecimal-escape-sequence:
 conditional-escape-sequence:
 	\ conditional-escape-sequence-char
 conditional-escape-sequence-char:
-	NOT_AN_OCTAL_DIGIT_A_SIMPLE_ESCAPE_SEQUENCE_CHAR_OR_THE_CHARACTERS_U_U_OR_X
+	CONDITIONAL_ESCAPE_SEQUENCE_CHAR
 floating-point-literal:
 	decimal-floating-point-literal
 	hexadecimal-floating-point-literal
@@ -1126,19 +1124,19 @@ s-char:
 	escape-sequence
 	universal-character-name
 basic-s-char:
-	EXCEPT_THE_QUOTATION_MARK_REVERSE_SOLIDUS_OR_NEW_LINE_CHARACTER
+	BASIC_S_CHAR
 raw-string:
 	" d-char-sequenceopt ( r-char-sequenceopt ) d-char-sequenceopt "
 r-char-sequence:
 	r-char
 	r-char-sequence r-char
 r-char:
-	EXCEPT_RIGHT_PARENTHESIS_FOLLOWED_BY_THE_INITIAL_D_CHAR_SEQUENCE_FOLLOWED_BY_QUOTATION_MARK
+	R_CHAR
 d-char-sequence:
 	d-char
 	d-char-sequence d-char
 d-char:
-	EXCEPT_SPACE_PARENTHESIS_REVERSE_SOLIDUS_TABULATION_LINE_TABULATION_FORM_FEED_AND_NEW_LINE
+	D_CHAR
 
 boolean-literal:
 	false
