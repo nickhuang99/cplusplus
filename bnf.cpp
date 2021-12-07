@@ -430,27 +430,22 @@ int main(int argc, char**argv){
 //	};
 //	printTerminals(terminals);
 
-
 	auto outputFlexInput=[](map<string, string> terminalTokens){
 		ofstream out("scanner.l");
 		string strPrologue=R"delim(
 %{
 #include "cplusplus.h"
 int lineno;
-static int yywrap(void);
 extern int yylex (void);
 %}
-
+%option noyywrap
 %%
-"\n"					{ ++lineno; }
+"\n"				{ ++lineno; }
+[\t\f\v\r ]+		{ /* Ignore whitespace. */ }
 )delim";
 
 		string strEpilogue=R"delim(
 %%
-static int yywrap(void)
-{
-	return 1;
-}
 )delim";
 		out<<strPrologue<<endl;
 		auto quoteEscapeStr=[](const string& str){
@@ -477,11 +472,15 @@ static int yywrap(void)
 			}else if(m.first=="D_CHAR"){
 				continue;
 //				out<<"[^\\s ( ) \\\\ \\t \\| \\f \\n]";
-			}else if (m.first=="CONDITIONAL_ESCAPE_SEQUENCE_CHAR"){
+			}else if (m.first=="CONDITIONAL_ESCAPE_SEQUENCE"){
+				string s=R"(\\[^0-7'"\?\\Uuxabfnrtv]	{ unput(yytext[1]);})";
+				out<<s<<endl;
 				continue;
-//				out<<"[^0-7 '  \"  ?  \\\\ a  b  f  n  r  t  v]";
 			}else if (m.first=="BASIC_S_CHAR"){
 //				out<<"[^\"\\\\\\n]";
+				continue;
+			}else if (m.first=="IDENTIFIER"){
+//				out<<"[a-zA-Z_][a-zA-Z_0-9]*";
 				continue;
 			}else{
 //				if (m.second.size()==3&&m.second[0]==m.second[2]&& m.second[0]=='"'){

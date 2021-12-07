@@ -1078,9 +1078,7 @@ hexadecimal-escape-sequence:
 	\x hexadecimal-digit
 	hexadecimal-escape-sequence hexadecimal-digit
 conditional-escape-sequence:
-	\ conditional-escape-sequence-char
-conditional-escape-sequence-char:
-	CONDITIONAL_ESCAPE_SEQUENCE_CHAR
+	CONDITIONAL_ESCAPE_SEQUENCE
 floating-point-literal:
 	decimal-floating-point-literal
 	hexadecimal-floating-point-literal
