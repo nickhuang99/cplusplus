@@ -268,50 +268,35 @@ void bnf(){
 			}
 			stringstream ss(str);
 			string token;
-			vector<vector<string>> optProductions;
+			vector<string> production;
 			while (ss>>token){
 				trim(token);
 				bool bOpt=false;
+				string dup=token;
 				if (token.size()>=4 && token.substr(token.size()-3)=="opt"){
 					token=token.substr(0, token.size()-3);
+					dup=token;
 					bOpt=true;
 				}
 				if (isTerminal(token)){
-					string dup=token;
 					token=getTerminalToken(token);
 					if (token.empty()){
 						cout<<dup<<" is empty!"<<endl;
 					}
 				}
 				if (bOpt){
-					vector<vector<string>> dup;
-					if (optProductions.empty()){
-						optProductions.push_back(vector<string>{token});
-						optProductions.push_back(vector<string>{});
-					}else{
-						for (auto v:optProductions){
-							v.push_back(token);
-							dup.push_back(v);
-						}
-						for (auto v:dup){
-							optProductions.push_back(v);
-						}
+					string tokenOpt=token+"-opt";
+					if (!result.contains(tokenOpt)){
+						vector<vector<string>> optRules{{"%empty"}, {token}};
+						result.insert(make_pair(tokenOpt, optRules));
 					}
+					non_terminals.insert(tokenOpt);
+					production.push_back(tokenOpt);
 				}else{
-					if (optProductions.empty()){
-						optProductions.push_back(vector<string>{token});
-					}else{
-						for (auto& v: optProductions){
-							v.push_back(token);
-						}
-					}
+					production.push_back(token);
 				}
 			}
-			for (auto v:optProductions){
-				if (!v.empty()){
-					productions.push_back(v);
-				}
-			}
+			productions.push_back(production);
 		}
 		result.insert(make_pair(ruleName, productions));
 		return result;
@@ -319,16 +304,15 @@ void bnf(){
 	rules=getProduction();
 	//cout<<"===================print rules====================="<<endl;
 	ofstream out("cplusplus.y");
-	auto outputBisonDeclaration=[&out](auto rules){
-
-		set<string> tokenSet=[&out](auto rules)->set<string>{
+	auto outputBisonTokens=[&out, &non_terminals](auto rules){
+		set<string> tokenSet=[&out,&non_terminals](auto rules)->set<string>{
 			set<string> result;
 			for (auto r:rules){
 				for (auto p: r.second){
 					for (auto s: p){
 						if (s.size()>1 && std::isupper(s[0], std::locale("C"))){
-							if (!result.contains(s)){
-								out<<"%token  "<<s<<endl;
+							if (!non_terminals.contains(s) && !result.contains(s)){
+								out<<"%term  "<<s<<endl;
 								result.insert(s);
 							}
 						}
@@ -355,9 +339,11 @@ void bnf(){
 			}
 			out<<"\t;"<<endl;
 		}
+	};
+	auto resolveShiftReduceConflicts=[](auto& rules){
 
 	};
-	auto outputBisonInput=[&out, outputBisonDeclaration, outputRules](auto rules){
+	auto outputBisonInput=[&out, outputBisonTokens, outputRules](auto rules){
 		string strPrologue=R"delim(
 %{
 #include <stdio.h>
@@ -394,15 +380,16 @@ int main(int argc, char**argv){
 	}
 	return 0;
 }
-
 )delim";
-		out<<strPrologue<<endl;
-		outputBisonDeclaration(rules);
 
-		out<<"%glr-parser"<<endl;
-		//out<<"%expect-rr 6307"<<endl;
-		out<<"%start  translation-unit;"<<endl<<"%%"<<endl;
-
+		string strDeclaration=R"(
+%start  translation-unit
+%glr-parser
+%%
+)";
+		out<<strPrologue;
+		outputBisonTokens(rules);
+		out<<strDeclaration;
 		outputRules(rules);
 		out<<strEpilogue<<endl;
 	};
