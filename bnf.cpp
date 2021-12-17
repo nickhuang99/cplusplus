@@ -296,13 +296,13 @@ void bnf(){
 		return result;
 	};
 	rules=getProduction();
-	cout<<"=================printout all non-terminals===================="<<endl;
-	[](auto r){
-		for (auto item: r){
-			cout<<item<<endl;
-		}
-	}(non_terminals);
-	cout<<"=================printout all non-terminals===================="<<endl;
+//	cout<<"=================printout all non-terminals===================="<<endl;
+//	[](auto r){
+//		for (auto item: r){
+//			cout<<item<<endl;
+//		}
+//	}(non_terminals);
+	//cout<<"=================printout all non-terminals===================="<<endl;
 	//cout<<"===================print rules====================="<<endl;
 	ofstream out("cplusplus.y");
 	auto outputBisonTokens=[&out, &non_terminals](auto rules){
@@ -345,21 +345,18 @@ void bnf(){
 	auto outputBisonInput=[&out, outputBisonTokens, outputRules](auto rules){
 		string strPrologue=R"delim(
 %{
-#include <stdio.h>
-extern int lineno;
-static void yyerror(const char *s);
+#include <iostream>
+#include <string>
+using namespace std;
+extern int yylineno;
+extern void yyerror(const string& );
 extern int yylex (void);
 %}
 )delim";
 
 		string strEpilogue=R"delim(
 %%
-static void yyerror(const char *s)
-{
-	fprintf(stderr, "%d: %s\n", lineno, s);
-}
-int main(int argc, char**argv){
-	lineno = 1;
+int main(int argc, char**argv){	
 	extern FILE *yyin;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
@@ -395,27 +392,27 @@ int main(int argc, char**argv){
 	outputBisonInput(rules);
 
 //	cout<<"=================print all terminals======================"<<endl;
-	set<string> terminals=[](auto rules){
-		set<string> result;
-		for (auto r:rules){
-			for (auto p:r.second){
-				for (auto s:p){
-					if (!rules.contains(s)){
-						result.insert(s);
-					}
-				}
-			}
-		}
-		return result;
-	}(rules);
-	auto printTerminals=[](auto s){
-		cout<<"=============terminals=================="<<endl;
-		for (auto item: s){
-			cout<<item<<endl;
-		}
-		cout<<"=============terminals=================="<<endl;
-	};
-	printTerminals(terminals);
+//	set<string> terminals=[](auto rules){
+//		set<string> result;
+//		for (auto r:rules){
+//			for (auto p:r.second){
+//				for (auto s:p){
+//					if (!rules.contains(s)){
+//						result.insert(s);
+//					}
+//				}
+//			}
+//		}
+//		return result;
+//	}(rules);
+//	auto printTerminals=[](auto s){
+//		cout<<"=============terminals=================="<<endl;
+//		for (auto item: s){
+//			cout<<item<<endl;
+//		}
+//		cout<<"=============terminals=================="<<endl;
+//	};
+//	printTerminals(terminals);
 
 
 }

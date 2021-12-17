@@ -1,8 +1,10 @@
 
 %{
-#include <stdio.h>
-extern int lineno;
-static void yyerror(const char *s);
+#include <iostream>
+#include <string>
+using namespace std;
+extern int yylineno;
+extern void yyerror(const string& );
 extern int yylex (void);
 %}
 %term  COMMA
@@ -1540,12 +1542,7 @@ yield-expression:
 	;
 
 %%
-static void yyerror(const char *s)
-{
-	fprintf(stderr, "%d: %s\n", lineno, s);
-}
-int main(int argc, char**argv){
-	lineno = 1;
+int main(int argc, char**argv){	
 	extern FILE *yyin;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);

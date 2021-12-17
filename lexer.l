@@ -36,7 +36,6 @@ using namespace std;
 
 void yyerror(const string& str);
 #define LITERAL    		1000
-#define STRING_LITERAL	1001
 %}
 %option	noyywrap
 %option yylineno
@@ -120,8 +119,8 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
                       }
 }
 <END_RAW_STRING>{
-		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return STRING_LITERAL;}
-		<<EOF>>					{BEGIN(INITIAL); return STRING_LITERAL;}		
+		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return LITERAL;}
+		<<EOF>>					{BEGIN(INITIAL); return LITERAL;}		
 		/* user defined string literal */
 		[_a-zA-Z][_a-zA-Z0-9]*	{BEGIN(INITIAL); yymore(); return LITERAL;}
 }
@@ -181,17 +180,17 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 "}"				{ return CLOSE_BRACE;}
 ")"				{ return CLOSE_PAREN;}
 ":>"			|
-"]"		{ return CLOSE_SQUARE;}
-":"		{ return COLON;}
-","		{ return COMMA;}
-compl	|
-"~"		{ return COMPL;}
+"]"				{ return CLOSE_SQUARE;}
+":"				{ return COLON;}
+","				{ return COMMA;}
+compl			|
+"~"				{ return COMPL;}
 "concept"		{ return CONCEPT;}
-"const"		{ return CONST;}
+"const"			{ return CONST;}
 "consteval"		{ return CONSTEVAL;}
 "constexpr"		{ return CONSTEXPR;}
 "constinit"		{ return CONSTINIT;}
-"const_cast"		{ return CONST_CAST;}
+"const_cast"	{ return CONST_CAST;}
 "continue"		{ return CONTINUE;}
 "co_await"		{ return CO_AWAIT;}
 "co_return"		{ return CO_RETURN;}
@@ -199,116 +198,114 @@ compl	|
 "decltype"		{ return DECLTYPE;}
 "default"		{ return DEFAULT;}
 "delete"		{ return DELETE;}
-"->"		{ return DEREF;}
-"->*"		{ return DEREF_STAR;}
-"/"		{ return DIV;}
-"/="		{ return DIV_EQ;}
-"do"		{ return DO;}
-"."		{ return DOT;}
-".*"		{ return DOT_STAR;}
+"->"			{ return DEREF;}
+"->*"			{ return DEREF_STAR;}
+"/"				{ return DIV;}
+"/="			{ return DIV_EQ;}
+"do"			{ return DO;}
+"."				{ return DOT;}
+".*"			{ return DOT_STAR;}
 "double"		{ return DOUBLE;}
-"dynamic_cast"		{ return DYNAMIC_CAST;}
-"..."		{ return ELLIPSIS;}
-"else"		{ return ELSE;}
-"enum"		{ return ENUM;}
-"="		{ return EQ;}
-"=="		{ return EQ_EQ;}
+"dynamic_cast"	{ return DYNAMIC_CAST;}
+"..."			{ return ELLIPSIS;}
+"else"			{ return ELSE;}
+"enum"			{ return ENUM;}
+"="				{ return EQ;}
+"=="			{ return EQ_EQ;}
 "explicit"		{ return EXPLICIT;}
 "export"		{ return EXPORT;}
 "extern"		{ return EXTERN;}
-"final"		{ return FINAL;}
-"float"		{ return FLOAT;}
-"for"		{ return FOR;}
+"final"			{ return FINAL;}
+"float"			{ return FLOAT;}
+"for"			{ return FOR;}
 "friend"		{ return FRIEND;}
-"goto"		{ return GOTO;}
-">"		{ return GREATER;}
-">="		{ return GREATER_EQ;}
+"goto"			{ return GOTO;}
+">"				{ return GREATER;}
+">="			{ return GREATER_EQ;}
 HEADER_NAME		{ return HEADER_NAME;}
-"if"		{ return IF;}
+"if"			{ return IF;}
 "import"		{ return IMPORT;}
 "inline"		{ return INLINE;}
-"int"		{ return INT;}
-"<"		{ return LESS;}
-"<="		{ return LESS_EQ;}
+"int"			{ return INT;}
+"<"				{ return LESS;}
+"<="			{ return LESS_EQ;}
 "literal"		{ return LITERAL;}
-"long"		{ return LONG;}
-"<<"		{ return LSHIFT;}
-"<<="		{ return LSHIFT_EQ;}
-"-"		{ return MINUS;}
-"-="		{ return MINUS_EQ;}
-"--"		{ return MINUS_MINUS;}
-"%"		{ return MOD;}
+"long"			{ return LONG;}
+"<<"			{ return LSHIFT;}
+"<<="			{ return LSHIFT_EQ;}
+"-"				{ return MINUS;}
+"-="			{ return MINUS_EQ;}
+"--"			{ return MINUS_MINUS;}
+"%"				{ return MOD;}
 "module"		{ return MODULE;}
-"%="		{ return MOD_EQ;}
-"*"		{ return MULT;}
-"*="		{ return MULT_EQ;}
+"%="			{ return MOD_EQ;}
+"*"				{ return MULT;}
+"*="			{ return MULT_EQ;}
 "mutable"		{ return MUTABLE;}
 "namespace"		{ return NAMESPACE;}
-"new"		{ return NEW;}
+"new"			{ return NEW;}
 "noexcept"		{ return NOEXCEPT;}
-"not"	|
-"!"		{ return NOT;}
-"not_eq"	|
-"!="		{ return NOT_EQ;}
-"<%"	|
-"{"		{ return OPEN_BRACE;}
-"("		{ return OPEN_PAREN;}
-"<:"	|
-"["		{ return OPEN_SQUARE;}
+"not"			|
+"!"				{ return NOT;}
+"not_eq"		|
+"!="			{ return NOT_EQ;}
+"<%"			|
+"{"				{ return OPEN_BRACE;}
+"("				{ return OPEN_PAREN;}
+"<:"			|
+"["				{ return OPEN_SQUARE;}
 "operator"		{ return OPERATOR;}
-bitor	|
-"|"		{ return OR;}
-"or_eq"		|
-"|="		{ return OR_EQ;}
-"or"		|
-"||"		{ return OR_OR;}
+bitor			|
+"|"				{ return OR;}
+"or_eq"			|
+"|="			{ return OR_EQ;}
+"or"			|
+"||"			{ return OR_OR;}
 "override"		{ return OVERRIDE;}
-"+"		{ return PLUS;}
-"+="		{ return PLUS_EQ;}
-"++"		{ return PLUS_PLUS;}
+"+"				{ return PLUS;}
+"+="			{ return PLUS_EQ;}
+"++"			{ return PLUS_PLUS;}
 "private"		{ return PRIVATE;}
 "protected"		{ return PROTECTED;}
 "public"		{ return PUBLIC;}
-"?"		{ return QUERY;}
+"?"				{ return QUERY;}
 "reinterpret_cast"		{ return REINTERPRET_CAST;}
 "requires"		{ return REQUIRES;}
 "return"		{ return RETURN;}
-">>"		{ return RSHIFT;}
-">>="		{ return RSHIFT_EQ;}
-"::"		{ return SCOPE;}
-";"		{ return SEMICOLON;}
-"short"		{ return SHORT;}
+">>"			{ return RSHIFT;}
+">>="			{ return RSHIFT_EQ;}
+"::"			{ return SCOPE;}
+";"				{ return SEMICOLON;}
+"short"			{ return SHORT;}
 "signed"		{ return SIGNED;}
 "sizeof"		{ return SIZEOF;}
-"<=>"		{ return SPACESHIP;}
+"<=>"			{ return SPACESHIP;}
 "static"		{ return STATIC;}
-"static_assert"		{ return STATIC_ASSERT;}
-"static_cast"		{ return STATIC_CAST;}
-STRING_LITERAL		{ return STRING_LITERAL;}
+"static_assert"	{ return STATIC_ASSERT;}
+"static_cast"	{ return STATIC_CAST;}
 "struct"		{ return STRUCT;}
 "switch"		{ return SWITCH;}
 "template"		{ return TEMPLATE;}
-"this"		{ return THIS;}
-"thread_local"		{ return THREAD_LOCAL;}
-"throw"		{ return THROW;}
-"try"		{ return TRY;}
+"this"			{ return THIS;}
+"thread_local"	{ return THREAD_LOCAL;}
+"throw"			{ return THROW;}
+"try"			{ return TRY;}
 "typedef"		{ return TYPEDEF;}
 "typeid"		{ return TYPEID;}
 "typename"		{ return TYPENAME;}
-"union"		{ return UNION;}
+"union"			{ return UNION;}
 "unsigned"		{ return UNSIGNED;}
-"using"		{ return USING;}
+"using"			{ return USING;}
 "virtual"		{ return VIRTUAL;}
-"void"		{ return VOID;}
+"void"			{ return VOID;}
 "volatile"		{ return VOLATILE;}
 "wchar_t"		{ return WCHAR_T;}
-"while"		{ return WHILE;}
-"xor"		|
-"^"		{ return XOR;}
-"xor_eq"	|
-"^="		{ return XOR_EQ;}
-
-{identifier}		{return IDENTIFIER;}
+"while"			{ return WHILE;}
+"xor"			|
+"^"				{ return XOR;}
+"xor_eq"		|
+"^="			{ return XOR_EQ;}
+{identifier}	{return IDENTIFIER;}
 
 [#][[:space:]]*"pragma"[^\n]*[\n]		; /*GCC has #pragma GCC visibility noise */		
 
@@ -317,9 +314,10 @@ STRING_LITERAL		{ return STRING_LITERAL;}
 
 %%
 void yyerror(const string& str){
-	cout<<"error:"<<str<<endl;
+	cerr<<"error:"<<str<<endl;
 }
 
+#ifdef LEXER_TEST
 int main(int argc, char**argv){
 	extern FILE *yyin;
 	if (argc==2){
@@ -343,5 +341,5 @@ int main(int argc, char**argv){
 		}
 	}
 }
-
+#endif
 
