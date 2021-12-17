@@ -2,48 +2,14 @@
 %{
 #include "cplusplus.h"
 int lineno;
-static int yywrap(void);
 extern int yylex (void);
 %}
-
+%option noyywrap
 %%
-"\n"					{ ++lineno; }
+"\n"				{ ++lineno; }
+[\t\f\v\r ]+		{ /* Ignore whitespace. */ }
 
 "0"		{ return '0';}
-"1"		{ return '1';}
-"2"		{ return '2';}
-"3"		{ return '3';}
-"4"		{ return '4';}
-"5"		{ return '5';}
-"6"		{ return '6';}
-"7"		{ return '7';}
-"8"		{ return '8';}
-"9"		{ return '9';}
-"A"		{ return 'A';}
-"B"		{ return 'B';}
-"C"		{ return 'C';}
-"D"		{ return 'D';}
-"E"		{ return 'E';}
-"F"		{ return 'F';}
-"L"		{ return 'L';}
-"P"		{ return 'P';}
-"R"		{ return 'R';}
-"U"		{ return 'U';}
-"Z"		{ return 'Z';}
-"a"		{ return 'a';}
-"b"		{ return 'b';}
-"c"		{ return 'c';}
-"d"		{ return 'd';}
-"e"		{ return 'e';}
-"f"		{ return 'f';}
-"l"		{ return 'l';}
-"n"		{ return 'n';}
-"p"		{ return 'p';}
-"r"		{ return 'r';}
-"t"		{ return 't';}
-"u"		{ return 'u';}
-"v"		{ return 'v';}
-"z"		{ return 'z';}
 "alignas"		{ return ALIGNAS;}
 "alignof"		{ return ALIGNOF;}
 "&"		{ return AND;}
@@ -87,21 +53,15 @@ extern int yylex (void);
 "."		{ return DOT;}
 ".*"		{ return DOT_STAR;}
 "double"		{ return DOUBLE;}
-"\""		{ return DOUBLE_QUOTE;}
 "dynamic_cast"		{ return DYNAMIC_CAST;}
 "..."		{ return ELLIPSIS;}
 "else"		{ return ELSE;}
 "enum"		{ return ENUM;}
 "="		{ return EQ;}
 "=="		{ return EQ_EQ;}
-"\\"		{ return ESCAPE;}
-"\\U"		{ return ESCAPE_HU;}
-"\\u"		{ return ESCAPE_LU;}
-"\\x"		{ return ESCAPE_LX;}
 "explicit"		{ return EXPLICIT;}
 "export"		{ return EXPORT;}
 "extern"		{ return EXTERN;}
-"false"		{ return FALSE;}
 "final"		{ return FINAL;}
 "float"		{ return FLOAT;}
 "for"		{ return FOR;}
@@ -109,16 +69,15 @@ extern int yylex (void);
 "goto"		{ return GOTO;}
 ">"		{ return GREATER;}
 ">="		{ return GREATER_EQ;}
-IDENTIFIER		{ return IDENTIFIER;}
+HEADER_NAME		{ return HEADER_NAME;}
 "if"		{ return IF;}
 "import"		{ return IMPORT;}
 "inline"		{ return INLINE;}
 "int"		{ return INT;}
 "<"		{ return LESS;}
 "<="		{ return LESS_EQ;}
+"literal"		{ return LITERAL;}
 "long"		{ return LONG;}
-"LL"		{ return LONG_LONG_H;}
-"ll"		{ return LONG_LONG_L;}
 "<<"		{ return LSHIFT;}
 "<<="		{ return LSHIFT_EQ;}
 "-"		{ return MINUS;}
@@ -135,7 +94,6 @@ IDENTIFIER		{ return IDENTIFIER;}
 "noexcept"		{ return NOEXCEPT;}
 "!"		{ return NOT;}
 "!="		{ return NOT_EQ;}
-"nullptr"		{ return NULLPTR;}
 "{"		{ return OPEN_BRACE;}
 "("		{ return OPEN_PAREN;}
 "["		{ return OPEN_SQUARE;}
@@ -160,24 +118,22 @@ IDENTIFIER		{ return IDENTIFIER;}
 ";"		{ return SEMICOLON;}
 "short"		{ return SHORT;}
 "signed"		{ return SIGNED;}
-"'"		{ return SINGLE_QUOTE;}
 "sizeof"		{ return SIZEOF;}
 "<=>"		{ return SPACESHIP;}
 "static"		{ return STATIC;}
 "static_assert"		{ return STATIC_ASSERT;}
 "static_cast"		{ return STATIC_CAST;}
+STRING_LITERAL		{ return STRING_LITERAL;}
 "struct"		{ return STRUCT;}
 "switch"		{ return SWITCH;}
 "template"		{ return TEMPLATE;}
 "this"		{ return THIS;}
 "thread_local"		{ return THREAD_LOCAL;}
 "throw"		{ return THROW;}
-"true"		{ return TRUE;}
 "try"		{ return TRY;}
 "typedef"		{ return TYPEDEF;}
 "typeid"		{ return TYPEID;}
 "typename"		{ return TYPENAME;}
-"u8"		{ return UNICODE_8;}
 "union"		{ return UNION;}
 "unsigned"		{ return UNSIGNED;}
 "using"		{ return USING;}
@@ -188,14 +144,6 @@ IDENTIFIER		{ return IDENTIFIER;}
 "while"		{ return WHILE;}
 "^"		{ return XOR;}
 "^="		{ return XOR_EQ;}
-"0B"		{ return ZERO_HB;}
-"0X"		{ return ZERO_HX;}
-"0b"		{ return ZERO_LB;}
-"0x"		{ return ZERO_LX;}
 
 %%
-static int yywrap(void)
-{
-	return 1;
-}
 

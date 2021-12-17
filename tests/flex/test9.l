@@ -63,8 +63,6 @@ schar-seq				[^"\\\n]*
 ud-suffix			[_a-zA-Z][_a-zA-Z0-9]*
 
 
-
-
 %%	
 		size_t delim_len;
 		size_t delim_offset;

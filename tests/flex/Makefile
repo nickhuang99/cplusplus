@@ -42,6 +42,20 @@ test9:
 test10:
 	flex -t test10.l > test10.cpp
 	g++ -I. test10.cpp -o test10.exe
-	./test10.exe test10.CPP				
+	./test10.exe test10.CPP		
+test11:
+	flex -t test11.l > test11.cpp
+	g++ -I. test11.cpp -o test11.exe
+	./test11.exe test11.CPP	
+test12:
+	flex -t test12.l > test12.cpp
+	g++ -I. test12.cpp -o test12.exe
+	./test12.exe test12.CPP	
+test13:
+	flex -t test13.l > test13.cpp
+	g++ -I. test13.cpp -o test13.exe
+	./test13.exe test13.CPP	
+		
+						
 clean:
 	rm -f *.exe		

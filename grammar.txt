@@ -1,0 +1,891 @@
+translation-unit:
+	declaration-seqopt
+	global-module-fragmentopt module-declaration declaration-seqopt private-module-fragmentopt
+
+
+primary-expression:
+	literal
+	this
+	( expression )
+	id-expression
+	lambda-expression
+	fold-expression
+	requires-expression
+id-expression:
+	unqualified-id
+	qualified-id
+unqualified-id:
+	IDENTIFIER
+	operator-function-id
+	conversion-function-id
+	literal-operator-id
+	~ type-name
+	~ decltype-specifier
+	template-id
+qualified-id:
+	nested-name-specifier templateopt unqualified-id
+nested-name-specifier:
+	::
+	type-name ::
+	namespace-name ::
+	decltype-specifier ::
+	nested-name-specifier IDENTIFIER ::
+	nested-name-specifier templateopt simple-template-id ::
+lambda-expression:
+	lambda-introducer lambda-declarator compound-statement
+	lambda-introducer < template-parameter-list > requires-clauseopt lambda-declarator compound-statement
+lambda-introducer:
+	[ lambda-captureopt ]
+lambda-declarator:
+	lambda-specifiers
+	( parameter-declaration-clause ) lambda-specifiers requires-clauseopt
+lambda-specifiers:
+	decl-specifier-seqopt noexcept-specifieropt attribute-specifier-seqopt trailing-return-typeopt
+lambda-capture:
+	capture-default
+	capture-list
+	capture-default , capture-list
+capture-default:
+	&
+	=
+capture-list:
+	capture
+	capture-list , capture
+capture:
+	simple-capture
+	init-capture
+simple-capture:
+	IDENTIFIER ...opt
+	& IDENTIFIER ...opt
+	this
+	* this
+init-capture:
+	...opt IDENTIFIER initializer
+	& ...opt IDENTIFIER initializer
+fold-expression:
+	( cast-expression fold-operator ... )
+	( ... fold-operator cast-expression )
+	( cast-expression fold-operator ... fold-operator cast-expression )
+fold-operator:
+	+
+	-
+	*
+	/
+	%
+	^
+	&
+	|
+	<<
+	>>
+	+=
+	-=
+	*=
+	/=
+	%=
+	^=
+	&=
+	|=
+	<<=
+	>>=
+	=
+	==
+	!=
+	<
+	>
+	<=
+	>=
+	&&
+	||
+	,
+	.*
+	->*
+requires-expression:
+	requires requirement-parameter-listopt requirement-body
+requirement-parameter-list:
+	( parameter-declaration-clause )
+requirement-body:
+	{ requirement-seq }
+requirement-seq:
+	requirement
+	requirement-seq requirement
+requirement:
+	simple-requirement
+	type-requirement
+	compound-requirement
+	nested-requirement
+simple-requirement:
+	expression ;
+type-requirement:
+	typename nested-name-specifieropt type-name ;
+compound-requirement:
+	{ expression } noexceptopt return-type-requirementopt ;
+return-type-requirement:
+	-> type-constraint
+nested-requirement:
+	requires constraint-expression ;
+postfix-expression:
+	primary-expression
+	postfix-expression [ expression-listopt ]
+	postfix-expression ( expression-listopt )
+	simple-type-specifier ( expression-listopt )
+	typename-specifier ( expression-listopt )
+	simple-type-specifier braced-init-list
+	typename-specifier braced-init-list
+	postfix-expression . templateopt id-expression
+	postfix-expression -> templateopt id-expression
+	postfix-expression ++
+	postfix-expression --
+	dynamic_cast < type-id > ( expression )
+	static_cast < type-id > ( expression )
+	reinterpret_cast < type-id > ( expression )
+	const_cast < type-id > ( expression )
+	typeid ( expression )
+	typeid ( type-id )
+expression-list:
+	initializer-list
+unary-expression:
+	postfix-expression
+	unary-operator cast-expression
+	++ cast-expression
+	-- cast-expression
+	await-expression
+	sizeof unary-expression
+	sizeof ( type-id )
+	sizeof ... ( IDENTIFIER )
+	alignof ( type-id )
+	noexcept-expression
+	new-expression
+	delete-expression
+unary-operator: 
+	*  
+	&  
+	+  
+	-  
+	!  
+	~
+await-expression:
+	co_await cast-expression
+noexcept-expression:
+	noexcept ( expression )
+new-expression:
+	::opt new new-placementopt new-type-id new-initializeropt
+	::opt new new-placementopt ( type-id ) new-initializeropt
+new-placement:
+	( expression-list )
+new-type-id:
+	type-specifier-seq new-declaratoropt
+new-declarator:
+	ptr-operator new-declaratoropt
+	noptr-new-declarator
+noptr-new-declarator:
+	[ expressionopt ] attribute-specifier-seqopt
+	noptr-new-declarator [ constant-expression ] attribute-specifier-seqopt
+new-initializer:
+	( expression-listopt )
+	braced-init-list
+delete-expression:
+	::opt delete cast-expression
+	::opt delete [ ] cast-expression
+cast-expression:
+	unary-expression
+	( type-id ) cast-expression
+pm-expression:
+cast-expression
+	pm-expression .* cast-expression
+	pm-expression ->* cast-expression
+multiplicative-expression:
+	pm-expression
+	multiplicative-expression * pm-expression
+	multiplicative-expression / pm-expression
+	multiplicative-expression % pm-expression
+additive-expression:
+	multiplicative-expression
+	additive-expression + multiplicative-expression
+	additive-expression - multiplicative-expression
+shift-expression:
+	additive-expression
+	shift-expression << additive-expression
+	shift-expression >> additive-expression
+compare-expression:
+	shift-expression
+	compare-expression <=> shift-expression
+relational-expression:
+	compare-expression
+	relational-expression < compare-expression
+	relational-expression > compare-expression
+	relational-expression <= compare-expression
+	relational-expression >= compare-expression
+equality-expression:
+	relational-expression
+	equality-expression == relational-expression
+	equality-expression != relational-expression
+and-expression:
+	equality-expression
+	and-expression & equality-expression
+exclusive-or-expression:
+	and-expression
+	exclusive-or-expression ^ and-expression
+inclusive-or-expression:
+	exclusive-or-expression
+	inclusive-or-expression | exclusive-or-expression
+logical-and-expression:
+	inclusive-or-expression
+	logical-and-expression && inclusive-or-expression
+logical-or-expression:
+	logical-and-expression
+	logical-or-expression || logical-and-expression
+conditional-expression:
+	logical-or-expression
+	logical-or-expression ? expression : assignment-expression
+yield-expression:
+	co_yield assignment-expression
+	co_yield braced-init-list
+throw-expression:
+	throw assignment-expressionopt
+assignment-expression:
+	conditional-expression
+	yield-expression
+	throw-expression
+	logical-or-expression assignment-operator initializer-clause
+assignment-operator:
+	=  
+	*=  
+	/=  
+	%=   
+	+=  
+	-=  
+	>>=  
+	<<=  
+	&=  
+	^=  
+	|=
+expression:
+	assignment-expression
+	expression , assignment-expression
+constant-expression:
+	conditional-expression 	
+	
+statement:
+	labeled-statement
+	attribute-specifier-seqopt expression-statement
+	attribute-specifier-seqopt compound-statement
+	attribute-specifier-seqopt selection-statement
+	attribute-specifier-seqopt iteration-statement
+	attribute-specifier-seqopt jump-statement
+	declaration-statement
+	attribute-specifier-seqopt try-block
+init-statement:
+	expression-statement
+	simple-declaration
+	alias-declaration
+condition:
+	expression
+	attribute-specifier-seqopt decl-specifier-seq declarator brace-or-equal-initializer
+labeled-statement:
+	attribute-specifier-seqopt IDENTIFIER : statement
+	attribute-specifier-seqopt case constant-expression : statement
+	attribute-specifier-seqopt default : statement
+expression-statement:
+	expressionopt ;
+compound-statement:
+	{ statement-seqopt }
+statement-seq:
+	statement
+	statement-seq statement
+selection-statement:
+	if constexpropt ( init-statementopt condition ) statement
+	if constexpropt ( init-statementopt condition ) statement else statement
+	if !opt consteval compound-statement
+	if !opt consteval compound-statement else statement
+	switch ( init-statementopt condition ) statement
+iteration-statement:
+	while ( condition ) statement
+	do statement while ( expression ) ;
+	for ( init-statement conditionopt ; expressionopt ) statement
+	for ( init-statementopt for-range-declaration : for-range-initializer ) statement
+for-range-declaration:
+	attribute-specifier-seqopt decl-specifier-seq declarator
+	attribute-specifier-seqopt decl-specifier-seq ref-qualifieropt [ identifier-list ]
+for-range-initializer:
+	expr-or-braced-init-list
+jump-statement:
+	break ;
+	continue ;
+	return expr-or-braced-init-listopt ;
+	coroutine-return-statement
+	goto IDENTIFIER ;
+coroutine-return-statement:
+	co_return expr-or-braced-init-listopt ;
+declaration-statement:
+	block-declaration 			
+	
+declaration-seq:
+	declaration
+	declaration-seq declaration
+declaration:
+	block-declaration
+	nodeclspec-function-declaration
+	function-definition
+	template-declaration
+	deduction-guide
+	explicit-instantiation
+	explicit-specialization
+	export-declaration
+	linkage-specification
+	namespace-definition
+	empty-declaration
+	attribute-declaration
+	module-import-declaration
+block-declaration:
+	simple-declaration
+	asm-declaration
+	namespace-alias-definition
+	using-declaration
+	using-enum-declaration
+	using-directive
+	static_assert-declaration
+	alias-declaration
+	opaque-enum-declaration
+nodeclspec-function-declaration:
+	attribute-specifier-seqopt declarator ;
+alias-declaration:
+	using IDENTIFIER attribute-specifier-seqopt = defining-type-id ;
+identifier-list:
+	IDENTIFIER
+	identifier-list , IDENTIFIER 	
+simple-declaration:
+	decl-specifier-seq init-declarator-listopt ;
+	attribute-specifier-seq decl-specifier-seq init-declarator-list ;
+	attribute-specifier-seqopt decl-specifier-seq ref-qualifieropt [ identifier-list ] initializer ;
+static_assert-declaration:
+	static_assert ( constant-expression ) ;
+	static_assert ( constant-expression , string-literal ) ;
+empty-declaration:
+	;
+attribute-declaration:
+	attribute-specifier-seq ;
+decl-specifier:
+	storage-class-specifier
+	defining-type-specifier
+	function-specifier
+	friend
+	typedef
+	constexpr
+	consteval
+	constinit
+	inline
+	
+decl-specifier-seq:
+	decl-specifier attribute-specifier-seqopt
+	decl-specifier decl-specifier-seq
+storage-class-specifier:
+	static
+	thread_local
+	extern
+	mutable
+function-specifier:
+	virtual
+	explicit-specifier
+explicit-specifier:
+	explicit ( constant-expression )
+	explicit
+typedef-name:
+	IDENTIFIER
+	simple-template-id
+type-specifier:
+	simple-type-specifier
+	elaborated-type-specifier
+	typename-specifier
+	cv-qualifier
+type-specifier-seq:
+	type-specifier attribute-specifier-seqopt
+	type-specifier type-specifier-seq
+defining-type-specifier:
+	type-specifier
+	class-specifier
+	enum-specifier
+defining-type-specifier-seq:
+	defining-type-specifier attribute-specifier-seqopt
+	defining-type-specifier defining-type-specifier-seq
+simple-type-specifier:
+	nested-name-specifieropt type-name
+	nested-name-specifier template simple-template-id
+	decltype-specifier
+	placeholder-type-specifier
+	nested-name-specifieropt template-name
+	char
+	char8_t
+	char16_t
+	char32_t
+	wchar_t
+	bool
+	short
+	int
+	long
+	signed
+	unsigned
+	float
+	double
+	void
+type-name:
+	class-name
+	enum-name
+	typedef-name
+elaborated-type-specifier:
+	class-key attribute-specifier-seqopt nested-name-specifieropt IDENTIFIER
+	class-key simple-template-id
+	class-key nested-name-specifier templateopt simple-template-id
+	elaborated-enum-specifier
+elaborated-enum-specifier:
+	enum nested-name-specifieropt IDENTIFIER
+decltype-specifier:
+	decltype ( expression )
+placeholder-type-specifier:
+	type-constraintopt auto
+	type-constraintopt decltype ( auto )
+init-declarator-list:
+	init-declarator
+	init-declarator-list , init-declarator
+init-declarator:
+	declarator initializeropt
+	declarator requires-clause
+declarator:
+	ptr-declarator
+	noptr-declarator parameters-and-qualifiers trailing-return-type
+ptr-declarator:
+	noptr-declarator
+	ptr-operator ptr-declarator
+noptr-declarator:
+	declarator-id attribute-specifier-seqopt
+	noptr-declarator parameters-and-qualifiers
+	noptr-declarator [ constant-expressionopt ] attribute-specifier-seqopt
+	( ptr-declarator )
+parameters-and-qualifiers:
+	( parameter-declaration-clause ) cv-qualifier-seqopt ref-qualifieropt noexcept-specifieropt attribute-specifier-seqopt
+trailing-return-type:
+	-> type-id
+ptr-operator:
+	* attribute-specifier-seqopt cv-qualifier-seqopt
+	& attribute-specifier-seqopt
+	&& attribute-specifier-seqopt
+	nested-name-specifier * attribute-specifier-seqopt cv-qualifier-seqopt
+cv-qualifier-seq:
+	cv-qualifier cv-qualifier-seqopt
+cv-qualifier:
+	const
+	volatile
+ref-qualifier:
+	&
+	&&
+declarator-id:
+	...opt id-expression
+type-id:
+	type-specifier-seq abstract-declaratoropt
+defining-type-id:
+	defining-type-specifier-seq abstract-declaratoropt
+abstract-declarator:
+	ptr-abstract-declarator
+	noptr-abstract-declaratoropt parameters-and-qualifiers trailing-return-type
+	abstract-pack-declarator
+ptr-abstract-declarator:
+	noptr-abstract-declarator
+	ptr-operator ptr-abstract-declaratoropt
+noptr-abstract-declarator:
+	noptr-abstract-declaratoropt parameters-and-qualifiers
+	noptr-abstract-declaratoropt [ constant-expressionopt ] attribute-specifier-seqopt
+	( ptr-abstract-declarator )
+abstract-pack-declarator:
+	noptr-abstract-pack-declarator
+	ptr-operator abstract-pack-declarator
+noptr-abstract-pack-declarator:
+	noptr-abstract-pack-declarator parameters-and-qualifiers
+	noptr-abstract-pack-declarator [ constant-expressionopt ] attribute-specifier-seqopt
+	...
+parameter-declaration-clause:
+	parameter-declaration-listopt ...opt
+	parameter-declaration-list , ...
+parameter-declaration-list:
+	parameter-declaration
+	parameter-declaration-list , parameter-declaration
+parameter-declaration:
+	attribute-specifier-seqopt thisopt decl-specifier-seq declarator
+	attribute-specifier-seqopt thisopt decl-specifier-seq declarator = initializer-clause
+	attribute-specifier-seqopt thisopt decl-specifier-seq abstract-declaratoropt
+	attribute-specifier-seqopt thisopt decl-specifier-seq abstract-declaratoropt = initializer-clause
+initializer:
+	brace-or-equal-initializer
+	( expression-list )
+brace-or-equal-initializer:
+	= initializer-clause
+	braced-init-list
+initializer-clause:
+	assignment-expression
+	braced-init-list
+braced-init-list:
+	{ initializer-list ,opt }
+	{ designated-initializer-list ,opt }
+	{ }
+initializer-list:
+	initializer-clause ...opt
+	initializer-list , initializer-clause ...opt
+designated-initializer-list:
+	designated-initializer-clause
+	designated-initializer-list , designated-initializer-clause
+designated-initializer-clause:
+	designator brace-or-equal-initializer
+designator:
+	. IDENTIFIER
+expr-or-braced-init-list:
+	expression
+	braced-init-list
+function-definition:
+	attribute-specifier-seqopt decl-specifier-seqopt declarator virt-specifier-seqopt function-body
+	attribute-specifier-seqopt decl-specifier-seqopt declarator requires-clause function-body
+function-body:
+	ctor-initializeropt compound-statement
+	function-try-block
+	= default ;
+	= delete ;
+enum-name:
+	IDENTIFIER
+enum-specifier:
+	enum-head { enumerator-listopt }
+	enum-head { enumerator-list , }
+enum-head:
+	enum-key attribute-specifier-seqopt enum-head-nameopt enum-baseopt
+enum-head-name:
+	nested-name-specifieropt IDENTIFIER
+opaque-enum-declaration:
+	enum-key attribute-specifier-seqopt enum-head-name enum-baseopt ;
+enum-key:
+	enum
+	enum class
+	enum struct
+enum-base:
+	: type-specifier-seq
+enumerator-list:
+	enumerator-definition
+	enumerator-list , enumerator-definition
+enumerator-definition:
+	enumerator
+	enumerator = constant-expression
+enumerator:
+	IDENTIFIER attribute-specifier-seqopt
+using-enum-declaration:
+	using elaborated-enum-specifier ;
+namespace-name:
+	IDENTIFIER
+	namespace-alias
+namespace-definition:
+	named-namespace-definition
+	unnamed-namespace-definition
+	nested-namespace-definition
+named-namespace-definition:
+	inlineopt namespace attribute-specifier-seqopt IDENTIFIER { namespace-body }
+unnamed-namespace-definition:
+	inlineopt namespace attribute-specifier-seqopt { namespace-body }
+nested-namespace-definition:
+	namespace enclosing-namespace-specifier :: inlineopt IDENTIFIER { namespace-body }
+enclosing-namespace-specifier:
+	IDENTIFIER
+	enclosing-namespace-specifier :: inlineopt IDENTIFIER
+namespace-body:
+	declaration-seqopt
+namespace-alias:
+	IDENTIFIER
+namespace-alias-definition:
+	namespace IDENTIFIER = qualified-namespace-specifier ;
+qualified-namespace-specifier:
+	nested-name-specifieropt namespace-name
+using-directive:
+	attribute-specifier-seqopt using namespace nested-name-specifieropt namespace-name ;
+using-declaration:
+	using using-declarator-list ;
+using-declarator-list:
+	using-declarator ...opt
+	using-declarator-list , using-declarator ...opt
+using-declarator:
+	typenameopt nested-name-specifier unqualified-id
+asm-declaration:
+	attribute-specifier-seqopt asm ( string-literal ) ;
+linkage-specification:
+	extern string-literal { declaration-seqopt }
+	extern string-literal declaration
+attribute-specifier-seq:
+	attribute-specifier-seqopt attribute-specifier
+attribute-specifier:
+	[ [ attribute-using-prefixopt attribute-list ] ]
+	alignment-specifier
+alignment-specifier:
+	alignas ( type-id ...opt )
+	alignas ( constant-expression ...opt )
+attribute-using-prefix:
+	using attribute-namespace :
+attribute-list:
+	attributeopt
+	attribute-list , attributeopt
+	attribute ...
+	attribute-list , attribute ...
+attribute:
+	attribute-token attribute-argument-clauseopt
+attribute-token:
+	IDENTIFIER
+	attribute-scoped-token
+attribute-scoped-token:
+	attribute-namespace :: IDENTIFIER
+attribute-namespace:
+	IDENTIFIER
+attribute-argument-clause:
+	( balanced-token-seqopt )
+balanced-token-seq:
+	balanced-token
+	balanced-token-seq balanced-token
+balanced-token:
+	( balanced-token-seqopt )
+	[ balanced-token-seqopt ]
+	{ balanced-token-seqopt }
+	BALANCED_TOKEN	
+
+module-declaration:
+	export-keywordopt module-keyword module-name module-partitionopt attribute-specifier-seqopt ;
+module-name:
+	module-name-qualifieropt IDENTIFIER
+module-partition:
+	: module-name-qualifieropt IDENTIFIER
+module-name-qualifier:
+	IDENTIFIER .
+	module-name-qualifier IDENTIFIER .
+export-declaration:
+	export declaration
+	export { declaration-seqopt }
+	export-keyword module-import-declaration
+module-import-declaration:
+	import-keyword module-name attribute-specifier-seqopt ;
+	import-keyword module-partition attribute-specifier-seqopt ;
+	import-keyword header-name attribute-specifier-seqopt ;
+global-module-fragment:
+	module-keyword ; declaration-seqopt
+private-module-fragment:
+	module-keyword : private ; declaration-seqopt 	
+
+header-name:
+	HEADER_NAME
+class-name:
+	IDENTIFIER
+	simple-template-id
+class-specifier:
+	class-head { member-specificationopt }
+class-head:
+	class-key attribute-specifier-seqopt class-head-name class-virt-specifieropt base-clauseopt
+	class-key attribute-specifier-seqopt base-clauseopt
+class-head-name:
+	nested-name-specifieropt class-name
+class-virt-specifier:
+	final
+class-key:
+	class
+	struct
+	union
+member-specification:
+	member-declaration member-specificationopt
+	access-specifier : member-specificationopt
+member-declaration:
+	attribute-specifier-seqopt decl-specifier-seqopt member-declarator-listopt ;
+	function-definition
+	using-declaration
+	using-enum-declaration
+	static_assert-declaration
+	template-declaration
+	explicit-specialization
+	deduction-guide
+	alias-declaration
+	opaque-enum-declaration
+	empty-declaration
+member-declarator-list:
+	member-declarator
+	member-declarator-list , member-declarator
+member-declarator:
+	declarator virt-specifier-seqopt pure-specifieropt
+	declarator requires-clause
+	declarator brace-or-equal-initializeropt
+	IDENTIFIERopt attribute-specifier-seqopt : constant-expression brace-or-equal-initializeropt
+virt-specifier-seq:
+	virt-specifier
+	virt-specifier-seq virt-specifier
+virt-specifier:
+	override
+	final
+pure-specifier:
+	= 0
+conversion-function-id:
+	operator conversion-type-id
+conversion-type-id:
+	type-specifier-seq conversion-declaratoropt
+conversion-declarator:
+	ptr-operator conversion-declaratoropt
+base-clause:
+	: base-specifier-list
+base-specifier-list:
+	base-specifier ...opt
+	base-specifier-list , base-specifier ...opt
+base-specifier:
+	attribute-specifier-seqopt class-or-decltype
+	attribute-specifier-seqopt virtual access-specifieropt class-or-decltype
+	attribute-specifier-seqopt access-specifier virtualopt class-or-decltype
+class-or-decltype:
+	nested-name-specifieropt type-name
+	nested-name-specifier template simple-template-id
+	decltype-specifier
+access-specifier:
+	private
+	protected
+	public
+ctor-initializer:
+	: mem-initializer-list
+mem-initializer-list:
+	mem-initializer ...opt
+	mem-initializer-list , mem-initializer ...opt
+mem-initializer:
+	mem-initializer-id ( expression-listopt )
+	mem-initializer-id braced-init-list
+mem-initializer-id:
+	class-or-decltype
+	IDENTIFIER 
+operator-function-id:
+	operator overloadable-operator
+	operator overloadable-operator < template-argument-listopt >
+	
+overloadable-operator:
+	new      
+	delete   
+	new [ ]    
+	delete [ ] 
+	co_await 
+	( )        
+	[ ]        
+	->       
+	->*
+	~        
+	!        
+	+        
+	-        
+	*        
+	/        
+	%        
+	^        
+	&
+	|        
+	=        
+	+=       
+	-=       
+	*=       
+	/=       
+	%=       
+	^=       
+	&=
+	|=       
+	==       
+	!=       
+	<        
+	>        
+	<=       
+	>=       
+	<=>      
+	&&
+	||       
+	<<       
+	>>       
+	<<=      
+	>>=      
+	++       
+	--       
+	,
+literal-operator-id:
+	operator string-literal IDENTIFIER
+	operator user-defined-string-literal 	
+	
+user-defined-string-literal:
+	string-literal ud-suffix
+ud-suffix:
+	IDENTIFIER 	
+string-literal:
+	STRING_LITERAL
+	
+template-declaration:
+	template-head declaration
+	template-head concept-definition
+template-head:
+	template < template-parameter-list > requires-clauseopt
+template-parameter-list:
+	template-parameter
+	template-parameter-list , template-parameter
+requires-clause:
+	requires constraint-logical-or-expression
+constraint-logical-or-expression:
+	constraint-logical-and-expression
+	constraint-logical-or-expression || constraint-logical-and-expression
+constraint-logical-and-expression:
+	primary-expression
+	constraint-logical-and-expression && primary-expression
+template-parameter:
+	type-parameter
+	parameter-declaration
+type-parameter:
+	type-parameter-key ...opt IDENTIFIERopt
+	type-parameter-key IDENTIFIERopt = type-id
+	type-constraint ...opt IDENTIFIERopt
+	type-constraint IDENTIFIERopt = type-id
+	template-head type-parameter-key ...opt IDENTIFIERopt
+	template-head type-parameter-key IDENTIFIERopt = id-expression
+type-parameter-key:
+	class
+	typename
+type-constraint:
+	nested-name-specifieropt concept-name
+	nested-name-specifieropt concept-name < template-argument-listopt >
+simple-template-id:
+	template-name < template-argument-listopt >
+template-id:
+	simple-template-id
+	operator-function-id < template-argument-listopt >
+	literal-operator-id < template-argument-listopt >
+template-name:
+	IDENTIFIER
+template-argument-list:
+	template-argument ...opt
+	template-argument-list , template-argument ...opt
+template-argument:
+	constant-expression
+	type-id
+	id-expression
+constraint-expression:
+	logical-or-expression
+deduction-guide:
+	explicit-specifieropt template-name ( parameter-declaration-clause ) -> simple-template-id ;
+concept-definition:
+	concept concept-name = constraint-expression ;
+concept-name:
+	IDENTIFIER
+typename-specifier:
+	typename nested-name-specifier IDENTIFIER
+	typename nested-name-specifier templateopt simple-template-id
+explicit-instantiation:
+	externopt template declaration
+explicit-specialization:
+	template < > declaration 		
+	
+try-block:
+	try compound-statement handler-seq
+function-try-block:
+	try ctor-initializeropt compound-statement handler-seq
+handler-seq:
+	handler handler-seqopt
+handler:
+	catch ( exception-declaration ) compound-statement
+exception-declaration:
+	attribute-specifier-seqopt type-specifier-seq declarator
+	attribute-specifier-seqopt type-specifier-seq abstract-declaratoropt
+	...
+noexcept-specifier:
+	noexcept ( constant-expression )
+	noexcept	

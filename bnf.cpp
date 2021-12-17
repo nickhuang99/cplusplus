@@ -93,7 +93,7 @@ void bnf(){
 			str.resize(str.size()-1);
 		}
 	};
-	const string bnfFile="bnf.txt";
+	const string bnfFile="grammar.txt";
 	set<string> non_terminals=[trim, bnfFile](){
 		ifstream in(bnfFile);
 		string str;
@@ -112,12 +112,6 @@ void bnf(){
 		return result;
 	}();
 
-//	cout<<"=================printout all non-terminals===================="<<endl;
-//	[](auto r){
-//		for (auto item: r){
-//			cout<<item<<endl;
-//		}
-//	}(non_terminals);
 	map<string, vector<vector<string> > > rules;
 	map<string, string> terminalTokens;
 	auto quoteString=[](const string& str){
@@ -302,6 +296,13 @@ void bnf(){
 		return result;
 	};
 	rules=getProduction();
+	cout<<"=================printout all non-terminals===================="<<endl;
+	[](auto r){
+		for (auto item: r){
+			cout<<item<<endl;
+		}
+	}(non_terminals);
+	cout<<"=================printout all non-terminals===================="<<endl;
 	//cout<<"===================print rules====================="<<endl;
 	ofstream out("cplusplus.y");
 	auto outputBisonTokens=[&out, &non_terminals](auto rules){
@@ -340,9 +341,7 @@ void bnf(){
 			out<<"\t;"<<endl;
 		}
 	};
-	auto resolveShiftReduceConflicts=[](auto& rules){
 
-	};
 	auto outputBisonInput=[&out, outputBisonTokens, outputRules](auto rules){
 		string strPrologue=R"delim(
 %{
@@ -395,7 +394,6 @@ int main(int argc, char**argv){
 	};
 	outputBisonInput(rules);
 
-
 //	cout<<"=================print all terminals======================"<<endl;
 	set<string> terminals=[](auto rules){
 		set<string> result;
@@ -410,94 +408,16 @@ int main(int argc, char**argv){
 		}
 		return result;
 	}(rules);
-//	auto printTerminals=[](auto s){
-//		for (auto item: s){
-//			cout<<item<<endl;
-//		}
-//	};
-//	printTerminals(terminals);
-
-	auto outputFlexInput=[](map<string, string> terminalTokens){
-		ofstream out("scanner.l");
-		string strPrologue=R"delim(
-%{
-#include "cplusplus.h"
-int lineno;
-extern int yylex (void);
-%}
-%option noyywrap
-%%
-"\n"				{ ++lineno; }
-[\t\f\v\r ]+		{ /* Ignore whitespace. */ }
-)delim";
-
-		string strEpilogue=R"delim(
-%%
-)delim";
-		out<<strPrologue<<endl;
-		auto quoteEscapeStr=[](const string& str){
-			stringstream ss;
-			ss<<quoted(str, str.size()==1?'\'':'"');
-			return ss.str();
-		};
-		for (auto m: terminalTokens){
-			if (m.first=="BALANCED_TOKEN"){
-				continue;
-//				out<<"[^(){}<>]";
-			}else if (m.first=="BASIC_C_CHAR"){
-				continue;
-//				out<<"[^\\\\ ' \\n]";
-			}else if (m.first=="H_CHAR"){
-				continue;
-//				out<<"[^\\n>]";
-			}else if(m.first=="Q_CHAR"){
-				continue;
-//				out<<"[^\\n\"]";
-			}else if(m.first=="R_CHAR"){
-				continue;
-//				out<<".";
-			}else if(m.first=="D_CHAR"){
-				continue;
-//				out<<"[^\\s ( ) \\\\ \\t \\| \\f \\n]";
-			}else if (m.first=="CONDITIONAL_ESCAPE_SEQUENCE"){
-				string s=R"(\\[^0-7'"\?\\Uuxabfnrtv]	{ unput(yytext[1]);})";
-				out<<s<<endl;
-				continue;
-			}else if (m.first=="BASIC_S_CHAR"){
-//				out<<"[^\"\\\\\\n]";
-				continue;
-			}else if (m.first=="IDENTIFIER"){
-//				out<<"[a-zA-Z_][a-zA-Z_0-9]*";
-				continue;
-			}else{
-//				if (m.second.size()==3&&m.second[0]==m.second[2]&& m.second[0]=='"'){
-//					switch (m.second[1]){
-//					case '*':
-//					case '[':
-//					case ']':
-//					case '(':
-//					case ')':
-//					case '"':
-//					case '\\':
-//					case '{':
-//					case '}':
-//						out<<"'\\"<<m.second[1]<<'\'';
-//						break;
-//					default:
-//						out<<m.second;
-//					}
-//				}else{
-//					out<<m.second;
-//				}
-				out<<m.second;
-			}
-			out<<"\t\t{ return ";
-			out<<m.first;
-			out<<";}\n";
+	auto printTerminals=[](auto s){
+		cout<<"=============terminals=================="<<endl;
+		for (auto item: s){
+			cout<<item<<endl;
 		}
-		out<<strEpilogue<<endl;
+		cout<<"=============terminals=================="<<endl;
 	};
-	outputFlexInput(terminalTokens);
+	printTerminals(terminals);
+
+
 }
 int main(){
 	bnf();
