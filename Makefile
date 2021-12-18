@@ -3,7 +3,7 @@ CC=/home/nick/opt/gcc-10.2.0/bin/gcc
 CPP=/home/nick/opt/gcc-10.2.0/bin/g++
 
 all: cplusplus.c lexer.c
-	${CPP} -g -O0 cplusplus.c lexer.c -o cplusplus
+	${CPP} -g -O0 cplusplus.c lexer.c -o cplusplus.exe
 	cp grammar.txt /mnt/sda3/diabloforum/public_html/mycplusplus/
 	cp bnf.cpp /mnt/sda3/diabloforum/public_html/mycplusplus/
 	cp cplusplus.y /mnt/sda3/diabloforum/public_html/mycplusplus/
@@ -29,4 +29,6 @@ lexer.exe: lexer.c lexer.l
 	g++ -I. -DLEXER_TEST lexer.c -o lexer.exe -lfl
 #	./lexer.exe /tmp/bnf.i
 
+clean:
+	rm -f *.exe cplusplus.* lexer.c lexer.exe
 			
