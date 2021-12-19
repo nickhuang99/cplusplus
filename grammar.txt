@@ -2,9 +2,9 @@ translation-unit:
 	declaration-seqopt
 	global-module-fragmentopt module-declaration declaration-seqopt private-module-fragmentopt
 
-
 primary-expression:
 	literal
+	string-literal
 	this
 	( expression )
 	id-expression
@@ -802,15 +802,13 @@ overloadable-operator:
 	,
 literal-operator-id:
 	operator string-literal IDENTIFIER
-	operator user-defined-string-literal 	
-	
+	operator user-defined-string-literal	
 user-defined-string-literal:
 	string-literal ud-suffix
 ud-suffix:
 	IDENTIFIER 	
 string-literal:
-	STRING_LITERAL
-	
+	STRING_LITERAL	
 template-declaration:
 	template-head declaration
 	template-head concept-definition
@@ -873,7 +871,6 @@ explicit-instantiation:
 	externopt template declaration
 explicit-specialization:
 	template < > declaration 		
-	
 try-block:
 	try compound-statement handler-seq
 function-try-block:
@@ -889,3 +886,4 @@ exception-declaration:
 noexcept-specifier:
 	noexcept ( constant-expression )
 	noexcept	
+	

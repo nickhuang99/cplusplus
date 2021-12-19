@@ -134,7 +134,8 @@ set<string> getNonTerminals(const string& bnfFile){
 };
 
 
-map<string, vector<vector<string> > > getProduction(const string& bnfFile)
+map<string, vector<vector<string> > > getProduction(const string& bnfFile,
+		map<string, string>&terminalTokens)
 {
 	auto quoteString=[](const string& str){
 		stringstream ss;
@@ -147,7 +148,6 @@ map<string, vector<vector<string> > > getProduction(const string& bnfFile)
 	vector<vector<string>> productions;
 	map<string, vector<vector<string> > > result;
 	set<string> non_terminals=getNonTerminals(bnfFile);
-	map<string, string> terminalTokens;
 	ifstream in(bnfFile);
 
 
@@ -296,16 +296,22 @@ map<string, vector<vector<string> > > getProduction(const string& bnfFile)
 }
 
 
-void outputBisonInput(const string& bisonFile, auto rules, const string startRule="translation-unit")
+void outputBisonInput(const string& bisonFile, auto rules, const map<string, string>& terminalTokens,
+		const string startRule="translation-unit")
 {
-	auto outputBisonTokens=[](auto&out, auto rules){
+	auto outputBisonTokens=[](auto&out, auto& rules, auto& terminalTokens){
 		set<string> result;
 		for (auto r:rules){
 			for (auto p: r.second){
 				for (auto s: p){
 					if (s.size()>1 && std::isupper(s[0], std::locale("C"))){
 						if (!rules.contains(s) && !result.contains(s)){
-							out<<"%term  "<<s<<endl;
+							const string& strAlias=terminalTokens.at(s);
+							if (s != strAlias){
+								out<<"%token  "<<s<<"\t"<<terminalTokens.at(s)<<endl;
+							}else{
+								out<<"%token  "<<s<<endl;
+							}
 							result.insert(s);
 						}
 					}
@@ -349,6 +355,7 @@ extern int yylex (void);
 	string strEpilogue=R"delim(
 %%
 int main(int argc, char**argv){	
+yydebug=1;
 extern FILE *yyin;
 if (argc!=2){
 	fprintf(stderr, "usage: %s <source>\n", argv[0]);
@@ -376,7 +383,7 @@ return 0;
 )";
 	ofstream out(bisonFile);
 	out<<strPrologue;
-	outputBisonTokens(out, rules);
+	outputBisonTokens(out, rules, terminalTokens);
 	out<<"%start "<<startRule<<endl;
 	out<<strDeclaration;
 	outputRules(out, rules);
@@ -387,7 +394,8 @@ void bnf(){
 
 	const string bnfFile="grammar.txt";
 	map<string, vector<vector<string> > > rules;
-	rules=getProduction(bnfFile);
+	map<string, string> terminalTokens;
+	rules=getProduction(bnfFile, terminalTokens);
 //	cout<<"=================printout all non-terminals===================="<<endl;
 //	[](auto r){
 //		for (auto item: r){
@@ -398,7 +406,7 @@ void bnf(){
 	//cout<<"===================print rules====================="<<endl;
 
 	const string bisonFile="cplusplus.y";
-	outputBisonInput(bisonFile, rules);
+	outputBisonInput(bisonFile, rules, terminalTokens);
 
 //	cout<<"=================print all terminals======================"<<endl;
 //	set<string> terminals=[](auto rules){
@@ -429,7 +437,8 @@ int main(int argc, char**argv){
 	}else if (argc==2){
 		const string bnfFile="grammar.txt";
 		map<string, vector<vector<string> > > rules;
-		rules=getProduction(bnfFile);
+		map<string, string> terminalTokens;
+		rules=getProduction(bnfFile, terminalTokens);
 		auto subTree=selectTree(rules, argv[1]);
 		cout<<"=================printout all non-terminals===================="<<endl;
 		[](auto r){
@@ -439,6 +448,6 @@ int main(int argc, char**argv){
 		}(subTree);
 
 		const string bisonFile="cplusplus.y";
-		outputBisonInput(bisonFile, subTree, argv[1]);
+		outputBisonInput(bisonFile, subTree, terminalTokens, argv[1]);
 	}
 }

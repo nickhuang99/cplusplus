@@ -24,7 +24,7 @@
  */
 
 /*
- * ISO C++ lexical analyzer.
+ * C++ lexical analyzer.
  * 
  */
 
@@ -35,7 +35,7 @@
 using namespace std;
 
 void yyerror(const string& str);
-#define LITERAL    		1000
+
 %}
 %option	noyywrap
 %option yylineno
@@ -88,7 +88,7 @@ ud-suffix			{identifier}
 
 
 %%
-		size_t delim_len, delim_offset;
+		size_t delim_len, delim_offset; 
 	/********************************start integer literal*******************************/
 {binary-literal}{integer-suffix}?			{return LITERAL;}
 {octal-literal}{integer-suffix}?			{return LITERAL;}
@@ -109,9 +109,9 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 	                            memcmp(yytext + yyleng - (delim_len + 1),
 	                                   yytext + delim_offset, delim_len) == 0) 
 	                        {	
-	                          	BEGIN(END_RAW_STRING);	                          	                   
-	                       	}
-                     		yymore();                     		
+	                          	BEGIN(END_RAW_STRING); 	                                                	                     	                   
+	                       	}	                                          	
+                     		yymore();                      		                  		
                       }
    <<EOF>>            {  yyerror("Unterminated raw string");
                          BEGIN(INITIAL);
@@ -119,15 +119,15 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
                       }
 }
 <END_RAW_STRING>{
-		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return LITERAL;}
-		<<EOF>>					{BEGIN(INITIAL); return LITERAL;}		
+		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return STRING_LITERAL;}
+		<<EOF>>					{BEGIN(INITIAL); return STRING_LITERAL;}		
 		/* user defined string literal */
-		[_a-zA-Z][_a-zA-Z0-9]*	{BEGIN(INITIAL); yymore(); return LITERAL;}
+		[_a-zA-Z][_a-zA-Z0-9]*	{BEGIN(INITIAL); yymore(); return STRING_LITERAL;}
 }
 		/********************************end raw-string literal*******************************/
 		/********************************other string literal*******************************/
 
-{encoding-prefix}?[\"]{schar-seq}*[\"]		{ return LITERAL;}	
+{encoding-prefix}?[\"]{schar-seq}*[\"]		{ return STRING_LITERAL;}	
 
 	/********************************end string literal*******************************/
 
