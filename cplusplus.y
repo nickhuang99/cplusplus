@@ -7,144 +7,144 @@ extern int yylineno;
 extern void yyerror(const string& );
 extern int yylex (void);
 %}
-%term  COMMA
-%term  CONSTEXPR
-%term  ELLIPSIS
-%term  EXPORT
-%term  EXTERN
-%term  IDENTIFIER
-%term  INLINE
-%term  NOEXCEPT
-%term  NOT
-%term  SCOPE
-%term  TEMPLATE
-%term  THIS
-%term  TYPENAME
-%term  VIRTUAL
-%term  PRIVATE
-%term  PROTECTED
-%term  PUBLIC
-%term  PLUS
-%term  MINUS
-%term  USING
-%term  EQ
-%term  SEMICOLON
-%term  ALIGNAS
-%term  OPEN_PAREN
-%term  CLOSE_PAREN
-%term  AND
-%term  ASM
-%term  MULT_EQ
-%term  DIV_EQ
-%term  MOD_EQ
-%term  PLUS_EQ
-%term  MINUS_EQ
-%term  RSHIFT_EQ
-%term  LSHIFT_EQ
-%term  AND_EQ
-%term  XOR_EQ
-%term  OR_EQ
-%term  OPEN_SQUARE
-%term  CLOSE_SQUARE
-%term  COLON
-%term  CO_AWAIT
-%term  OPEN_BRACE
-%term  CLOSE_BRACE
-%term  BALANCED_TOKEN
-%term  CLASS
-%term  STRUCT
-%term  UNION
-%term  FINAL
-%term  SPACESHIP
-%term  CONCEPT
-%term  QUERY
-%term  AND_AND
-%term  OR_OR
-%term  OPERATOR
-%term  CO_RETURN
-%term  CONST
-%term  VOLATILE
-%term  FRIEND
-%term  TYPEDEF
-%term  CONSTEVAL
-%term  CONSTINIT
-%term  DECLTYPE
-%term  DEREF
-%term  DELETE
-%term  DOT
-%term  ENUM
-%term  EQ_EQ
-%term  NOT_EQ
-%term  XOR
-%term  LESS
-%term  GREATER
-%term  EXPLICIT
-%term  MULT
-%term  DIV
-%term  MOD
-%term  OR
-%term  LSHIFT
-%term  RSHIFT
-%term  LESS_EQ
-%term  GREATER_EQ
-%term  DOT_STAR
-%term  DEREF_STAR
-%term  DEFAULT
-%term  TRY
-%term  MODULE
-%term  CATCH
-%term  HEADER_NAME
-%term  WHILE
-%term  DO
-%term  FOR
-%term  BREAK
-%term  CONTINUE
-%term  RETURN
-%term  GOTO
-%term  CASE
-%term  IMPORT
-%term  NAMESPACE
-%term  REQUIRES
-%term  NEW
-%term  COMPL
-%term  PLUS_PLUS
-%term  MINUS_MINUS
-%term  AUTO
-%term  DYNAMIC_CAST
-%term  STATIC_CAST
-%term  REINTERPRET_CAST
-%term  CONST_CAST
-%term  TYPEID
-%term  LITERAL
-%term  IF
-%term  ELSE
-%term  SWITCH
-%term  CHAR
-%term  CHAR8_T
-%term  CHAR16_T
-%term  CHAR32_T
-%term  WCHAR_T
-%term  BOOL
-%term  SHORT
-%term  INT
-%term  LONG
-%term  SIGNED
-%term  UNSIGNED
-%term  FLOAT
-%term  DOUBLE
-%term  VOID
-%term  STATIC_ASSERT
-%term  STATIC
-%term  THREAD_LOCAL
-%term  MUTABLE
-%term  STRING_LITERAL
-%term  THROW
-%term  SIZEOF
-%term  ALIGNOF
-%term  OVERRIDE
-%term  CO_YIELD
+%token  COMMA	","
+%token  CONSTEXPR	"constexpr"
+%token  ELLIPSIS	"..."
+%token  EXPORT	"export"
+%token  EXTERN	"extern"
+%token  IDENTIFIER
+%token  INLINE	"inline"
+%token  NOEXCEPT	"noexcept"
+%token  NOT	"!"
+%token  SCOPE	"::"
+%token  TEMPLATE	"template"
+%token  THIS	"this"
+%token  TYPENAME	"typename"
+%token  VIRTUAL	"virtual"
+%token  PRIVATE	"private"
+%token  PROTECTED	"protected"
+%token  PUBLIC	"public"
+%token  PLUS	"+"
+%token  MINUS	"-"
+%token  USING	"using"
+%token  EQ	"="
+%token  SEMICOLON	";"
+%token  ALIGNAS	"alignas"
+%token  OPEN_PAREN	"("
+%token  CLOSE_PAREN	")"
+%token  AND	"&"
+%token  ASM	"asm"
+%token  MULT_EQ	"*="
+%token  DIV_EQ	"/="
+%token  MOD_EQ	"%="
+%token  PLUS_EQ	"+="
+%token  MINUS_EQ	"-="
+%token  RSHIFT_EQ	">>="
+%token  LSHIFT_EQ	"<<="
+%token  AND_EQ	"&="
+%token  XOR_EQ	"^="
+%token  OR_EQ	"|="
+%token  OPEN_SQUARE	"["
+%token  CLOSE_SQUARE	"]"
+%token  COLON	":"
+%token  CO_AWAIT	"co_await"
+%token  OPEN_BRACE	"{"
+%token  CLOSE_BRACE	"}"
+%token  BALANCED_TOKEN
+%token  CLASS	"class"
+%token  STRUCT	"struct"
+%token  UNION	"union"
+%token  FINAL	"final"
+%token  SPACESHIP	"<=>"
+%token  CONCEPT	"concept"
+%token  QUERY	"?"
+%token  AND_AND	"&&"
+%token  OR_OR	"||"
+%token  OPERATOR	"operator"
+%token  CO_RETURN	"co_return"
+%token  CONST	"const"
+%token  VOLATILE	"volatile"
+%token  FRIEND	"friend"
+%token  TYPEDEF	"typedef"
+%token  CONSTEVAL	"consteval"
+%token  CONSTINIT	"constinit"
+%token  DECLTYPE	"decltype"
+%token  DEREF	"->"
+%token  DELETE	"delete"
+%token  DOT	"."
+%token  ENUM	"enum"
+%token  EQ_EQ	"=="
+%token  NOT_EQ	"!="
+%token  XOR	"^"
+%token  LESS	"<"
+%token  GREATER	">"
+%token  EXPLICIT	"explicit"
+%token  MULT	"*"
+%token  DIV	"/"
+%token  MOD	"%"
+%token  OR	"|"
+%token  LSHIFT	"<<"
+%token  RSHIFT	">>"
+%token  LESS_EQ	"<="
+%token  GREATER_EQ	">="
+%token  DOT_STAR	".*"
+%token  DEREF_STAR	"->*"
+%token  DEFAULT	"default"
+%token  TRY	"try"
+%token  MODULE	"module"
+%token  CATCH	"catch"
+%token  HEADER_NAME
+%token  WHILE	"while"
+%token  DO	"do"
+%token  FOR	"for"
+%token  BREAK	"break"
+%token  CONTINUE	"continue"
+%token  RETURN	"return"
+%token  GOTO	"goto"
+%token  CASE	"case"
+%token  IMPORT	"import"
+%token  NAMESPACE	"namespace"
+%token  REQUIRES	"requires"
+%token  NEW	"new"
+%token  COMPL	"~"
+%token  PLUS_PLUS	"++"
+%token  MINUS_MINUS	"--"
+%token  AUTO	"auto"
+%token  DYNAMIC_CAST	"dynamic_cast"
+%token  STATIC_CAST	"static_cast"
+%token  REINTERPRET_CAST	"reinterpret_cast"
+%token  CONST_CAST	"const_cast"
+%token  TYPEID	"typeid"
+%token  LITERAL	"literal"
+%token  IF	"if"
+%token  ELSE	"else"
+%token  SWITCH	"switch"
+%token  CHAR	"char"
+%token  CHAR8_T	"char8_t"
+%token  CHAR16_T	"char16_t"
+%token  CHAR32_T	"char32_t"
+%token  WCHAR_T	"wchar_t"
+%token  BOOL	"bool"
+%token  SHORT	"short"
+%token  INT	"int"
+%token  LONG	"long"
+%token  SIGNED	"signed"
+%token  UNSIGNED	"unsigned"
+%token  FLOAT	"float"
+%token  DOUBLE	"double"
+%token  VOID	"void"
+%token  STATIC_ASSERT	"static_assert"
+%token  STATIC	"static"
+%token  THREAD_LOCAL	"thread_local"
+%token  MUTABLE	"mutable"
+%token  STRING_LITERAL
+%token  THROW	"throw"
+%token  SIZEOF	"sizeof"
+%token  ALIGNOF	"alignof"
+%token  OVERRIDE	"override"
+%token  CO_YIELD	"co_yield"
+%start translation-unit
 
-%start  translation-unit
 %glr-parser
 %%
 COMMA-opt:
@@ -1188,6 +1188,7 @@ postfix-expression:
 	;
 primary-expression:
 	LITERAL
+	|	string-literal
 	|	THIS
 	|	OPEN_PAREN	expression	CLOSE_PAREN
 	|	id-expression
@@ -1543,23 +1544,24 @@ yield-expression:
 
 %%
 int main(int argc, char**argv){	
-	extern FILE *yyin;
-	if (argc!=2){
-		fprintf(stderr, "usage: %s <source>\n", argv[0]);
-		return -1;
-	}
-	yyin=fopen(argv[1], "r");
-	if (yyin){	
-		if (yyparse()==0){
-				printf("success!\n");
-			}else{
-				printf("failure\n");
-			}
-			fclose(yyin);
+yydebug=1;
+extern FILE *yyin;
+if (argc!=2){
+	fprintf(stderr, "usage: %s <source>\n", argv[0]);
+	return -1;
+}
+yyin=fopen(argv[1], "r");
+if (yyin){	
+	if (yyparse()==0){
+			printf("success!\n");
 		}else{
-			perror(argv[1]);
-		return -2;
-	}
-	return 0;
+			printf("failure\n");
+		}
+		fclose(yyin);
+	}else{
+		perror(argv[1]);
+	return -2;
+}
+return 0;
 }
 
