@@ -377,13 +377,20 @@ return 0;
 }
 )delim";
 
-	string strDeclaration=R"(
+	string strDeclaration=R"delim(
+%require "3.2"
+%language "c++"
 %glr-parser
+%skeleton "glr2.cc"
 %%
-)";
+)delim";
+	string strOtherLexerTokens=R"delim(
+%token <std::string> LITERAL "literal"
+)delim";
 	ofstream out(bisonFile);
 	out<<strPrologue;
 	outputBisonTokens(out, rules, terminalTokens);
+	out<<strOtherLexerTokens;
 	out<<"%start "<<startRule<<endl;
 	out<<strDeclaration;
 	outputRules(out, rules);

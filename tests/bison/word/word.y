@@ -8,13 +8,13 @@
 #include <vector>
 #include <sstream>
 #include <variant>
-
 using namespace std;
-
 }
 
 %require "3.2"
 %language "c++"
+%glr-parser
+%skeleton "glr2.cc"
 %define parse.trace
 %code{
 	std::ostream& operator<< (std::ostream& o, const std::vector<std::variant<std::string,int>>& ss){
@@ -30,17 +30,12 @@ using namespace std;
 }	
 %define api.value.type variant
 %define api.token.constructor
-%code
-{
-  namespace yy
-  {
-  	ifstream yyin;
-    // Return the next token.
-    auto yylex () -> parser::symbol_type
-    { 
+%code{
+  namespace yy{
+  	ifstream yyin;   
+    auto yylex () -> parser::symbol_type{ 
     	string str;
-    	while (yyin>>str){
-    		
+    	while (yyin>>str){    		
     		stringstream ss(str);
     		int n;
     		if (ss>>n){    			

@@ -77,8 +77,10 @@ hexadecimal-floating-point-literal	[0][xX]({hexadecimal-fractional-constant}|{he
 %x 				START_RAW_STRING
 %x				END_RAW_STRING
 basic-s-char			[^"\\\n]
+h-char					[^\n>]
+q-char					[^\n"]						 
 s-char					{basic-s-char}|{escape-sequence}|{universal-character-name}
-
+header-name				(["]{q-char}+["])|([<]{h-char}+[>])
 dchar-seq				[^()\\[:space:]]{0,64}  
 schar-seq				{s-char}+
 	/********************************end string literals*******************************/
@@ -183,7 +185,7 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 "]"				{ return CLOSE_SQUARE;}
 ":"				{ return COLON;}
 ","				{ return COMMA;}
-compl			|
+"compl"			|
 "~"				{ return COMPL;}
 "concept"		{ return CONCEPT;}
 "const"			{ return CONST;}
@@ -222,14 +224,14 @@ compl			|
 "goto"			{ return GOTO;}
 ">"				{ return GREATER;}
 ">="			{ return GREATER_EQ;}
-HEADER_NAME		{ return HEADER_NAME;}
+{header-name}	{ return HEADER_NAME;}
 "if"			{ return IF;}
 "import"		{ return IMPORT;}
 "inline"		{ return INLINE;}
 "int"			{ return INT;}
 "<"				{ return LESS;}
 "<="			{ return LESS_EQ;}
-"literal"		{ return LITERAL;}
+
 "long"			{ return LONG;}
 "<<"			{ return LSHIFT;}
 "<<="			{ return LSHIFT_EQ;}
@@ -255,7 +257,7 @@ HEADER_NAME		{ return HEADER_NAME;}
 "<:"			|
 "["				{ return OPEN_SQUARE;}
 "operator"		{ return OPERATOR;}
-bitor			|
+"bitor"			|
 "|"				{ return OR;}
 "or_eq"			|
 "|="			{ return OR_EQ;}
@@ -305,7 +307,7 @@ bitor			|
 "^"				{ return XOR;}
 "xor_eq"		|
 "^="			{ return XOR_EQ;}
-{identifier}	{return IDENTIFIER;}
+{identifier}	{ return IDENTIFIER;}
 
 [#][[:space:]]*"pragma"[^\n]*[\n]		; /*GCC has #pragma GCC visibility noise */		
 
