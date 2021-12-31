@@ -31,6 +31,7 @@
 %{
 #include <iostream>
 #include <string>
+#include "driver.h"
 #include "cplusplus.h"
 using namespace std;
 
@@ -92,13 +93,13 @@ ud-suffix			{identifier}
 %%
 		size_t delim_len, delim_offset; 
 	/********************************start integer literal*******************************/
-{binary-literal}{integer-suffix}?			{return LITERAL;}
-{octal-literal}{integer-suffix}?			{return LITERAL;}
-{decimal-literal}{integer-suffix}?			{return LITERAL;}
-{hexadecimal-literal}{integer-suffix}?		{return LITERAL;}
+{binary-literal}{integer-suffix}?			{ return yy::parser::make_LITERAL();}
+{octal-literal}{integer-suffix}?			{ return yy::parser::make_LITERAL();}
+{decimal-literal}{integer-suffix}?			{ return yy::parser::make_LITERAL();}
+{hexadecimal-literal}{integer-suffix}?		{ return yy::parser::make_LITERAL();}
 	/********************************end integer literal*******************************/
 	/********************************start character literal*******************************/
-{character-literal}							{return LITERAL;}
+{character-literal}							{ return yy::parser::make_LITERAL();}
 	/********************************end character literal*******************************/
 LR\"{dchar-seq}*\(		{ delim_offset=3; delim_len = yyleng - delim_offset-1; yymore(); BEGIN(START_RAW_STRING); }
 u8R\"{dchar-seq}*\(    	{ delim_offset=4; delim_len = yyleng - delim_offset-1; yymore(); BEGIN(START_RAW_STRING); }
@@ -117,31 +118,31 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
                       }
    <<EOF>>            {  yyerror("Unterminated raw string");
                          BEGIN(INITIAL);
-                         return 0;
+                         return yy::parser::make_YYUNDEF();
                       }
 }
 <END_RAW_STRING>{
-		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return STRING_LITERAL;}
-		<<EOF>>					{BEGIN(INITIAL); return STRING_LITERAL;}		
+		[^_a-zA-Z]				{yyleng--;BEGIN(INITIAL); return yy::parser::make_STRING_LITERAL();}
+		<<EOF>>					{BEGIN(INITIAL); return yy::parser::make_STRING_LITERAL();}		
 		/* user defined string literal */
-		[_a-zA-Z][_a-zA-Z0-9]*	{BEGIN(INITIAL); yymore(); return STRING_LITERAL;}
+		[_a-zA-Z][_a-zA-Z0-9]*	{BEGIN(INITIAL); yymore(); return yy::parser::make_STRING_LITERAL();}
 }
 		/********************************end raw-string literal*******************************/
 		/********************************other string literal*******************************/
 
-{encoding-prefix}?[\"]{schar-seq}*[\"]		{ return STRING_LITERAL;}	
+{encoding-prefix}?[\"]{schar-seq}*[\"]		{ return yy::parser::make_STRING_LITERAL();}	
 
 	/********************************end string literal*******************************/
 
 	/********************************start floating point literals*******************************/
-{decimal-floating-point-literal}		{return LITERAL;}
-{hexadecimal-floating-point-literal}	{return LITERAL;}
+{decimal-floating-point-literal}		{ return yy::parser::make_LITERAL();}
+{hexadecimal-floating-point-literal}	{ return yy::parser::make_LITERAL();}
 	/********************************end floating point literals*******************************/
 	/********************************start boolean & pointer literals*******************************/
 
 "false"						|	
-"true"						{return LITERAL;}
-"nullptr"					{return LITERAL;}
+"true"						{ return yy::parser::make_LITERAL();}
+"nullptr"					{ return yy::parser::make_LITERAL();}
 
 	/********************************end boolean & pointer literals*******************************/
 	/********************************start user-defined literals*******************************/
@@ -153,165 +154,167 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 {digit-sequence}{exponent-part}{ud-suffix}										|
 [0][xX]{hexadecimal-fractional-constant}{binary-exponent-part}{ud-suffix}		|
 [0][xX]{hexadecimal-digit-sequence}{binary-exponent-part}{ud-suffix}			|	
-{character-literal}{ud-suffix}						{return LITERAL;}
+{character-literal}{ud-suffix}						{ return yy::parser::make_LITERAL();}
 
-{encoding-prefix}?["]{schar-seq}*["]{ud-suffix}		{return LITERAL;}	
+{encoding-prefix}?["]{schar-seq}*["]{ud-suffix}		{ return yy::parser::make_LITERAL();}	
 
 
 	/******************keyword and terminal used by parser********************/
-"alignas"		{ return ALIGNAS;}
-"alignof"		{ return ALIGNOF;}
+"<=>"			{ return yy::parser::make_SPACESHIP();}
+"alignas"		{ return yy::parser::make_ALIGNAS();}
+"alignof"		{ return yy::parser::make_ALIGNOF();}
 "bitand"		|
-"&"				{ return AND;}
+"&"				{ return yy::parser::make_AND();}
 "and"			|
-"&&"			{ return AND_AND;}
+"&&"			{ return yy::parser::make_AND_AND();}
 "and_eq"		|
-"&="			{ return AND_EQ;}
-"asm"			{ return ASM;}
-"auto"			{ return AUTO;}
-"bool"			{ return BOOL;}
-"break"			{ return BREAK;}
-"case"			{ return CASE;}
-"catch"			{ return CATCH;}
-"char"			{ return CHAR;}
-"char16_t"		{ return CHAR16_T;}
-"char32_t"		{ return CHAR32_T;}
-"char8_t"		{ return CHAR8_T;}
-"class"			{ return CLASS;}
+"&="			{ return yy::parser::make_AND_EQ();}
+"asm"			{ return yy::parser::make_ASM();}
+"auto"			{ return yy::parser::make_AUTO();}
+"bool"			{ return yy::parser::make_BOOL();}
+"break"			{ return yy::parser::make_BREAK();}
+"case"			{ return yy::parser::make_CASE();}
+"catch"			{ return yy::parser::make_CATCH();}
+"char"			{ return yy::parser::make_CHAR();}
+"char16_t"		{ return yy::parser::make_CHAR16_T();}
+"char32_t"		{ return yy::parser::make_CHAR32_T();}
+"char8_t"		{ return yy::parser::make_CHAR8_T();}
+"class"			{ return yy::parser::make_CLASS();}
 "%>"			|
-"}"				{ return CLOSE_BRACE;}
-")"				{ return CLOSE_PAREN;}
+"}"				{ return yy::parser::make_CLOSE_BRACE();}
+")"				{ return yy::parser::make_CLOSE_PAREN();}
 ":>"			|
-"]"				{ return CLOSE_SQUARE;}
-":"				{ return COLON;}
-","				{ return COMMA;}
+"]"				{ return yy::parser::make_CLOSE_SQUARE();}
+":"				{ return yy::parser::make_COLON();}
+","				{ return yy::parser::make_COMMA();}
 "compl"			|
-"~"				{ return COMPL;}
-"concept"		{ return CONCEPT;}
-"const"			{ return CONST;}
-"consteval"		{ return CONSTEVAL;}
-"constexpr"		{ return CONSTEXPR;}
-"constinit"		{ return CONSTINIT;}
-"const_cast"	{ return CONST_CAST;}
-"continue"		{ return CONTINUE;}
-"co_await"		{ return CO_AWAIT;}
-"co_return"		{ return CO_RETURN;}
-"co_yield"		{ return CO_YIELD;}
-"decltype"		{ return DECLTYPE;}
-"default"		{ return DEFAULT;}
-"delete"		{ return DELETE;}
-"->"			{ return DEREF;}
-"->*"			{ return DEREF_STAR;}
-"/"				{ return DIV;}
-"/="			{ return DIV_EQ;}
-"do"			{ return DO;}
-"."				{ return DOT;}
-".*"			{ return DOT_STAR;}
-"double"		{ return DOUBLE;}
-"dynamic_cast"	{ return DYNAMIC_CAST;}
-"..."			{ return ELLIPSIS;}
-"else"			{ return ELSE;}
-"enum"			{ return ENUM;}
-"="				{ return EQ;}
-"=="			{ return EQ_EQ;}
-"explicit"		{ return EXPLICIT;}
-"export"		{ return EXPORT;}
-"extern"		{ return EXTERN;}
-"final"			{ return FINAL;}
-"float"			{ return FLOAT;}
-"for"			{ return FOR;}
-"friend"		{ return FRIEND;}
-"goto"			{ return GOTO;}
-">"				{ return GREATER;}
-">="			{ return GREATER_EQ;}
-{header-name}	{ return HEADER_NAME;}
-"if"			{ return IF;}
-"import"		{ return IMPORT;}
-"inline"		{ return INLINE;}
-"int"			{ return INT;}
-"<"				{ return LESS;}
-"<="			{ return LESS_EQ;}
-
-"long"			{ return LONG;}
-"<<"			{ return LSHIFT;}
-"<<="			{ return LSHIFT_EQ;}
-"-"				{ return MINUS;}
-"-="			{ return MINUS_EQ;}
-"--"			{ return MINUS_MINUS;}
-"%"				{ return MOD;}
-"module"		{ return MODULE;}
-"%="			{ return MOD_EQ;}
-"*"				{ return MULT;}
-"*="			{ return MULT_EQ;}
-"mutable"		{ return MUTABLE;}
-"namespace"		{ return NAMESPACE;}
-"new"			{ return NEW;}
-"noexcept"		{ return NOEXCEPT;}
+"~"				{ return yy::parser::make_COMPL();}
+"concept"		{ return yy::parser::make_CONCEPT();}
+"const"			{ return yy::parser::make_CONST();}
+"consteval"		{ return yy::parser::make_CONSTEVAL();}
+"constexpr"		{ return yy::parser::make_CONSTEXPR();}
+"constinit"		{ return yy::parser::make_CONSTINIT();}
+"const_cast"	{ return yy::parser::make_CONST_CAST();}
+"continue"		{ return yy::parser::make_CONTINUE();}
+"co_await"		{ return yy::parser::make_CO_AWAIT();}
+"co_return"		{ return yy::parser::make_CO_RETURN();}
+"co_yield"		{ return yy::parser::make_CO_YIELD();}
+"decltype"		{ return yy::parser::make_DECLTYPE();}
+"default"		{ return yy::parser::make_DEFAULT();}
+"delete"		{ return yy::parser::make_DELETE();}
+"->"			{ return yy::parser::make_DEREF();}
+"->*"			{ return yy::parser::make_DEREF_STAR();}
+"/"				{ return yy::parser::make_DIV();}
+"/="			{ return yy::parser::make_DIV_EQ();}
+"do"			{ return yy::parser::make_DO();}
+"."				{ return yy::parser::make_DOT();}
+".*"			{ return yy::parser::make_DOT_STAR();}
+"double"		{ return yy::parser::make_DOUBLE();}
+"dynamic_cast"	{ return yy::parser::make_DYNAMIC_CAST();}
+"..."			{ return yy::parser::make_ELLIPSIS();}
+"else"			{ return yy::parser::make_ELSE();}
+"enum"			{ return yy::parser::make_ENUM();}
+"="				{ return yy::parser::make_EQ();}
+"=="			{ return yy::parser::make_EQ_EQ();}
+"explicit"		{ return yy::parser::make_EXPLICIT();}
+"export"		{ return yy::parser::make_EXPORT();}
+"extern"		{ return yy::parser::make_EXTERN();}
+"final"			{ return yy::parser::make_FINAL();}
+"float"			{ return yy::parser::make_FLOAT();}
+"for"			{ return yy::parser::make_FOR();}
+"friend"		{ return yy::parser::make_FRIEND();}
+"goto"			{ return yy::parser::make_GOTO();}
+">"				{ return yy::parser::make_GREATER();}
+">="			{ return yy::parser::make_GREATER_EQ();}
+{header-name}	{ return yy::parser::make_HEADER_NAME();}
+"if"			{ return yy::parser::make_IF();}
+"import"		{ return yy::parser::make_IMPORT();}
+"inline"		{ return yy::parser::make_INLINE();}
+"int"			{ return yy::parser::make_INT();}
+"<"				{ return yy::parser::make_LESS();}
+"<="			{ return yy::parser::make_LESS_EQ();}
+"long"			{ return yy::parser::make_LONG();}
+"<<"			{ return yy::parser::make_LSHIFT();}
+"<<="			{ return yy::parser::make_LSHIFT_EQ();}
+"-"				{ return yy::parser::make_MINUS();}
+"-="			{ return yy::parser::make_MINUS_EQ();}
+"--"			{ return yy::parser::make_MINUS_MINUS();}
+"%"				{ return yy::parser::make_MOD();}
+"module"		{ return yy::parser::make_MODULE();}
+"%="			{ return yy::parser::make_MOD_EQ();}
+"*"				{ return yy::parser::make_MULT();}
+"*="			{ return yy::parser::make_MULT_EQ();}
+"mutable"		{ return yy::parser::make_MUTABLE();}
+"namespace"		{ return yy::parser::make_NAMESPACE();}
+"new"			{ return yy::parser::make_NEW();}
+"noexcept"		{ return yy::parser::make_NOEXCEPT();}
 "not"			|
-"!"				{ return NOT;}
+"!"				{ return yy::parser::make_NOT();}
 "not_eq"		|
-"!="			{ return NOT_EQ;}
+"!="			{ return yy::parser::make_NOT_EQ();}
 "<%"			|
-"{"				{ return OPEN_BRACE;}
-"("				{ return OPEN_PAREN;}
+"{"				{ return yy::parser::make_OPEN_BRACE();}
+"("				{ return yy::parser::make_OPEN_PAREN();}
 "<:"			|
-"["				{ return OPEN_SQUARE;}
-"operator"		{ return OPERATOR;}
+"["				{ return yy::parser::make_OPEN_SQUARE();}
+"operator"		{ return yy::parser::make_OPERATOR();}
 "bitor"			|
-"|"				{ return OR;}
+"|"				{ return yy::parser::make_OR();}
 "or_eq"			|
-"|="			{ return OR_EQ;}
+"|="			{ return yy::parser::make_OR_EQ();}
 "or"			|
-"||"			{ return OR_OR;}
-"override"		{ return OVERRIDE;}
-"+"				{ return PLUS;}
-"+="			{ return PLUS_EQ;}
-"++"			{ return PLUS_PLUS;}
-"private"		{ return PRIVATE;}
-"protected"		{ return PROTECTED;}
-"public"		{ return PUBLIC;}
-"?"				{ return QUERY;}
-"reinterpret_cast"		{ return REINTERPRET_CAST;}
-"requires"		{ return REQUIRES;}
-"return"		{ return RETURN;}
-">>"			{ return RSHIFT;}
-">>="			{ return RSHIFT_EQ;}
-"::"			{ return SCOPE;}
-";"				{ return SEMICOLON;}
-"short"			{ return SHORT;}
-"signed"		{ return SIGNED;}
-"sizeof"		{ return SIZEOF;}
-"<=>"			{ return SPACESHIP;}
-"static"		{ return STATIC;}
-"static_assert"	{ return STATIC_ASSERT;}
-"static_cast"	{ return STATIC_CAST;}
-"struct"		{ return STRUCT;}
-"switch"		{ return SWITCH;}
-"template"		{ return TEMPLATE;}
-"this"			{ return THIS;}
-"thread_local"	{ return THREAD_LOCAL;}
-"throw"			{ return THROW;}
-"try"			{ return TRY;}
-"typedef"		{ return TYPEDEF;}
-"typeid"		{ return TYPEID;}
-"typename"		{ return TYPENAME;}
-"union"			{ return UNION;}
-"unsigned"		{ return UNSIGNED;}
-"using"			{ return USING;}
-"virtual"		{ return VIRTUAL;}
-"void"			{ return VOID;}
-"volatile"		{ return VOLATILE;}
-"wchar_t"		{ return WCHAR_T;}
-"while"			{ return WHILE;}
+"||"			{ return yy::parser::make_OR_OR();}
+"override"		{ return yy::parser::make_OVERRIDE();}
+"+"				{ return yy::parser::make_PLUS();}
+"+="			{ return yy::parser::make_PLUS_EQ();}
+"++"			{ return yy::parser::make_PLUS_PLUS();}
+"private"		{ return yy::parser::make_PRIVATE();}
+"protected"		{ return yy::parser::make_PROTECTED();}
+"public"		{ return yy::parser::make_PUBLIC();}
+"?"				{ return yy::parser::make_QUERY();}
+"reinterpret_cast"		{ return yy::parser::make_REINTERPRET_CAST();}
+"requires"		{ return yy::parser::make_REQUIRES();}
+"return"		{ return yy::parser::make_RETURN();}
+">>"			{ return yy::parser::make_RSHIFT();}
+
+">>="			{ return yy::parser::make_RSHIFT_EQ();}
+"::"			{ return yy::parser::make_SCOPE();}
+";"				{ return yy::parser::make_SEMICOLON();}
+"short"			{ return yy::parser::make_SHORT();}
+"signed"		{ return yy::parser::make_SIGNED();}
+"sizeof"		{ return yy::parser::make_SIZEOF();}
+"struct"		{ return yy::parser::make_STRUCT();}
+"static_cast"	{ return yy::parser::make_STATIC_CAST();}
+"static_assert"	{ return yy::parser::make_STATIC_ASSERT();}
+"static"		{ return yy::parser::make_STATIC();}
+"switch"		{ return yy::parser::make_SWITCH();}
+"template"		{ return yy::parser::make_TEMPLATE();}
+"this"			{ return yy::parser::make_THIS();}
+"thread_local"	{ return yy::parser::make_THREAD_LOCAL();}
+"throw"			{ return yy::parser::make_THROW();}
+"try"			{ return yy::parser::make_TRY();}
+"typedef"		{ return yy::parser::make_TYPEDEF();}
+"typeid"		{ return yy::parser::make_TYPEID();}
+"typename"		{ return yy::parser::make_TYPENAME();}
+"union"			{ return yy::parser::make_UNION();}
+"unsigned"		{ return yy::parser::make_UNSIGNED();}
+"using"			{ return yy::parser::make_USING();}
+"virtual"		{ return yy::parser::make_VIRTUAL();}
+"void"			{ return yy::parser::make_VOID();}
+"volatile"		{ return yy::parser::make_VOLATILE();}
+"wchar_t"		{ return yy::parser::make_WCHAR_T();}
+"while"			{ return yy::parser::make_WHILE();}
 "xor"			|
-"^"				{ return XOR;}
+"^"				{ return yy::parser::make_XOR();}
 "xor_eq"		|
-"^="			{ return XOR_EQ;}
-{identifier}	{ return IDENTIFIER;}
+"^="			{ return yy::parser::make_XOR_EQ();}
+
+{identifier}	{ return yy::parser::make_IDENTIFIER();}
 
 [#][[:space:]]*"pragma"[^\n]*[\n]		; /*GCC has #pragma GCC visibility noise */		
 
 [[:space:][:blank:]]+          { ; /* Ignore whitespace */}
+
 .				{ fprintf(stderr, "%d: ERROR! unexpected character `%c'\n", yylineno, yytext[0]); }
 
 %%
@@ -320,25 +323,30 @@ void yyerror(const string& str){
 }
 
 #ifdef LEXER_TEST
+
+#include "cplusplus.h"
 int main(int argc, char**argv){
+	using namespace yy;
+	
 	extern FILE *yyin;
 	if (argc==2){
 		yyin=fopen(argv[1], "r");
 		if (yyin){
-			int token=0;
-			while (token=yylex()){				
-				string str(yytext, yyleng);
-				if (token==IDENTIFIER){
+			parser::symbol_type tk;
+			while (true){				
+				tk=yylex();
+				if (tk.kind()== parser::symbol_kind::S_YYEOF) break;
+									
+				if (tk.kind()==parser::symbol_kind::S_IDENTIFIER){
 					cout<<"token:\t"<<"IDENTIFIER";
-				}else if (token==LITERAL){
+				}else if (tk.kind()==parser::symbol_kind::S_LITERAL){
 					cout<<"token:\t"<<"LITERAL";
-				}else if (token==STRING_LITERAL){
+				}else if (tk.kind()==parser::symbol_kind::S_STRING_LITERAL){
 					cout<<"token:\t"<<"STRING_LITERAL";
 				}else{
-					cout<<"token:\t"<<token;
+					cout<<"token: UNKNOWN\t";
 				}
-				cout<<"\tline_number:"<<yylineno<<";\t"
-					<<"yyleng:"<<yyleng<<"\t:["<<str<<"]"<<endl;							
+				cout<<"\tline_number:"<<yylineno<<endl;							
 			}
 		}
 	}

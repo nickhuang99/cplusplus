@@ -4,8 +4,6 @@
 #include <string>
 using namespace std;
 extern int yylineno;
-extern void yyerror(const string& );
-extern int yylex (void);
 %}
 %token  COMMA	","
 %token  CONSTEXPR	"constexpr"
@@ -143,9 +141,33 @@ extern int yylex (void);
 %token  ALIGNOF	"alignof"
 %token  OVERRIDE	"override"
 %token  CO_YIELD	"co_yield"
+
+%code {
+# include "driver.h"
+}
+%code requires {
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
+}
 %start translation-unit
 
+%require "3.2"
 %glr-parser
+%skeleton "glr2.cc"
+%header
+%define api.value.type variant
+%define parse.assert
+%define api.token.constructor
+%define parse.error detailed
 %%
 COMMA-opt:
 	%empty
@@ -1543,6 +1565,11 @@ yield-expression:
 	;
 
 %%
+void
+yy::parser::error (const std::string& m)
+{
+  std::cerr << m << '\n';
+}
 int main(int argc, char**argv){	
 yydebug=1;
 extern FILE *yyin;
@@ -1552,7 +1579,8 @@ if (argc!=2){
 }
 yyin=fopen(argv[1], "r");
 if (yyin){	
-	if (yyparse()==0){
+	yy::parser parser;
+	if (parser.parse()==0){
 			printf("success!\n");
 		}else{
 			printf("failure\n");
