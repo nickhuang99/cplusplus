@@ -348,6 +348,23 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 using namespace std;
 extern int yylineno;
 %}
+%code {
+# include "driver.h"
+}
+%code requires {
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
+
+}
 )delim";
 
 	string strEpilogue=R"delim(
@@ -390,30 +407,35 @@ return 0;
 %define parse.assert
 %define api.token.constructor
 %define parse.error detailed
+%define api.token.prefix {TOK_}
 %%
 )delim";
-	string strOtherLexerTokens=R"delim(
-%code {
-# include "driver.h"
-}
-%code requires {
-# ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
-#    define YY_NULLPTR nullptr
-#   else
-#    define YY_NULLPTR 0
-#   endif
-#  else
-#   define YY_NULLPTR ((void*)0)
-#  endif
-# endif
-}
+
+	string strPrecedence=R"delim(
+%left COMMA
+	/*%right AND_EQ XOR_EQ OR_EQ LSHIFT_EQ RSHIFT_EQ MULT_EQ DIV_EQ MOD_EQ PLUS_EQ MINUS_EQ EQ CO_YIELD THROW*/
+%left OR_OR
+%left AND_AND
+%left OR
+%left XOR
+%left AND
+%left EQ_EQ NOT_EQ
+%left LESS LESS_EQ GREATER GREATER_EQ
+%left SPACESHIP
+%left LSHIFT RSHIFT
+%left PLUS MINUS
+%left MULT DIV MOD
+%left DOT_STAR DEREF_STAR
+	/*%right DELETE NEW CO_WAIT SIZEOF AND MULT*/ 
+
+%left DOT DEREF PLUS_PLUS MINUS_MINUS
+%left SCOPE
+
 )delim";
 	ofstream out(bisonFile);
 	out<<strPrologue;
 	outputBisonTokens(out, rules, terminalTokens);
-	out<<strOtherLexerTokens;
+	//out<<strPrecedence;
 	out<<"%start "<<startRule<<endl;
 	out<<strDeclaration;
 	outputRules(out, rules);
