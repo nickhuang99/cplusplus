@@ -331,7 +331,7 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 			for (auto s: p){
 				out<<"\t"<<s;
 			}
-			out<<endl;
+			out<<"\t%merge <stmt_merge>"<<endl;
 		}
 		out<<"\t;"<<endl;
 	};
@@ -342,14 +342,15 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 	};
 
 	string strPrologue=R"delim(
-%{
+%code{
 #include <iostream>
 #include <string>
+#include "driver.h"
+#include "cplusplus.h"
 using namespace std;
-extern int yylineno;
-%}
-%code {
-# include "driver.h"
+namespace yy{
+	 parser::value_type stmt_merge (parser::value_type& yy0, parser::value_type& yy1);
+}
 }
 %code requires {
 # ifndef YY_NULLPTR
@@ -374,31 +375,40 @@ yy::parser::error (const std::string& m)
 {
   std::cerr << m << '\n';
 }
+
+namespace yy{
+parser::value_type stmt_merge (parser::value_type& yy0, parser::value_type& yy1)
+{
+	extern parser::value_type yyval_default;
+	return yyval_default;
+}
+}
 int main(int argc, char**argv){	
-yydebug=1;
-extern FILE *yyin;
-if (argc!=2){
-	fprintf(stderr, "usage: %s <source>\n", argv[0]);
-	return -1;
-}
-yyin=fopen(argv[1], "r");
-if (yyin){	
-	yy::parser parser;
-	if (parser.parse()==0){
-			printf("success!\n");
+	yydebug=1;
+	extern FILE *yyin;
+	if (argc!=2){
+		fprintf(stderr, "usage: %s <source>\n", argv[0]);
+		return -1;
+	}
+	yyin=fopen(argv[1], "r");
+	if (yyin){	
+		yy::parser parser;
+		if (parser.parse()==0){
+				printf("success!\n");
+			}else{
+				printf("failure\n");
+			}
+			fclose(yyin);
 		}else{
-			printf("failure\n");
-		}
-		fclose(yyin);
-	}else{
-		perror(argv[1]);
-	return -2;
-}
-return 0;
+			perror(argv[1]);
+		return -2;
+	}
+	return 0;
 }
 )delim";
 
 	string strDeclaration=R"delim(
+
 %require "3.2"
 %glr-parser
 %skeleton "glr2.cc"
@@ -435,7 +445,7 @@ return 0;
 	ofstream out(bisonFile);
 	out<<strPrologue;
 	outputBisonTokens(out, rules, terminalTokens);
-	//out<<strPrecedence;
+	out<<strPrecedence;
 	out<<"%start "<<startRule<<endl;
 	out<<strDeclaration;
 	outputRules(out, rules);

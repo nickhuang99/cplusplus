@@ -1,7 +1,9 @@
 %{
 #include <stdio.h>
+#include "parser.hh"
 int yylex (void);
 void yyerror (char const *);
+static YYSTYPE stmt_merge (YYSTYPE x0, YYSTYPE x1);
 %}
 %define api.value.type {char const *}
 %token TYPENAME ID
@@ -18,8 +20,8 @@ prog:
 	| prog stmt   { printf ("\n"); }
 	;
 stmt:
-	expr ';'	/* %dprec 1 */
-	| decl      /* %dprec 2*/
+	expr ';'	%merge <stmt_merge> /* %dprec 1 */
+	| decl      %merge <stmt_merge> /* %dprec 2*/
 	;
 
 expr:
@@ -43,13 +45,20 @@ declarator:
 	;
 %%
 
+
 void yyerror (char const * msg){
 	printf("error %s\n", msg);
+}
+static YYSTYPE
+stmt_merge (YYSTYPE x0, YYSTYPE x1)
+{
+  printf ("<OR> ");
+  return "";
 }
 int main(int argc, char**argv){
 	extern FILE* yyin;
 	extern int yydebug;
-	yydebug=1;
+	//yydebug=1;
 	if (argc==2){
 		yyin=fopen(argv[1], "r");
 		if (yyin){
