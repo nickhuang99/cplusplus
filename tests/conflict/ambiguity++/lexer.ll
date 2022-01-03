@@ -10,12 +10,12 @@ blank			[ \t\n]+
 {typename}	{return yy::parser::make_TYPENAME(Term(yytext));}
 {id}		{return yy::parser::make_ID(Term(yytext));}
 
-"+"         { return yy::parser::make_PLUS ();}
-"="         { return yy::parser::make_EQUAL ();}
-"("         { return yy::parser::make_LPAREN ();}
-")"         { return yy::parser::make_RPAREN ();}
-";"         { return yy::parser::make_SEMICOLON ();}
+"+"         { return yy::parser::make_PLUS (Term(yytext));}
+"="         { return yy::parser::make_EQUAL (Term(yytext));}
+"("         { return yy::parser::make_LPAREN (Term(yytext));}
+")"         { return yy::parser::make_RPAREN (Term(yytext));}
+";"         { return yy::parser::make_SEMICOLON (Term(yytext));}
 {blank}		{;}
-.			{ return yy::parser::make_YYerror();}
-<<EOF>>  	{ return yy::parser::make_YYEOF();}
+.			{ return yy::parser::make_YYerror(Term("error"));}
+<<EOF>>  	{ return yy::parser::make_YYEOF(Term("EOF"));}
 

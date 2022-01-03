@@ -340,32 +340,29 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 			outputOneRule(out, r);
 		}
 	};
+	auto outputNodeType=[](auto&out, auto&rules, auto&terminalTokens){
+		out<<"%type  <Node> ";
+		for (auto s: terminalTokens){
+			out<<s.first<<"\t";
+		}
+		for (auto item: rules){
+			out<<item.first<<"\t";
+		}
+	};
 
 	string strPrologue=R"delim(
+%code requires{
+#include "ast.h"
+Node merge_function (const Node& x0, const Node& x1);
+}
 %code{
 #include <iostream>
 #include <string>
 #include "driver.h"
 #include "cplusplus.h"
 using namespace std;
-namespace yy{
-	 parser::value_type stmt_merge (parser::value_type& yy0, parser::value_type& yy1);
 }
-}
-%code requires {
-# ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
-#    define YY_NULLPTR nullptr
-#   else
-#    define YY_NULLPTR 0
-#   endif
-#  else
-#   define YY_NULLPTR ((void*)0)
-#  endif
-# endif
 
-}
 )delim";
 
 	string strEpilogue=R"delim(
@@ -377,10 +374,9 @@ yy::parser::error (const std::string& m)
 }
 
 namespace yy{
-parser::value_type stmt_merge (parser::value_type& yy0, parser::value_type& yy1)
+Node merge_function (const Node& x0, const Node& x1)
 {
-	extern parser::value_type yyval_default;
-	return yyval_default;
+	return Nterm ("<OR>", x0, x1);
 }
 }
 int main(int argc, char**argv){	
@@ -444,6 +440,7 @@ int main(int argc, char**argv){
 )delim";
 	ofstream out(bisonFile);
 	out<<strPrologue;
+	outputNodeType(out, rules, terminalTokens);
 	outputBisonTokens(out, rules, terminalTokens);
 	out<<strPrecedence;
 	out<<"%start "<<startRule<<endl;

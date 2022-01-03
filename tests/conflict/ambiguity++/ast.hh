@@ -41,7 +41,7 @@ public:
 
   explicit operator bool () const
   {
-    return impl_ != nullptr;
+    return impl_.operator bool();
   }
 
   std::ostream& print (std::ostream& o) const;
@@ -91,36 +91,49 @@ Node::Node (T&& t)
   : impl_ (new NodeImpl<std::decay_t<T>>{std::forward<T> (t)})
 {}
 
+const size_t MaxChildNumber=10;
 class Nterm
 {
 public:
   Nterm (std::string form,
-         Node child0 = Node (), Node child1 = Node (), Node child2 = Node ())
+         Node child0 = Node (), Node child1 = Node (), Node child2 = Node (),
+		 	 Node child3=Node(), Node child4=Node(), Node child5=Node(), Node child6=Node()
+			 , Node child7=Node(), Node child8=Node(), Node child9=Node())
     : form_ (std::move (form))
   {
     children_[0] = child0;
     children_[1] = child1;
     children_[2] = child2;
+    children_[3] = child3;
+    children_[4] = child4;
+    children_[5] = child5;
+    children_[6] = child6;
+    children_[7] = child7;
+    children_[8] = child8;
+    children_[9] = child9;
   }
 
   friend std::ostream& operator<< (std::ostream& o, const Nterm& t)
   {
     o << t.form_;
-    if (t.children_[0])
-      {
-        o << '(' << t.children_[0];
-        if (t.children_[1])
-          o << ", " << t.children_[1];
-        if (t.children_[2])
-          o << ", " << t.children_[2];
-        o << ')';
-      }
+    for (size_t i=0; i<MaxChildNumber; i++)
+    {
+    	if (i==0){
+    		o<<"(";
+    	}
+    	if (t.children_[i]){
+    		o<<t.children_[i]<<", ";
+    	}
+    	if (i==MaxChildNumber-1){
+    		o<<")";
+    	}
+    }
     return o;
   }
 
 private:
   std::string form_;
-  Node children_[3];
+  Node children_[MaxChildNumber];
 };
 
 class Term

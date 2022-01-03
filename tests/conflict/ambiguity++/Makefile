@@ -1,7 +1,7 @@
 PROGRAM=parser
 
 all: ${PROGRAM}
-CXX=g++
+CXX=g++ -g -O0
 
 %.cc %.html %.gv %.hh: %.yy
 	bison -d --header --html --graph -o $*.cc  $<
