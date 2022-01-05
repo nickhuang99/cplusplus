@@ -319,25 +319,32 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 			}
 		}
 	};
-	auto outputOneRule=[](auto& out, auto r){
+	auto outputOneRule=[](auto& out, auto r, auto rules){
 		out<<r.first<<":"<<endl;
 		bool bFirst=true;
+
 		for (auto p: r.second){
 			if (bFirst){
 				bFirst=false;
 			}else{
 				out<<"\t|";
 			}
-			for (auto s: p){
-				out<<"\t"<<s;
+			stringstream ss;
+			ss<<"{$$=Node(\""<<r.first<<"\"";
+			for (size_t i=0; i<p.size(); i++){
+				out<<"\t"<<p[i];
+				if (rules.contains(p[i])){
+					ss<<",$"<<i+1;
+				}
 			}
-			out<<"\t%merge <stmt_merge>"<<endl;
+			ss<<");}";
+			out<<"\t%merge <merge_function>"<<"\t"<<ss.str()<<endl;
 		}
 		out<<"\t;"<<endl;
 	};
 	auto outputRules=[outputOneRule](auto&out, auto& rules){
 		for (auto r: rules){
-			outputOneRule(out, r);
+			outputOneRule(out, r, rules);
 		}
 	};
 	auto outputNodeType=[](auto&out, auto&rules, auto&terminalTokens){
@@ -379,8 +386,7 @@ Node merge_function (const Node& x0, const Node& x1)
 	return Nterm ("<OR>", x0, x1);
 }
 }
-int main(int argc, char**argv){	
-	yydebug=1;
+int main(int argc, char**argv){		
 	extern FILE *yyin;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
@@ -389,6 +395,7 @@ int main(int argc, char**argv){
 	yyin=fopen(argv[1], "r");
 	if (yyin){	
 		yy::parser parser;
+		parser.set_debug_level(1);
 		if (parser.parse()==0){
 				printf("success!\n");
 			}else{
@@ -407,7 +414,7 @@ int main(int argc, char**argv){
 
 %require "3.2"
 %glr-parser
-%skeleton "glr2.cc"
+%skeleton "lalr1.cc"
 %header
 %define api.value.type variant
 %define parse.assert

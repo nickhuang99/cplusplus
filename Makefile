@@ -24,10 +24,10 @@ cplusplus.c cplusplus.h: cplusplus.y
 	
 lexer.c: lexer.l cplusplus.h
 	flex -t lexer.l > lexer.c
-	${CPP} -std=c++20 -I. -DLEXER_TEST lexer.c -o lexer.exe 
+	
 
 lexer.exe: lexer.c lexer.l
-	g++ -I. -DLEXER_TEST lexer.c -o lexer.exe -lfl
+	${CPP} -std=c++20 -I. -DLEXER_TEST lexer.c -o lexer.exe 
 #	./lexer.exe /tmp/bnf.i
 
 clean:
