@@ -1,0 +1,1 @@
+foo = fun(fun(fun(fun(fun(4)))));

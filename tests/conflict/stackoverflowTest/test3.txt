@@ -1,0 +1,3 @@
+a = fun(fun);
+x=array(4);
+basic=basic;
