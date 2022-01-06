@@ -28,10 +28,11 @@
 #include "driver.hh"  
 		
 #include "lexer.cc"
-	Node* stmt_merge (yy::parser::value_type x0, yy::parser::value_type x1);	
+	Node* stmt_merge (yy::parser::value_type x0, yy::parser::value_type x1);
+	Node* expr_merge (yy::parser::value_type x0, yy::parser::value_type x1);	
 }
 
-%type <node> YYerror YYEOF TYPENAME ID SEMICOLON EQUAL PLUS LPAREN RPAREN expr declarator decl prog stmt stmts result
+%type <node> TYPENAME ID expr declarator decl prog stmt stmts result
 %printer { yyo << $$; } <node>
 %token
   TYPENAME  "typename"
@@ -45,49 +46,53 @@
 %%
 
 result: 
-	prog %merge <stmt_merge> { std::cout << $1 << '\n'; }
-
-prog:
-	%empty      {;}
-	| prog stmts   %merge <stmt_merge> { $$=new Node("prog", $2); }
+	prog   { std::cout << $1 << '\n'; }	
+	;
+prog:	
+	prog stmts    { $$=new Node("prog", $2); }
+	| %empty      {;}
 	;
 stmts:	
-	%empty      {;}
-	| stmt  %merge <stmt_merge> { $$=new Node("stmts", $1); }
+	stmt   { $$=new Node("stmts", $1); }
+	;
 stmt:		
-	expr SEMICOLON	 %merge <stmt_merge>  {$$=new Node("stmt", $1);}/* %dprec 1 */
-	| decl           %merge <stmt_merge>  {$$=new Node("stmt", $1);}  /* %dprec 2*/
+	expr SEMICOLON	    {$$=new Node("stmt", $1);}/* %dprec 1 */
+	| decl              {$$=new Node("stmt", $1);}  /* %dprec 2*/
 	;
 
 expr:	
-	ID		%merge <stmt_merge> {$$=new Node("expr", $1);}
-	| TYPENAME LPAREN expr RPAREN %merge <stmt_merge>	{ $$=new Node("type-cast", $1, $3); }
-	| expr PLUS expr		    	%merge <stmt_merge> { $$=new Node("plus-expr", $1, $3); }
-	| expr EQUAL expr		 		%merge <stmt_merge> { $$=new Node("minus-expr", $1, $3); }	
+	ID								 { $$=new Node("expr", $1);}
+	| TYPENAME LPAREN expr RPAREN 	 { $$=new Node("type-cast", $1, $3); }
+	| expr PLUS expr		    	 { $$=new Node("plus-expr", $1, $3); }
+	| expr EQUAL expr		 		 { $$=new Node("minus-expr", $1, $3); }	
 	;
 
 decl:	  
-	TYPENAME declarator SEMICOLON  %merge <stmt_merge>
-			{ $$=new Node("type-declaration", $1, $2);}
-	| TYPENAME declarator EQUAL expr SEMICOLON  %merge <stmt_merge>
-			{ $$=new Node("type-declaration-init", $1, $2, $4); }
+	TYPENAME declarator SEMICOLON  	
+			 { $$=new Node("type-declaration", $1, $2);}
+	| TYPENAME declarator EQUAL expr SEMICOLON  
+			 { $$=new Node("type-declaration-init", $1, $2, $4); }
 	;
 declarator:
-	ID		%merge <stmt_merge>   {$$=new Node("declarator", $1);}
-	| LPAREN declarator RPAREN %merge <stmt_merge> { $$=new Node("declarator", $2);}
+	ID		{ $$=new Node("declarator", $1);}
+	| LPAREN declarator RPAREN
+			{ $$=new Node("declarator", $2);}
 	;
 %%
 
 void yy::parser::error (const std::string& m)
 {
-  std::cerr << m << '\n';
+	std::cerr << m << '\n';
 }
 Node* stmt_merge (yy::parser::value_type x0, yy::parser::value_type x1)
 {
-  return new Node ("*****<OR>******", x0.node, x1.node);
+	return new Node ("*****<OR>******", x0.node, x1.node);
 }
 
-
+Node* expr_merge (yy::parser::value_type x0, yy::parser::value_type x1)
+{
+	return new Node ("*****<OR>******", x0.node, x1.node);
+}
 
 int main(int argc, char**argv){
 	extern FILE* yyin;
