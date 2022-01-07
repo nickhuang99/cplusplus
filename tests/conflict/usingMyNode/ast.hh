@@ -30,31 +30,51 @@ struct Node
 			Node node5=Node(),Node node6=Node(),Node node7=Node()){
 		m_label=str;
 		if (node1){
-			m_ary.push_back(shared_ptr<Node>(new Node(node1)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node1))));
 		}
 		if (node2){
-			m_ary.push_back(shared_ptr<Node>(new Node(node2)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node2))));
 		}
 		if (node3){
-			m_ary.push_back(shared_ptr<Node>(new Node(node3)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node3))));
 		}
 		if (node4){
-			m_ary.push_back(shared_ptr<Node>(new Node(node4)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node4))));
 		}
 		if (node5){
-			m_ary.push_back(shared_ptr<Node>(new Node(node5)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node5))));
 		}
 		if (node6){
-			m_ary.push_back(shared_ptr<Node>(new Node(node6)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node6))));
 		}
 		if (node7){
-			m_ary.push_back(shared_ptr<Node>(new Node(node7)));
+			m_ary.push_back(shared_ptr<Node>(new Node(std::move(node7))));
 		}
 	}
-	Node(const Node&node)=default;
-	Node(Node&&node)=default;
-	Node& operator= (const Node& node) = default;
-	Node& operator= (Node&& node) = default;
+	Node(const Node&node){
+		clone(std::move(node));
+	}
+	Node(Node&&node){
+		clone(std::move(node));
+	}
+	Node& operator= (const Node& node){
+		clone(std::move(node));
+		return *this;
+	}
+	Node& operator= (Node&& node){
+		clone(std::move(node));
+		return *this;
+	}
+	void clone(const Node& node){
+		for (size_t i=0; i<node.m_ary.size(); i++){
+			m_ary[i].reset(node.m_ary[i].get());
+		}
+	}
+	void clone(Node&&node){
+		for (size_t i=0; i<node.m_ary.size(); i++){
+			m_ary[i].swap(node.m_ary[i]);
+		}
+	}
 	vector<shared_ptr<Node>> m_ary;
 	string m_label;
 	explicit operator bool(){

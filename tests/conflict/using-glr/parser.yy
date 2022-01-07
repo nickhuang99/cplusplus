@@ -12,11 +12,7 @@
 
 %no-lines
 %skeleton "glr.cc"
-%union 
-{
-	Node* node;
-	int  n;
-};
+%union {Node* node;};
 
 			/*%right "=" */
 		/*%left "+" */
@@ -33,7 +29,7 @@
 }
 
 %type <node> TYPENAME ID expr declarator decl prog stmt stmts result
-%printer { yyo << $$; } <node>
+%printer { if (yyvaluep) yyo << $$; } <node>
 %token
   TYPENAME  "typename"
   ID        "identifier"
@@ -56,15 +52,15 @@ stmts:
 	stmt   { $$=new Node("stmts", $1); }
 	;
 stmt:		
-	expr SEMICOLON	    {$$=new Node("stmt", $1);}/* %dprec 1 */
-	| decl              {$$=new Node("stmt", $1);}  /* %dprec 2*/
+	expr SEMICOLON	   %merge <stmt_merge>  {$$=new Node("stmt", $1);}/* %dprec 1 */
+	| decl             %merge <stmt_merge>  {$$=new Node("stmt", $1);}  /* %dprec 2*/
 	;
 
 expr:	
-	ID								 { $$=new Node("expr", $1);}
-	| TYPENAME LPAREN expr RPAREN 	 { $$=new Node("type-cast", $1, $3); }
-	| expr PLUS expr		    	 { $$=new Node("plus-expr", $1, $3); }
-	| expr EQUAL expr		 		 { $$=new Node("minus-expr", $1, $3); }	
+	ID								  { $$=new Node("expr", $1);}
+	| TYPENAME LPAREN expr RPAREN 	 %merge <expr_merge> { $$=new Node("type-cast", $1, $3); }
+	| expr PLUS expr		    	 %merge <expr_merge> { $$=new Node("plus-expr", $1, $3); }
+	| expr EQUAL expr		 		 %merge <expr_merge> { $$=new Node("minus-expr", $1, $3); }	
 	;
 
 decl:	  

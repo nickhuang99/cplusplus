@@ -25,7 +25,7 @@ Node stmt_merge (const Node& x0, const Node& x1);
 }
 
 %type <Node> YYerror YYEOF TYPENAME ID SEMICOLON EQUAL PLUS LPAREN RPAREN expr declarator decl prog stmt stmts result
-%printer { yyo << $$; } <Node>
+%printer { if (yyval.as<Node*>()&& !!*yyval.as<Node*>()) yyo << $$; } <Node>
 %token
   TYPENAME  "typename"
   ID        "identifier"
