@@ -346,6 +346,9 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 		for (auto r: rules){
 			outputOneRule(out, r, rules);
 		}
+		const string strCode=R"({std::cout << *$1 << '\n';})";
+		//const string strCode=R"({$$->print(std::cout);})";
+		out<<"result:"<<"\n\t"<<"translation-unit"<<"\t"<<strCode<<"\n\t;"<<endl;
 	};
 	auto outputNodeType=[](auto&out, auto&rules, auto&terminalTokens){
 		out<<"%type  <node> ";
@@ -357,6 +360,7 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 		for (auto item: rules){
 			out<<item.first<<"\t";
 		}
+		out<<"result";
 		out<<endl;
 	};
 
@@ -388,7 +392,7 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1)
 int main(int argc, char**argv){		
 	extern FILE *yyin;
 	extern int yydebug;
-	yydebug=1;
+	//yydebug=1;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
 		return -1;
@@ -450,7 +454,8 @@ int main(int argc, char**argv){
 	outputNodeType(out, rules, terminalTokens);
 	outputBisonTokens(out, rules, terminalTokens);
 	out<<strPrecedence;
-	out<<"%start "<<startRule<<endl;
+	//out<<"%start "<<startRule<<endl;
+	out<<"%start "<<"result"<<endl;
 	out<<"%%"<<endl;
 
 	outputRules(out, rules);

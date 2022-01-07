@@ -3378,22 +3378,22 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 97 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 98 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 99 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 100 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 /********************************end integer literal*******************************/
 /********************************start character literal*******************************/
@@ -3401,7 +3401,7 @@ case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
 #line 103 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 /********************************end character literal*******************************/
 case 6:
@@ -3450,9 +3450,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(START_RAW_STRING):
 #line 120 "lexer.l"
-{  yyerror("Unterminated raw string");
+{  yyerror("UnNodeinated raw string");
                          BEGIN(INITIAL);
-                         return yy::parser::make_YYUNDEF();
+                         return yy::parser::token::TOK_YYEOF;
                       }
 	YY_BREAK
 
@@ -3461,17 +3461,17 @@ case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
 #line 126 "lexer.l"
-{yyleng--;BEGIN(INITIAL); return yy::parser::make_STRING_LITERAL();}
+{yyleng--;BEGIN(INITIAL); return yy::parser::token::TOK_STRING_LITERAL;}
 	YY_BREAK
 case YY_STATE_EOF(END_RAW_STRING):
 #line 127 "lexer.l"
-{BEGIN(INITIAL); return yy::parser::make_STRING_LITERAL();}		
+{BEGIN(INITIAL); return yy::parser::token::TOK_STRING_LITERAL;}		
 	YY_BREAK
 /* user defined string literal */
 case 14:
 YY_RULE_SETUP
 #line 129 "lexer.l"
-{BEGIN(INITIAL); yymore(); return yy::parser::make_STRING_LITERAL();}
+{BEGIN(INITIAL); yymore(); return yy::parser::token::TOK_STRING_LITERAL;}
 	YY_BREAK
 
 /********************************end raw-string literal*******************************/
@@ -3480,19 +3480,19 @@ case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
 #line 134 "lexer.l"
-{ return yy::parser::make_STRING_LITERAL();}	
+{ return yy::parser::token::TOK_STRING_LITERAL;}	
 	YY_BREAK
 /********************************end string literal*******************************/
 /********************************start floating point literals*******************************/
 case 16:
 YY_RULE_SETUP
 #line 139 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 140 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 /********************************end floating point literals*******************************/
 /********************************start boolean & pointer literals*******************************/
@@ -3501,12 +3501,12 @@ case 18:
 case 19:
 YY_RULE_SETUP
 #line 145 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 146 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 /********************************end boolean & pointer literals*******************************/
 /********************************start user-defined literals*******************************/
@@ -3530,709 +3530,709 @@ case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
 #line 158 "lexer.l"
-{ return yy::parser::make_LITERAL();}
+{ return yy::parser::token::TOK_LITERAL;}
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
 #line 160 "lexer.l"
-{ return yy::parser::make_LITERAL();}	
+{ return yy::parser::token::TOK_LITERAL;}	
 	YY_BREAK
 /******************keyword and terminal used by parser********************/
 case 31:
 YY_RULE_SETUP
 #line 164 "lexer.l"
-{ return yy::parser::make_SPACESHIP();}
+{ return yy::parser::token::TOK_SPACESHIP;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 165 "lexer.l"
-{ return yy::parser::make_ALIGNAS();}
+{ return yy::parser::token::TOK_ALIGNAS;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 166 "lexer.l"
-{ return yy::parser::make_ALIGNOF();}
+{ return yy::parser::token::TOK_ALIGNOF;}
 	YY_BREAK
 case 34:
 #line 168 "lexer.l"
 case 35:
 YY_RULE_SETUP
 #line 168 "lexer.l"
-{ return yy::parser::make_AND();}
+{ return yy::parser::token::TOK_AND;}
 	YY_BREAK
 case 36:
 #line 170 "lexer.l"
 case 37:
 YY_RULE_SETUP
 #line 170 "lexer.l"
-{ return yy::parser::make_AND_AND();}
+{ return yy::parser::token::TOK_AND_AND;}
 	YY_BREAK
 case 38:
 #line 172 "lexer.l"
 case 39:
 YY_RULE_SETUP
 #line 172 "lexer.l"
-{ return yy::parser::make_AND_EQ();}
+{ return yy::parser::token::TOK_AND_EQ;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 173 "lexer.l"
-{ return yy::parser::make_ASM();}
+{ return yy::parser::token::TOK_ASM;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 174 "lexer.l"
-{ return yy::parser::make_AUTO();}
+{ return yy::parser::token::TOK_AUTO;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 175 "lexer.l"
-{ return yy::parser::make_BOOL();}
+{ return yy::parser::token::TOK_BOOL;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 176 "lexer.l"
-{ return yy::parser::make_BREAK();}
+{ return yy::parser::token::TOK_BREAK;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 177 "lexer.l"
-{ return yy::parser::make_CASE();}
+{ return yy::parser::token::TOK_CASE;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 178 "lexer.l"
-{ return yy::parser::make_CATCH();}
+{ return yy::parser::token::TOK_CATCH;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 179 "lexer.l"
-{ return yy::parser::make_CHAR();}
+{ return yy::parser::token::TOK_CHAR;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 180 "lexer.l"
-{ return yy::parser::make_CHAR16_T();}
+{ return yy::parser::token::TOK_CHAR16_T;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 181 "lexer.l"
-{ return yy::parser::make_CHAR32_T();}
+{ return yy::parser::token::TOK_CHAR32_T;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 182 "lexer.l"
-{ return yy::parser::make_CHAR8_T();}
+{ return yy::parser::token::TOK_CHAR8_T;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 183 "lexer.l"
-{ return yy::parser::make_CLASS();}
+{ return yy::parser::token::TOK_CLASS;}
 	YY_BREAK
 case 51:
 #line 185 "lexer.l"
 case 52:
 YY_RULE_SETUP
 #line 185 "lexer.l"
-{ return yy::parser::make_CLOSE_BRACE();}
+{ return yy::parser::token::TOK_CLOSE_BRACE;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 186 "lexer.l"
-{ return yy::parser::make_CLOSE_PAREN();}
+{ return yy::parser::token::TOK_CLOSE_PAREN;}
 	YY_BREAK
 case 54:
 #line 188 "lexer.l"
 case 55:
 YY_RULE_SETUP
 #line 188 "lexer.l"
-{ return yy::parser::make_CLOSE_SQUARE();}
+{ return yy::parser::token::TOK_CLOSE_SQUARE;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 189 "lexer.l"
-{ return yy::parser::make_COLON();}
+{ return yy::parser::token::TOK_COLON;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 190 "lexer.l"
-{ return yy::parser::make_COMMA();}
+{ return yy::parser::token::TOK_COMMA;}
 	YY_BREAK
 case 58:
 #line 192 "lexer.l"
 case 59:
 YY_RULE_SETUP
 #line 192 "lexer.l"
-{ return yy::parser::make_COMPL();}
+{ return yy::parser::token::TOK_COMPL;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 193 "lexer.l"
-{ return yy::parser::make_CONCEPT();}
+{ return yy::parser::token::TOK_CONCEPT;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 194 "lexer.l"
-{ return yy::parser::make_CONST();}
+{ return yy::parser::token::TOK_CONST;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 195 "lexer.l"
-{ return yy::parser::make_CONSTEVAL();}
+{ return yy::parser::token::TOK_CONSTEVAL;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 196 "lexer.l"
-{ return yy::parser::make_CONSTEXPR();}
+{ return yy::parser::token::TOK_CONSTEXPR;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 197 "lexer.l"
-{ return yy::parser::make_CONSTINIT();}
+{ return yy::parser::token::TOK_CONSTINIT;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
 #line 198 "lexer.l"
-{ return yy::parser::make_CONST_CAST();}
+{ return yy::parser::token::TOK_CONST_CAST;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
 #line 199 "lexer.l"
-{ return yy::parser::make_CONTINUE();}
+{ return yy::parser::token::TOK_CONTINUE;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
 #line 200 "lexer.l"
-{ return yy::parser::make_CO_AWAIT();}
+{ return yy::parser::token::TOK_CO_AWAIT;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
 #line 201 "lexer.l"
-{ return yy::parser::make_CO_RETURN();}
+{ return yy::parser::token::TOK_CO_RETURN;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
 #line 202 "lexer.l"
-{ return yy::parser::make_CO_YIELD();}
+{ return yy::parser::token::TOK_CO_YIELD;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
 #line 203 "lexer.l"
-{ return yy::parser::make_DECLTYPE();}
+{ return yy::parser::token::TOK_DECLTYPE;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
 #line 204 "lexer.l"
-{ return yy::parser::make_DEFAULT();}
+{ return yy::parser::token::TOK_DEFAULT;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
 #line 205 "lexer.l"
-{ return yy::parser::make_DELETE();}
+{ return yy::parser::token::TOK_DELETE;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 206 "lexer.l"
-{ return yy::parser::make_DEREF();}
+{ return yy::parser::token::TOK_DEREF;}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
 #line 207 "lexer.l"
-{ return yy::parser::make_DEREF_STAR();}
+{ return yy::parser::token::TOK_DEREF_STAR;}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
 #line 208 "lexer.l"
-{ return yy::parser::make_DIV();}
+{ return yy::parser::token::TOK_DIV;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
 #line 209 "lexer.l"
-{ return yy::parser::make_DIV_EQ();}
+{ return yy::parser::token::TOK_DIV_EQ;}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
 #line 210 "lexer.l"
-{ return yy::parser::make_DO();}
+{ return yy::parser::token::TOK_DO;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 211 "lexer.l"
-{ return yy::parser::make_DOT();}
+{ return yy::parser::token::TOK_DOT;}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
 #line 212 "lexer.l"
-{ return yy::parser::make_DOT_STAR();}
+{ return yy::parser::token::TOK_DOT_STAR;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
 #line 213 "lexer.l"
-{ return yy::parser::make_DOUBLE();}
+{ return yy::parser::token::TOK_DOUBLE;}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 214 "lexer.l"
-{ return yy::parser::make_DYNAMIC_CAST();}
+{ return yy::parser::token::TOK_DYNAMIC_CAST;}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 215 "lexer.l"
-{ return yy::parser::make_ELLIPSIS();}
+{ return yy::parser::token::TOK_ELLIPSIS;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
 #line 216 "lexer.l"
-{ return yy::parser::make_ELSE();}
+{ return yy::parser::token::TOK_ELSE;}
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
 #line 217 "lexer.l"
-{ return yy::parser::make_ENUM();}
+{ return yy::parser::token::TOK_ENUM;}
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
 #line 218 "lexer.l"
-{ return yy::parser::make_EQ();}
+{ return yy::parser::token::TOK_EQ;}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
 #line 219 "lexer.l"
-{ return yy::parser::make_EQ_EQ();}
+{ return yy::parser::token::TOK_EQ_EQ;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
 #line 220 "lexer.l"
-{ return yy::parser::make_EXPLICIT();}
+{ return yy::parser::token::TOK_EXPLICIT;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
 #line 221 "lexer.l"
-{ return yy::parser::make_EXPORT();}
+{ return yy::parser::token::TOK_EXPORT;}
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
 #line 222 "lexer.l"
-{ return yy::parser::make_EXTERN();}
+{ return yy::parser::token::TOK_EXTERN;}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
 #line 223 "lexer.l"
-{ return yy::parser::make_FINAL();}
+{ return yy::parser::token::TOK_FINAL;}
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
 #line 224 "lexer.l"
-{ return yy::parser::make_FLOAT();}
+{ return yy::parser::token::TOK_FLOAT;}
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
 #line 225 "lexer.l"
-{ return yy::parser::make_FOR();}
+{ return yy::parser::token::TOK_FOR;}
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
 #line 226 "lexer.l"
-{ return yy::parser::make_FRIEND();}
+{ return yy::parser::token::TOK_FRIEND;}
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
 #line 227 "lexer.l"
-{ return yy::parser::make_GOTO();}
+{ return yy::parser::token::TOK_GOTO;}
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
 #line 228 "lexer.l"
-{ return yy::parser::make_GREATER();}
+{ return yy::parser::token::TOK_GREATER;}
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
 #line 229 "lexer.l"
-{ return yy::parser::make_GREATER_EQ();}
+{ return yy::parser::token::TOK_GREATER_EQ;}
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
 #line 230 "lexer.l"
-{ return yy::parser::make_HEADER_NAME();}
+{ return yy::parser::token::TOK_HEADER_NAME;}
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
 #line 231 "lexer.l"
-{ return yy::parser::make_IF();}
+{ return yy::parser::token::TOK_IF;}
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
 #line 232 "lexer.l"
-{ return yy::parser::make_IMPORT();}
+{ return yy::parser::token::TOK_IMPORT;}
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
 #line 233 "lexer.l"
-{ return yy::parser::make_INLINE();}
+{ return yy::parser::token::TOK_INLINE;}
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
 #line 234 "lexer.l"
-{ return yy::parser::make_INT();}
+{ return yy::parser::token::TOK_INT;}
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
 #line 235 "lexer.l"
-{ return yy::parser::make_LESS();}
+{ return yy::parser::token::TOK_LESS;}
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
 #line 236 "lexer.l"
-{ return yy::parser::make_LESS_EQ();}
+{ return yy::parser::token::TOK_LESS_EQ;}
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
 #line 237 "lexer.l"
-{ return yy::parser::make_LONG();}
+{ return yy::parser::token::TOK_LONG;}
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
 #line 238 "lexer.l"
-{ return yy::parser::make_LSHIFT();}
+{ return yy::parser::token::TOK_LSHIFT;}
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
 #line 239 "lexer.l"
-{ return yy::parser::make_LSHIFT_EQ();}
+{ return yy::parser::token::TOK_LSHIFT_EQ;}
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
 #line 240 "lexer.l"
-{ return yy::parser::make_MINUS();}
+{ return yy::parser::token::TOK_MINUS;}
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
 #line 241 "lexer.l"
-{ return yy::parser::make_MINUS_EQ();}
+{ return yy::parser::token::TOK_MINUS_EQ;}
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
 #line 242 "lexer.l"
-{ return yy::parser::make_MINUS_MINUS();}
+{ return yy::parser::token::TOK_MINUS_MINUS;}
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
 #line 243 "lexer.l"
-{ return yy::parser::make_MOD();}
+{ return yy::parser::token::TOK_MOD;}
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
 #line 244 "lexer.l"
-{ return yy::parser::make_MODULE();}
+{ return yy::parser::token::TOK_MODULE;}
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
 #line 245 "lexer.l"
-{ return yy::parser::make_MOD_EQ();}
+{ return yy::parser::token::TOK_MOD_EQ;}
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
 #line 246 "lexer.l"
-{ return yy::parser::make_MULT();}
+{ return yy::parser::token::TOK_MULT;}
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
 #line 247 "lexer.l"
-{ return yy::parser::make_MULT_EQ();}
+{ return yy::parser::token::TOK_MULT_EQ;}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
 #line 248 "lexer.l"
-{ return yy::parser::make_MUTABLE();}
+{ return yy::parser::token::TOK_MUTABLE;}
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
 #line 249 "lexer.l"
-{ return yy::parser::make_NAMESPACE();}
+{ return yy::parser::token::TOK_NAMESPACE;}
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
 #line 250 "lexer.l"
-{ return yy::parser::make_NEW();}
+{ return yy::parser::token::TOK_NEW;}
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
 #line 251 "lexer.l"
-{ return yy::parser::make_NOEXCEPT();}
+{ return yy::parser::token::TOK_NOEXCEPT;}
 	YY_BREAK
 case 119:
 #line 253 "lexer.l"
 case 120:
 YY_RULE_SETUP
 #line 253 "lexer.l"
-{ return yy::parser::make_NOT();}
+{ return yy::parser::token::TOK_NOT;}
 	YY_BREAK
 case 121:
 #line 255 "lexer.l"
 case 122:
 YY_RULE_SETUP
 #line 255 "lexer.l"
-{ return yy::parser::make_NOT_EQ();}
+{ return yy::parser::token::TOK_NOT_EQ;}
 	YY_BREAK
 case 123:
 #line 257 "lexer.l"
 case 124:
 YY_RULE_SETUP
 #line 257 "lexer.l"
-{ return yy::parser::make_OPEN_BRACE();}
+{ return yy::parser::token::TOK_OPEN_BRACE;}
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
 #line 258 "lexer.l"
-{ return yy::parser::make_OPEN_PAREN();}
+{ return yy::parser::token::TOK_OPEN_PAREN;}
 	YY_BREAK
 case 126:
 #line 260 "lexer.l"
 case 127:
 YY_RULE_SETUP
 #line 260 "lexer.l"
-{ return yy::parser::make_OPEN_SQUARE();}
+{ return yy::parser::token::TOK_OPEN_SQUARE;}
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
 #line 261 "lexer.l"
-{ return yy::parser::make_OPERATOR();}
+{ return yy::parser::token::TOK_OPERATOR;}
 	YY_BREAK
 case 129:
 #line 263 "lexer.l"
 case 130:
 YY_RULE_SETUP
 #line 263 "lexer.l"
-{ return yy::parser::make_OR();}
+{ return yy::parser::token::TOK_OR;}
 	YY_BREAK
 case 131:
 #line 265 "lexer.l"
 case 132:
 YY_RULE_SETUP
 #line 265 "lexer.l"
-{ return yy::parser::make_OR_EQ();}
+{ return yy::parser::token::TOK_OR_EQ;}
 	YY_BREAK
 case 133:
 #line 267 "lexer.l"
 case 134:
 YY_RULE_SETUP
 #line 267 "lexer.l"
-{ return yy::parser::make_OR_OR();}
+{ return yy::parser::token::TOK_OR_OR;}
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
 #line 268 "lexer.l"
-{ return yy::parser::make_OVERRIDE();}
+{ return yy::parser::token::TOK_OVERRIDE;}
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
 #line 269 "lexer.l"
-{ return yy::parser::make_PLUS();}
+{ return yy::parser::token::TOK_PLUS;}
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
 #line 270 "lexer.l"
-{ return yy::parser::make_PLUS_EQ();}
+{ return yy::parser::token::TOK_PLUS_EQ;}
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
 #line 271 "lexer.l"
-{ return yy::parser::make_PLUS_PLUS();}
+{ return yy::parser::token::TOK_PLUS_PLUS;}
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
 #line 272 "lexer.l"
-{ return yy::parser::make_PRIVATE();}
+{ return yy::parser::token::TOK_PRIVATE;}
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
 #line 273 "lexer.l"
-{ return yy::parser::make_PROTECTED();}
+{ return yy::parser::token::TOK_PROTECTED;}
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
 #line 274 "lexer.l"
-{ return yy::parser::make_PUBLIC();}
+{ return yy::parser::token::TOK_PUBLIC;}
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
 #line 275 "lexer.l"
-{ return yy::parser::make_QUERY();}
+{ return yy::parser::token::TOK_QUERY;}
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
 #line 276 "lexer.l"
-{ return yy::parser::make_REINTERPRET_CAST();}
+{ return yy::parser::token::TOK_REINTERPRET_CAST;}
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
 #line 277 "lexer.l"
-{ return yy::parser::make_REQUIRES();}
+{ return yy::parser::token::TOK_REQUIRES;}
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
 #line 278 "lexer.l"
-{ return yy::parser::make_RETURN();}
+{ return yy::parser::token::TOK_RETURN;}
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
 #line 279 "lexer.l"
-{ return yy::parser::make_RSHIFT();}
+{ return yy::parser::token::TOK_RSHIFT;}
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
 #line 281 "lexer.l"
-{ return yy::parser::make_RSHIFT_EQ();}
+{ return yy::parser::token::TOK_RSHIFT_EQ;}
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
 #line 282 "lexer.l"
-{ return yy::parser::make_SCOPE();}
+{ return yy::parser::token::TOK_SCOPE;}
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
 #line 283 "lexer.l"
-{ return yy::parser::make_SEMICOLON();}
+{ return yy::parser::token::TOK_SEMICOLON;}
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
 #line 284 "lexer.l"
-{ return yy::parser::make_SHORT();}
+{ return yy::parser::token::TOK_SHORT;}
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
 #line 285 "lexer.l"
-{ return yy::parser::make_SIGNED();}
+{ return yy::parser::token::TOK_SIGNED;}
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
 #line 286 "lexer.l"
-{ return yy::parser::make_SIZEOF();}
+{ return yy::parser::token::TOK_SIZEOF;}
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
 #line 287 "lexer.l"
-{ return yy::parser::make_STRUCT();}
+{ return yy::parser::token::TOK_STRUCT;}
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
 #line 288 "lexer.l"
-{ return yy::parser::make_STATIC_CAST();}
+{ return yy::parser::token::TOK_STATIC_CAST;}
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
 #line 289 "lexer.l"
-{ return yy::parser::make_STATIC_ASSERT();}
+{ return yy::parser::token::TOK_STATIC_ASSERT;}
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
 #line 290 "lexer.l"
-{ return yy::parser::make_STATIC();}
+{ return yy::parser::token::TOK_STATIC;}
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
 #line 291 "lexer.l"
-{ return yy::parser::make_SWITCH();}
+{ return yy::parser::token::TOK_SWITCH;}
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
 #line 292 "lexer.l"
-{ return yy::parser::make_TEMPLATE();}
+{ return yy::parser::token::TOK_TEMPLATE;}
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
 #line 293 "lexer.l"
-{ return yy::parser::make_THIS();}
+{ return yy::parser::token::TOK_THIS;}
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
 #line 294 "lexer.l"
-{ return yy::parser::make_THREAD_LOCAL();}
+{ return yy::parser::token::TOK_THREAD_LOCAL;}
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
 #line 295 "lexer.l"
-{ return yy::parser::make_THROW();}
+{ return yy::parser::token::TOK_THROW;}
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
 #line 296 "lexer.l"
-{ return yy::parser::make_TRY();}
+{ return yy::parser::token::TOK_TRY;}
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
 #line 297 "lexer.l"
-{ return yy::parser::make_TYPEDEF();}
+{ return yy::parser::token::TOK_TYPEDEF;}
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
 #line 298 "lexer.l"
-{ return yy::parser::make_TYPEID();}
+{ return yy::parser::token::TOK_TYPEID;}
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
 #line 299 "lexer.l"
-{ return yy::parser::make_TYPENAME();}
+{ return yy::parser::token::TOK_TYPENAME;}
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
 #line 300 "lexer.l"
-{ return yy::parser::make_UNION();}
+{ return yy::parser::token::TOK_UNION;}
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
 #line 301 "lexer.l"
-{ return yy::parser::make_UNSIGNED();}
+{ return yy::parser::token::TOK_UNSIGNED;}
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
 #line 302 "lexer.l"
-{ return yy::parser::make_USING();}
+{ return yy::parser::token::TOK_USING;}
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
 #line 303 "lexer.l"
-{ return yy::parser::make_VIRTUAL();}
+{ return yy::parser::token::TOK_VIRTUAL;}
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
 #line 304 "lexer.l"
-{ return yy::parser::make_VOID();}
+{ return yy::parser::token::TOK_VOID;}
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
 #line 305 "lexer.l"
-{ return yy::parser::make_VOLATILE();}
+{ return yy::parser::token::TOK_VOLATILE;}
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
 #line 306 "lexer.l"
-{ return yy::parser::make_WCHAR_T();}
+{ return yy::parser::token::TOK_WCHAR_T;}
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
 #line 307 "lexer.l"
-{ return yy::parser::make_WHILE();}
+{ return yy::parser::token::TOK_WHILE;}
 	YY_BREAK
 case 174:
 #line 309 "lexer.l"
 case 175:
 YY_RULE_SETUP
 #line 309 "lexer.l"
-{ return yy::parser::make_XOR();}
+{ return yy::parser::token::TOK_XOR;}
 	YY_BREAK
 case 176:
 #line 311 "lexer.l"
 case 177:
 YY_RULE_SETUP
 #line 311 "lexer.l"
-{ return yy::parser::make_XOR_EQ();}
+{ return yy::parser::token::TOK_XOR_EQ;}
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
 #line 313 "lexer.l"
-{ return yy::parser::make_IDENTIFIER();}
+{ return yy::parser::token::TOK_IDENTIFIER;}
 	YY_BREAK
 case 179:
 /* rule 179 can match eol */
@@ -4251,14 +4251,16 @@ YY_RULE_SETUP
 #line 319 "lexer.l"
 { fprintf(stderr, "%d: ERROR! unexpected character `%c'\n", yylineno, yytext[0]); }
 	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 320 "lexer.l"
+{ return yy::parser::token::TOK_YYEOF;}
+	YY_BREAK
 case 182:
 YY_RULE_SETUP
 #line 321 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 4260 "<stdout>"
-case YY_STATE_EOF(INITIAL):
-	yyterminate();
+#line 4264 "<stdout>"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -5291,9 +5293,7 @@ int main(int argc, char**argv){
 		if (yyin){
 			parser::symbol_type tk;
 			while (true){				
-				tk=yylex();
-				if (tk.kind()== parser::symbol_kind::S_YYEOF) break;
-									
+				tk=yylex();			
 				if (tk.kind()==parser::symbol_kind::S_IDENTIFIER){
 					cout<<"token:\t"<<"IDENTIFIER";
 				}else if (tk.kind()==parser::symbol_kind::S_LITERAL){
