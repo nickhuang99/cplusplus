@@ -330,7 +330,7 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 				out<<"\t|";
 			}
 			stringstream ss;
-			ss<<"{$$=Node(\""<<r.first<<"\"";
+			ss<<"{$$=new Node(\""<<r.first<<"\"";
 			for (size_t i=0; i<p.size(); i++){
 				out<<"\t"<<p[i];
 				if (rules.contains(p[i])){
@@ -348,54 +348,54 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 		}
 	};
 	auto outputNodeType=[](auto&out, auto&rules, auto&terminalTokens){
-		out<<"%type  <Node> ";
-		for (auto s: terminalTokens){
-			out<<s.first<<"\t";
-		}
+		out<<"%type  <node> ";
+//		for (auto s: terminalTokens){
+//			if (s.first[0]!='"'){
+//				out<<s.first<<"\t";
+//			}
+//		}
 		for (auto item: rules){
 			out<<item.first<<"\t";
 		}
+		out<<endl;
 	};
 
 	string strPrologue=R"delim(
 %code requires{
 #include "ast.h"
-Node merge_function (const Node& x0, const Node& x1);
 }
+
 %code{
 #include <iostream>
 #include <string>
 #include "driver.h"
 #include "cplusplus.h"
 using namespace std;
+Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 }
-
 )delim";
 
 	string strEpilogue=R"delim(
-%%
-void
-yy::parser::error (const std::string& m)
+void yy::parser::error (const std::string& m)
 {
   std::cerr << m << '\n';
 }
-
-namespace yy{
-Node merge_function (const Node& x0, const Node& x1)
+Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1)
 {
-	return Nterm ("<OR>", x0, x1);
+	return new Node ("***<OR>***", x0.node, x1.node);
 }
-}
+
 int main(int argc, char**argv){		
 	extern FILE *yyin;
+	extern int yydebug;
+	yydebug=1;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
 		return -1;
 	}
 	yyin=fopen(argv[1], "r");
 	if (yyin){	
-		yy::parser parser;
-		parser.set_debug_level(1);
+		yy::parser parser;	
 		if (parser.parse()==0){
 				printf("success!\n");
 			}else{
@@ -414,14 +414,13 @@ int main(int argc, char**argv){
 
 %require "3.2"
 %glr-parser
-%skeleton "lalr1.cc"
+%no-lines
+%skeleton "glr.cc"
 %header
-%define api.value.type variant
-%define parse.assert
-%define api.token.constructor
 %define parse.error detailed
 %define api.token.prefix {TOK_}
-%%
+%union {Node* node;};
+%printer { if (yyvaluep) yyo << $$; } <node>
 )delim";
 
 	string strPrecedence=R"delim(
@@ -446,13 +445,16 @@ int main(int argc, char**argv){
 
 )delim";
 	ofstream out(bisonFile);
+	out<<strDeclaration;
 	out<<strPrologue;
 	outputNodeType(out, rules, terminalTokens);
 	outputBisonTokens(out, rules, terminalTokens);
 	out<<strPrecedence;
 	out<<"%start "<<startRule<<endl;
-	out<<strDeclaration;
+	out<<"%%"<<endl;
+
 	outputRules(out, rules);
+	out<<"%%"<<endl;
 	out<<strEpilogue<<endl;
 }
 

@@ -10,7 +10,7 @@
 #include "cplusplus.h"
 // Give Flex the prototype of yylex we want ...
 # define YY_DECL \
-  yy::parser::symbol_type yylex ()
+  yy::parser::token_kind_type yylex (yy::parser::value_type* node)
 // ... and declare it for the parser's sake.
 YY_DECL;
 
