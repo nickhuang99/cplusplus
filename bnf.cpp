@@ -182,7 +182,8 @@ map<string, vector<vector<string> > > getProduction(const string& bnfFile,
 						   (const string& str)->string{
 		string token;
 		if (str.size() == 1 && std::isalnum(str[0], std::locale("C"))){
-			token="'"+str+"'";
+			//token="'"+str+"'";
+			token="LITERAL";
 			// "R": 'R'
 			terminalTokens.insert(make_pair(token, quoteString(str)));
 			//return token; //'R'
@@ -368,7 +369,6 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 %code requires{
 #include "ast.h"
 }
-
 %code{
 #include <iostream>
 #include <string>
@@ -386,13 +386,15 @@ void yy::parser::error (const std::string& m)
 }
 Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1)
 {
-	return new Node ("***<OR>***", x0.node, x1.node);
+	Node*result=new Node ("***<OR>***", x0.node, x1.node);
+	result->m_bMerged=true;
+	return result;
 }
 
 int main(int argc, char**argv){		
 	extern FILE *yyin;
 	extern int yydebug;
-	//yydebug=1;
+	yydebug=1;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
 		return -1;
@@ -415,10 +417,9 @@ int main(int argc, char**argv){
 )delim";
 
 	string strDeclaration=R"delim(
-
 %require "3.2"
 %glr-parser
-%no-lines
+		/*%no-lines */
 %skeleton "glr.cc"
 %header
 %define parse.error detailed

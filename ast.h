@@ -60,23 +60,35 @@ struct Node
 	explicit operator bool(){
 		return !(m_ary.empty()&&m_label.empty());
 	}
-	ostream& print(ostream& out) const{
+	ostream& print(ostream& out, int level=0) const{
+		if (!m_ary.empty()){
+			out<<endl;
+			for (int i=0; i<level; i++){
+				out<<" ";
+			}
+		}
 		if (!m_label.empty()){
 			out<<m_label;
 		}
 		if (!m_ary.empty()){
+
 			string start="{";
 			for (auto item:m_ary){
+
 				out<<start;
 				start=",";
-				item->print(out);
+				item->print(out, level+1);
 			}
 			out<<"}";
 		}
+//		if (m_bMerged){
+//			out<<endl;
+//		}
 		return out;
 	}
 	friend ostream& operator<<(ostream& out, const Node& node){
 		return node.print(out);
 	}
+	bool m_bMerged=false;
 };
 #endif

@@ -2,6 +2,42 @@ translation-unit:
 	declaration-seqopt
 	global-module-fragmentopt module-declaration declaration-seqopt private-module-fragmentopt
 
+literal:
+	integer-literal
+	character-literal
+	floating-point-literal
+	string-literal
+	boolean-literal
+	pointer-literal
+	user-defined-literal 
+string-literal:
+	STRING_LITERAL		
+integer-literal:
+	INTEGER_LITERAL
+character-literal:
+	CHARACTER_LITERAL	
+floating-point-literal:
+	FLOATING_POINT_LITERAL
+boolean-literal:
+	BOOLEAN_LITERAL
+pointer-literal:
+	POINTER_LITERAL
+user-defined-literal:
+	user-defined-integer-literal
+	user-defined-floating-point-literal
+	user-defined-string-literal
+	user-defined-character-literal
+user-defined-integer-literal:
+	USER_DEFINED_INTEGER_LITERAL
+user-defined-floating-point-literal:
+	USER_DEFINED_FLOATING_POINT_LITERAL
+user-defined-character-literal:
+	USER_DEFINED_CHARACTER_LITERAL
+	
+user-defined-string-literal:
+	string-literal ud-suffix
+ud-suffix:
+	IDENTIFIER 				
 primary-expression:
 	literal
 	string-literal
@@ -716,7 +752,7 @@ virt-specifier:
 	override
 	final
 pure-specifier:
-	= 0
+	= INTEGER_LITERAL
 conversion-function-id:
 	operator conversion-type-id
 conversion-type-id:
@@ -803,12 +839,8 @@ overloadable-operator:
 literal-operator-id:
 	operator string-literal IDENTIFIER
 	operator user-defined-string-literal	
-user-defined-string-literal:
-	string-literal ud-suffix
-ud-suffix:
-	IDENTIFIER 	
-string-literal:
-	STRING_LITERAL	
+
+
 template-declaration:
 	template-head declaration
 	template-head concept-definition

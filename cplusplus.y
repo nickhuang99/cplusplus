@@ -1,8 +1,7 @@
 
-
 %require "3.2"
 %glr-parser
-%no-lines
+		/*%no-lines */
 %skeleton "glr.cc"
 %header
 %define parse.error detailed
@@ -13,7 +12,6 @@
 %code requires{
 #include "ast.h"
 }
-
 %code{
 #include <iostream>
 #include <string>
@@ -22,7 +20,7 @@
 using namespace std;
 Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 }
-%type  <node> COMMA-opt	CONSTEXPR-opt	ELLIPSIS-opt	EXPORT-opt	EXTERN-opt	IDENTIFIER-opt	INLINE-opt	NOEXCEPT-opt	NOT-opt	SCOPE-opt	TEMPLATE-opt	THIS-opt	TYPENAME-opt	VIRTUAL-opt	abstract-declarator	abstract-declarator-opt	abstract-pack-declarator	access-specifier	access-specifier-opt	additive-expression	alias-declaration	alignment-specifier	and-expression	asm-declaration	assignment-expression	assignment-expression-opt	assignment-operator	attribute	attribute-argument-clause	attribute-argument-clause-opt	attribute-declaration	attribute-list	attribute-namespace	attribute-opt	attribute-scoped-token	attribute-specifier	attribute-specifier-seq	attribute-specifier-seq-opt	attribute-token	attribute-using-prefix	attribute-using-prefix-opt	await-expression	balanced-token	balanced-token-seq	balanced-token-seq-opt	base-clause	base-clause-opt	base-specifier	base-specifier-list	block-declaration	brace-or-equal-initializer	brace-or-equal-initializer-opt	braced-init-list	capture	capture-default	capture-list	cast-expression	class-head	class-head-name	class-key	class-name	class-or-decltype	class-specifier	class-virt-specifier	class-virt-specifier-opt	compare-expression	compound-requirement	compound-statement	concept-definition	concept-name	condition	condition-opt	conditional-expression	constant-expression	constant-expression-opt	constraint-expression	constraint-logical-and-expression	constraint-logical-or-expression	conversion-declarator	conversion-declarator-opt	conversion-function-id	conversion-type-id	coroutine-return-statement	ctor-initializer	ctor-initializer-opt	cv-qualifier	cv-qualifier-seq	cv-qualifier-seq-opt	decl-specifier	decl-specifier-seq	decl-specifier-seq-opt	declaration	declaration-seq	declaration-seq-opt	declaration-statement	declarator	declarator-id	decltype-specifier	deduction-guide	defining-type-id	defining-type-specifier	defining-type-specifier-seq	delete-expression	designated-initializer-clause	designated-initializer-list	designator	elaborated-enum-specifier	elaborated-type-specifier	empty-declaration	enclosing-namespace-specifier	enum-base	enum-base-opt	enum-head	enum-head-name	enum-head-name-opt	enum-key	enum-name	enum-specifier	enumerator	enumerator-definition	enumerator-list	enumerator-list-opt	equality-expression	exception-declaration	exclusive-or-expression	explicit-instantiation	explicit-specialization	explicit-specifier	explicit-specifier-opt	export-declaration	expr-or-braced-init-list	expr-or-braced-init-list-opt	expression	expression-list	expression-list-opt	expression-opt	expression-statement	fold-expression	fold-operator	for-range-declaration	for-range-initializer	function-body	function-definition	function-specifier	function-try-block	global-module-fragment	global-module-fragment-opt	handler	handler-seq	handler-seq-opt	header-name	id-expression	identifier-list	inclusive-or-expression	init-capture	init-declarator	init-declarator-list	init-declarator-list-opt	init-statement	init-statement-opt	initializer	initializer-clause	initializer-list	initializer-opt	iteration-statement	jump-statement	labeled-statement	lambda-capture	lambda-capture-opt	lambda-declarator	lambda-expression	lambda-introducer	lambda-specifiers	linkage-specification	literal-operator-id	logical-and-expression	logical-or-expression	mem-initializer	mem-initializer-id	mem-initializer-list	member-declaration	member-declarator	member-declarator-list	member-declarator-list-opt	member-specification	member-specification-opt	module-declaration	module-import-declaration	module-name	module-name-qualifier	module-name-qualifier-opt	module-partition	module-partition-opt	multiplicative-expression	named-namespace-definition	namespace-alias	namespace-alias-definition	namespace-body	namespace-definition	namespace-name	nested-name-specifier	nested-name-specifier-opt	nested-namespace-definition	nested-requirement	new-declarator	new-declarator-opt	new-expression	new-initializer	new-initializer-opt	new-placement	new-placement-opt	new-type-id	nodeclspec-function-declaration	noexcept-expression	noexcept-specifier	noexcept-specifier-opt	noptr-abstract-declarator	noptr-abstract-declarator-opt	noptr-abstract-pack-declarator	noptr-declarator	noptr-new-declarator	opaque-enum-declaration	operator-function-id	overloadable-operator	parameter-declaration	parameter-declaration-clause	parameter-declaration-list	parameter-declaration-list-opt	parameters-and-qualifiers	placeholder-type-specifier	pm-expression	postfix-expression	primary-expression	private-module-fragment	private-module-fragment-opt	ptr-abstract-declarator	ptr-abstract-declarator-opt	ptr-declarator	ptr-operator	pure-specifier	pure-specifier-opt	qualified-id	qualified-namespace-specifier	ref-qualifier	ref-qualifier-opt	relational-expression	requirement	requirement-body	requirement-parameter-list	requirement-parameter-list-opt	requirement-seq	requires-clause	requires-clause-opt	requires-expression	return-type-requirement	return-type-requirement-opt	selection-statement	shift-expression	simple-capture	simple-declaration	simple-requirement	simple-template-id	simple-type-specifier	statement	statement-seq	statement-seq-opt	static_assert-declaration	storage-class-specifier	string-literal	template-argument	template-argument-list	template-argument-list-opt	template-declaration	template-head	template-id	template-name	template-parameter	template-parameter-list	throw-expression	trailing-return-type	trailing-return-type-opt	translation-unit	try-block	type-constraint	type-constraint-opt	type-id	type-name	type-parameter	type-parameter-key	type-requirement	type-specifier	type-specifier-seq	typedef-name	typename-specifier	ud-suffix	unary-expression	unary-operator	unnamed-namespace-definition	unqualified-id	user-defined-string-literal	using-declaration	using-declarator	using-declarator-list	using-directive	using-enum-declaration	virt-specifier	virt-specifier-seq	virt-specifier-seq-opt	yield-expression	result
+%type  <node> COMMA-opt	CONSTEXPR-opt	ELLIPSIS-opt	EXPORT-opt	EXTERN-opt	IDENTIFIER-opt	INLINE-opt	NOEXCEPT-opt	NOT-opt	SCOPE-opt	TEMPLATE-opt	THIS-opt	TYPENAME-opt	VIRTUAL-opt	abstract-declarator	abstract-declarator-opt	abstract-pack-declarator	access-specifier	access-specifier-opt	additive-expression	alias-declaration	alignment-specifier	and-expression	asm-declaration	assignment-expression	assignment-expression-opt	assignment-operator	attribute	attribute-argument-clause	attribute-argument-clause-opt	attribute-declaration	attribute-list	attribute-namespace	attribute-opt	attribute-scoped-token	attribute-specifier	attribute-specifier-seq	attribute-specifier-seq-opt	attribute-token	attribute-using-prefix	attribute-using-prefix-opt	await-expression	balanced-token	balanced-token-seq	balanced-token-seq-opt	base-clause	base-clause-opt	base-specifier	base-specifier-list	block-declaration	boolean-literal	brace-or-equal-initializer	brace-or-equal-initializer-opt	braced-init-list	capture	capture-default	capture-list	cast-expression	character-literal	class-head	class-head-name	class-key	class-name	class-or-decltype	class-specifier	class-virt-specifier	class-virt-specifier-opt	compare-expression	compound-requirement	compound-statement	concept-definition	concept-name	condition	condition-opt	conditional-expression	constant-expression	constant-expression-opt	constraint-expression	constraint-logical-and-expression	constraint-logical-or-expression	conversion-declarator	conversion-declarator-opt	conversion-function-id	conversion-type-id	coroutine-return-statement	ctor-initializer	ctor-initializer-opt	cv-qualifier	cv-qualifier-seq	cv-qualifier-seq-opt	decl-specifier	decl-specifier-seq	decl-specifier-seq-opt	declaration	declaration-seq	declaration-seq-opt	declaration-statement	declarator	declarator-id	decltype-specifier	deduction-guide	defining-type-id	defining-type-specifier	defining-type-specifier-seq	delete-expression	designated-initializer-clause	designated-initializer-list	designator	elaborated-enum-specifier	elaborated-type-specifier	empty-declaration	enclosing-namespace-specifier	enum-base	enum-base-opt	enum-head	enum-head-name	enum-head-name-opt	enum-key	enum-name	enum-specifier	enumerator	enumerator-definition	enumerator-list	enumerator-list-opt	equality-expression	exception-declaration	exclusive-or-expression	explicit-instantiation	explicit-specialization	explicit-specifier	explicit-specifier-opt	export-declaration	expr-or-braced-init-list	expr-or-braced-init-list-opt	expression	expression-list	expression-list-opt	expression-opt	expression-statement	floating-point-literal	fold-expression	fold-operator	for-range-declaration	for-range-initializer	function-body	function-definition	function-specifier	function-try-block	global-module-fragment	global-module-fragment-opt	handler	handler-seq	handler-seq-opt	header-name	id-expression	identifier-list	inclusive-or-expression	init-capture	init-declarator	init-declarator-list	init-declarator-list-opt	init-statement	init-statement-opt	initializer	initializer-clause	initializer-list	initializer-opt	integer-literal	iteration-statement	jump-statement	labeled-statement	lambda-capture	lambda-capture-opt	lambda-declarator	lambda-expression	lambda-introducer	lambda-specifiers	linkage-specification	literal	literal-operator-id	logical-and-expression	logical-or-expression	mem-initializer	mem-initializer-id	mem-initializer-list	member-declaration	member-declarator	member-declarator-list	member-declarator-list-opt	member-specification	member-specification-opt	module-declaration	module-import-declaration	module-name	module-name-qualifier	module-name-qualifier-opt	module-partition	module-partition-opt	multiplicative-expression	named-namespace-definition	namespace-alias	namespace-alias-definition	namespace-body	namespace-definition	namespace-name	nested-name-specifier	nested-name-specifier-opt	nested-namespace-definition	nested-requirement	new-declarator	new-declarator-opt	new-expression	new-initializer	new-initializer-opt	new-placement	new-placement-opt	new-type-id	nodeclspec-function-declaration	noexcept-expression	noexcept-specifier	noexcept-specifier-opt	noptr-abstract-declarator	noptr-abstract-declarator-opt	noptr-abstract-pack-declarator	noptr-declarator	noptr-new-declarator	opaque-enum-declaration	operator-function-id	overloadable-operator	parameter-declaration	parameter-declaration-clause	parameter-declaration-list	parameter-declaration-list-opt	parameters-and-qualifiers	placeholder-type-specifier	pm-expression	pointer-literal	postfix-expression	primary-expression	private-module-fragment	private-module-fragment-opt	ptr-abstract-declarator	ptr-abstract-declarator-opt	ptr-declarator	ptr-operator	pure-specifier	pure-specifier-opt	qualified-id	qualified-namespace-specifier	ref-qualifier	ref-qualifier-opt	relational-expression	requirement	requirement-body	requirement-parameter-list	requirement-parameter-list-opt	requirement-seq	requires-clause	requires-clause-opt	requires-expression	return-type-requirement	return-type-requirement-opt	selection-statement	shift-expression	simple-capture	simple-declaration	simple-requirement	simple-template-id	simple-type-specifier	statement	statement-seq	statement-seq-opt	static_assert-declaration	storage-class-specifier	string-literal	template-argument	template-argument-list	template-argument-list-opt	template-declaration	template-head	template-id	template-name	template-parameter	template-parameter-list	throw-expression	trailing-return-type	trailing-return-type-opt	translation-unit	try-block	type-constraint	type-constraint-opt	type-id	type-name	type-parameter	type-parameter-key	type-requirement	type-specifier	type-specifier-seq	typedef-name	typename-specifier	ud-suffix	unary-expression	unary-operator	unnamed-namespace-definition	unqualified-id	user-defined-character-literal	user-defined-floating-point-literal	user-defined-integer-literal	user-defined-literal	user-defined-string-literal	using-declaration	using-declarator	using-declarator-list	using-directive	using-enum-declaration	virt-specifier	virt-specifier-seq	virt-specifier-seq-opt	yield-expression	result
 %token  COMMA	","
 %token  CONSTEXPR	"constexpr"
 %token  ELLIPSIS	"..."
@@ -67,6 +65,8 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 %token  OPEN_BRACE	"{"
 %token  CLOSE_BRACE	"}"
 %token  BALANCED_TOKEN
+%token  BOOLEAN_LITERAL
+%token  CHARACTER_LITERAL
 %token  CLASS	"class"
 %token  STRUCT	"struct"
 %token  UNION	"union"
@@ -95,6 +95,7 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 %token  LESS	"<"
 %token  GREATER	">"
 %token  EXPLICIT	"explicit"
+%token  FLOATING_POINT_LITERAL
 %token  MULT	"*"
 %token  DIV	"/"
 %token  MOD	"%"
@@ -110,6 +111,7 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 %token  MODULE	"module"
 %token  CATCH	"catch"
 %token  HEADER_NAME
+%token  INTEGER_LITERAL
 %token  WHILE	"while"
 %token  DO	"do"
 %token  FOR	"for"
@@ -126,12 +128,12 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 %token  PLUS_PLUS	"++"
 %token  MINUS_MINUS	"--"
 %token  AUTO	"auto"
+%token  POINTER_LITERAL
 %token  DYNAMIC_CAST	"dynamic_cast"
 %token  STATIC_CAST	"static_cast"
 %token  REINTERPRET_CAST	"reinterpret_cast"
 %token  CONST_CAST	"const_cast"
 %token  TYPEID	"typeid"
-%token  LITERAL	"literal"
 %token  IF	"if"
 %token  ELSE	"else"
 %token  SWITCH	"switch"
@@ -157,6 +159,9 @@ Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 %token  THROW	"throw"
 %token  SIZEOF	"sizeof"
 %token  ALIGNOF	"alignof"
+%token  USER_DEFINED_CHARACTER_LITERAL
+%token  USER_DEFINED_FLOATING_POINT_LITERAL
+%token  USER_DEFINED_INTEGER_LITERAL
 %token  OVERRIDE	"override"
 %token  CO_YIELD	"co_yield"
 
@@ -396,6 +401,9 @@ block-declaration:
 	|	alias-declaration	%merge <merge_function>	{$$=new Node("block-declaration",$1);}
 	|	opaque-enum-declaration	%merge <merge_function>	{$$=new Node("block-declaration",$1);}
 	;
+boolean-literal:
+	BOOLEAN_LITERAL	%merge <merge_function>	{$$=new Node("boolean-literal");}
+	;
 brace-or-equal-initializer:
 	EQ	initializer-clause	%merge <merge_function>	{$$=new Node("brace-or-equal-initializer",$2);}
 	|	braced-init-list	%merge <merge_function>	{$$=new Node("brace-or-equal-initializer",$1);}
@@ -424,6 +432,9 @@ capture-list:
 cast-expression:
 	unary-expression	%merge <merge_function>	{$$=new Node("cast-expression",$1);}
 	|	OPEN_PAREN	type-id	CLOSE_PAREN	cast-expression	%merge <merge_function>	{$$=new Node("cast-expression",$2,$4);}
+	;
+character-literal:
+	CHARACTER_LITERAL	%merge <merge_function>	{$$=new Node("character-literal");}
 	;
 class-head:
 	class-key	attribute-specifier-seq-opt	class-head-name	class-virt-specifier-opt	base-clause-opt	%merge <merge_function>	{$$=new Node("class-head",$1,$2,$3,$4,$5);}
@@ -739,6 +750,9 @@ expression-opt:
 expression-statement:
 	expression-opt	SEMICOLON	%merge <merge_function>	{$$=new Node("expression-statement",$1);}
 	;
+floating-point-literal:
+	FLOATING_POINT_LITERAL	%merge <merge_function>	{$$=new Node("floating-point-literal");}
+	;
 fold-expression:
 	OPEN_PAREN	cast-expression	fold-operator	ELLIPSIS	CLOSE_PAREN	%merge <merge_function>	{$$=new Node("fold-expression",$2,$3);}
 	|	OPEN_PAREN	ELLIPSIS	fold-operator	cast-expression	CLOSE_PAREN	%merge <merge_function>	{$$=new Node("fold-expression",$3,$4);}
@@ -875,6 +889,9 @@ initializer-opt:
 	%empty	%merge <merge_function>	{$$=new Node("initializer-opt");}
 	|	initializer	%merge <merge_function>	{$$=new Node("initializer-opt",$1);}
 	;
+integer-literal:
+	INTEGER_LITERAL	%merge <merge_function>	{$$=new Node("integer-literal");}
+	;
 iteration-statement:
 	WHILE	OPEN_PAREN	condition	CLOSE_PAREN	statement	%merge <merge_function>	{$$=new Node("iteration-statement",$3,$5);}
 	|	DO	statement	WHILE	OPEN_PAREN	expression	CLOSE_PAREN	SEMICOLON	%merge <merge_function>	{$$=new Node("iteration-statement",$2,$5);}
@@ -919,6 +936,15 @@ lambda-specifiers:
 linkage-specification:
 	EXTERN	string-literal	OPEN_BRACE	declaration-seq-opt	CLOSE_BRACE	%merge <merge_function>	{$$=new Node("linkage-specification",$2,$4);}
 	|	EXTERN	string-literal	declaration	%merge <merge_function>	{$$=new Node("linkage-specification",$2,$3);}
+	;
+literal:
+	integer-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	character-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	floating-point-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	string-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	boolean-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	pointer-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
+	|	user-defined-literal	%merge <merge_function>	{$$=new Node("literal",$1);}
 	;
 literal-operator-id:
 	OPERATOR	string-literal	IDENTIFIER	%merge <merge_function>	{$$=new Node("literal-operator-id",$2);}
@@ -1201,6 +1227,9 @@ pm-expression:
 	|	pm-expression	DOT_STAR	cast-expression	%merge <merge_function>	{$$=new Node("pm-expression",$1,$3);}
 	|	pm-expression	DEREF_STAR	cast-expression	%merge <merge_function>	{$$=new Node("pm-expression",$1,$3);}
 	;
+pointer-literal:
+	POINTER_LITERAL	%merge <merge_function>	{$$=new Node("pointer-literal");}
+	;
 postfix-expression:
 	primary-expression	%merge <merge_function>	{$$=new Node("postfix-expression",$1);}
 	|	postfix-expression	OPEN_SQUARE	expression-list-opt	CLOSE_SQUARE	%merge <merge_function>	{$$=new Node("postfix-expression",$1,$3);}
@@ -1221,7 +1250,7 @@ postfix-expression:
 	|	TYPEID	OPEN_PAREN	type-id	CLOSE_PAREN	%merge <merge_function>	{$$=new Node("postfix-expression",$3);}
 	;
 primary-expression:
-	LITERAL	%merge <merge_function>	{$$=new Node("primary-expression");}
+	literal	%merge <merge_function>	{$$=new Node("primary-expression",$1);}
 	|	string-literal	%merge <merge_function>	{$$=new Node("primary-expression",$1);}
 	|	THIS	%merge <merge_function>	{$$=new Node("primary-expression");}
 	|	OPEN_PAREN	expression	CLOSE_PAREN	%merge <merge_function>	{$$=new Node("primary-expression",$2);}
@@ -1256,7 +1285,7 @@ ptr-operator:
 	|	nested-name-specifier	MULT	attribute-specifier-seq-opt	cv-qualifier-seq-opt	%merge <merge_function>	{$$=new Node("ptr-operator",$1,$3,$4);}
 	;
 pure-specifier:
-	EQ	'0'	%merge <merge_function>	{$$=new Node("pure-specifier");}
+	EQ	INTEGER_LITERAL	%merge <merge_function>	{$$=new Node("pure-specifier");}
 	;
 pure-specifier-opt:
 	%empty	%merge <merge_function>	{$$=new Node("pure-specifier-opt");}
@@ -1540,6 +1569,21 @@ unqualified-id:
 	|	COMPL	decltype-specifier	%merge <merge_function>	{$$=new Node("unqualified-id",$2);}
 	|	template-id	%merge <merge_function>	{$$=new Node("unqualified-id",$1);}
 	;
+user-defined-character-literal:
+	USER_DEFINED_CHARACTER_LITERAL	%merge <merge_function>	{$$=new Node("user-defined-character-literal");}
+	;
+user-defined-floating-point-literal:
+	USER_DEFINED_FLOATING_POINT_LITERAL	%merge <merge_function>	{$$=new Node("user-defined-floating-point-literal");}
+	;
+user-defined-integer-literal:
+	USER_DEFINED_INTEGER_LITERAL	%merge <merge_function>	{$$=new Node("user-defined-integer-literal");}
+	;
+user-defined-literal:
+	user-defined-integer-literal	%merge <merge_function>	{$$=new Node("user-defined-literal",$1);}
+	|	user-defined-floating-point-literal	%merge <merge_function>	{$$=new Node("user-defined-literal",$1);}
+	|	user-defined-string-literal	%merge <merge_function>	{$$=new Node("user-defined-literal",$1);}
+	|	user-defined-character-literal	%merge <merge_function>	{$$=new Node("user-defined-literal",$1);}
+	;
 user-defined-string-literal:
 	string-literal	ud-suffix	%merge <merge_function>	{$$=new Node("user-defined-string-literal",$1,$2);}
 	;
@@ -1586,13 +1630,15 @@ void yy::parser::error (const std::string& m)
 }
 Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1)
 {
-	return new Node ("***<OR>***", x0.node, x1.node);
+	Node*result=new Node ("***<OR>***", x0.node, x1.node);
+	result->m_bMerged=true;
+	return result;
 }
 
 int main(int argc, char**argv){		
 	extern FILE *yyin;
 	extern int yydebug;
-	//yydebug=1;
+	yydebug=1;
 	if (argc!=2){
 		fprintf(stderr, "usage: %s <source>\n", argv[0]);
 		return -1;

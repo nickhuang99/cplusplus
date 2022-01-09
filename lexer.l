@@ -58,9 +58,11 @@ conditional-escape-sequence	([\\][^'"\?\\abfnrtv0-7uUx])
 numeric-escape-sequence		({octal-escape-sequence}|{hexadecimal-escape-sequence})
 escape-sequence				({simple-escape-sequence}|{numeric-escape-sequence}|{conditional-escape-sequence})
 universal-character-name	([\\][u][0-9a-fA-F]{4,4}|[\\][U][0-9a-fA-F]{8,8})
+
 character-literal			{encoding-prefix}?[']({basic-c-char}|{escape-sequence}|{universal-character-name})+[']   
 	/********************************end character literals*******************************/
 	/********************************start floating point literals*******************************/
+hexadecimal-prefix					[0][xX]											   
 digit-sequence						[0-9]([0-9']*[0-9])*
 floating-point-suffix				[fFlL]
 fractional-constant					({digit-sequence}[.])|({digit-sequence}*[.]{digit-sequence})
@@ -72,18 +74,22 @@ hexadecimal-digit-sequence			[0-9a-fA-F]+([0-9a-fA-F']*[0-9a-fA-F])*
 binary-exponent-part				[P][+-]?{digit-sequence}
 hexadecimal-fractional-constant		({hexadecimal-digit-sequence}[.])|({hexadecimal-digit-sequence}*[.]{hexadecimal-digit-sequence})
 
-hexadecimal-floating-point-literal	[0][xX]({hexadecimal-fractional-constant}|{hexadecimal-digit-sequence}){binary-exponent-part}{floating-point-suffix}?
+hexadecimal-floating-point-literal	{hexadecimal-prefix}({hexadecimal-fractional-constant}|{hexadecimal-digit-sequence}){binary-exponent-part}{floating-point-suffix}?
 	/********************************end floating point literals*******************************/
 	/********************************start string literals*******************************/
 %x 				START_RAW_STRING
 %x				END_RAW_STRING
+%x				START_EXPORT
+%x				START_IMPORT
+%x				START_HEADER_NAME
 basic-s-char			[^"\\\n]
 h-char					[^\n>]
 q-char					[^\n"]						 
 s-char					{basic-s-char}|{escape-sequence}|{universal-character-name}
 header-name				(["]{q-char}+["])|([<]{h-char}+[>])
 dchar-seq				[^()\\[:space:]]{0,64}  
-schar-seq				{s-char}+
+schar-seq				{s-char}*
+quoted-schar-seq		["]{schar-seq}["]
 	/********************************end string literals*******************************/
 
 identifier			[_a-zA-Z][_a-zA-Z0-9]*
@@ -93,13 +99,18 @@ ud-suffix			{identifier}
 %%
 		size_t delim_len, delim_offset; 
 	/********************************start integer literal*******************************/
-{binary-literal}{integer-suffix}?			{ return yy::parser::token::TOK_LITERAL;}
-{octal-literal}{integer-suffix}?			{ return yy::parser::token::TOK_LITERAL;}
-{decimal-literal}{integer-suffix}?			{ return yy::parser::token::TOK_LITERAL;}
-{hexadecimal-literal}{integer-suffix}?		{ return yy::parser::token::TOK_LITERAL;}
+{binary-literal}{integer-suffix}?			{ return yy::parser::token::TOK_INTEGER_LITERAL;}
+{binary-literal}{ud-suffix}					{ return yy::parser::token::TOK_USER_DEFINED_INTEGER_LITERAL;}
+{octal-literal}{integer-suffix}?			{ return yy::parser::token::TOK_INTEGER_LITERAL;}
+{octal-literal}{ud-suffix}					{ return yy::parser::token::TOK_USER_DEFINED_INTEGER_LITERAL;}
+{decimal-literal}{integer-suffix}?			{ return yy::parser::token::TOK_INTEGER_LITERAL;}
+{decimal-literal}{ud-suffix}				{ return yy::parser::token::TOK_USER_DEFINED_INTEGER_LITERAL;}
+{hexadecimal-literal}{integer-suffix}?		{ return yy::parser::token::TOK_INTEGER_LITERAL;}
+{hexadecimal-literal}{ud-suffix}			{ return yy::parser::token::TOK_USER_DEFINED_INTEGER_LITERAL;}
 	/********************************end integer literal*******************************/
 	/********************************start character literal*******************************/
-{character-literal}							{ return yy::parser::token::TOK_LITERAL;}
+{character-literal}							{ return yy::parser::token::TOK_CHARACTER_LITERAL;}
+{character-literal}{ud-suffix}				{ return yy::parser::token::TOK_USER_DEFINED_CHARACTER_LITERAL;}
 	/********************************end character literal*******************************/
 LR\"{dchar-seq}*\(		{ delim_offset=3; delim_len = yyleng - delim_offset-1; yymore(); BEGIN(START_RAW_STRING); }
 u8R\"{dchar-seq}*\(    	{ delim_offset=4; delim_len = yyleng - delim_offset-1; yymore(); BEGIN(START_RAW_STRING); }
@@ -129,35 +140,42 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 }
 		/********************************end raw-string literal*******************************/
 		/********************************other string literal*******************************/
-
-{encoding-prefix}?[\"]{schar-seq}*[\"]		{ return yy::parser::token::TOK_STRING_LITERAL;}	
-
+		/* all other literal I chose to define USER_DEFINED_XXX_LITERAL, for string_literal, better to leave it to parser  */
+{encoding-prefix}?{quoted-schar-seq}			{ return yy::parser::token::TOK_STRING_LITERAL;}	
 	/********************************end string literal*******************************/
 
 	/********************************start floating point literals*******************************/
-{decimal-floating-point-literal}		{ return yy::parser::token::TOK_LITERAL;}
-{hexadecimal-floating-point-literal}	{ return yy::parser::token::TOK_LITERAL;}
+				   
+{fractional-constant}{fractional-constant}?{floating-point-suffix}?		{ return yy::parser::token::TOK_FLOATING_POINT_LITERAL;}	
+{fractional-constant}{fractional-constant}?{ud-suffix}					{ return yy::parser::token::TOK_USER_DEFINED_FLOATING_POINT_LITERAL;}
+{digit-sequence}{exponent-part}{floating-point-suffix}?			   		{ return yy::parser::token::TOK_FLOATING_POINT_LITERAL;}
+{digit-sequence}{exponent-part}{ud-suffix}			   					{ return yy::parser::token::TOK_USER_DEFINED_FLOATING_POINT_LITERAL;}
+
+{hexadecimal-prefix}{hexadecimal-fractional-constant}{binary-exponent-part}{floating-point-suffix}?    	{ return yy::parser::token::TOK_FLOATING_POINT_LITERAL;}
+{hexadecimal-prefix}{hexadecimal-fractional-constant}{binary-exponent-part}{ud-suffix}   			   	{ return yy::parser::token::TOK_USER_DEFINED_FLOATING_POINT_LITERAL;}
+{hexadecimal-prefix}{hexadecimal-digit-sequence}{binary-exponent-part}{floating-point-suffix}?    		{ return yy::parser::token::TOK_FLOATING_POINT_LITERAL;}
+{hexadecimal-prefix}{hexadecimal-digit-sequence}{binary-exponent-part}{ud-suffix}       				{ return yy::parser::token::TOK_USER_DEFINED_FLOATING_POINT_LITERAL;}
+
 	/********************************end floating point literals*******************************/
 	/********************************start boolean & pointer literals*******************************/
 
 "false"						|	
-"true"						{ return yy::parser::token::TOK_LITERAL;}
-"nullptr"					{ return yy::parser::token::TOK_LITERAL;}
+"true"						{ return yy::parser::token::TOK_BOOLEAN_LITERAL;}
+"nullptr"					{ return yy::parser::token::TOK_POINTER_LITERAL;}
 
 	/********************************end boolean & pointer literals*******************************/
 	/********************************start user-defined literals*******************************/
-{decimal-literal}{ud-suffix}													|	
-{octal-literal}{ud-suffix}														|
-{hexadecimal-literal}{ud-suffix}												|
-{binary-literal}{ud-suffix}														|
-{fractional-constant}{exponent-part}?{ud-suffix}								|
-{digit-sequence}{exponent-part}{ud-suffix}										|
-[0][xX]{hexadecimal-fractional-constant}{binary-exponent-part}{ud-suffix}		|
-[0][xX]{hexadecimal-digit-sequence}{binary-exponent-part}{ud-suffix}			|	
-{character-literal}{ud-suffix}						{ return yy::parser::token::TOK_LITERAL;}
-
-{encoding-prefix}?["]{schar-seq}*["]{ud-suffix}		{ return yy::parser::token::TOK_LITERAL;}	
-
+		/* it is better to split them among with their literal siblings because of longest match */
+	/*{decimal-literal}{ud-suffix}													|*/	
+	/*{octal-literal}{ud-suffix}														|*/
+	/*{hexadecimal-literal}{ud-suffix}												|*/
+	/*{binary-literal}{ud-suffix}														|*/
+	/*{fractional-constant}{exponent-part}?{ud-suffix}								|*/
+	/*{digit-sequence}{exponent-part}{ud-suffix}										|*/
+	/*[0][xX]{hexadecimal-fractional-constant}{binary-exponent-part}{ud-suffix}		|*/
+	/*[0][xX]{hexadecimal-digit-sequence}{binary-exponent-part}{ud-suffix}			|*/	
+	/*{character-literal}{ud-suffix}						{ return yy::parser::token::TOK_LITERAL;}*/
+	/*{encoding-prefix}?["]{schar-seq}*["]{ud-suffix}		{ return yy::parser::token::TOK_LITERAL;}*/	
 
 	/******************keyword and terminal used by parser********************/
 "<=>"			{ return yy::parser::token::TOK_SPACESHIP;}
@@ -226,7 +244,7 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 "goto"			{ return yy::parser::token::TOK_GOTO;}
 ">"				{ return yy::parser::token::TOK_GREATER;}
 ">="			{ return yy::parser::token::TOK_GREATER_EQ;}
-{header-name}	{ return yy::parser::token::TOK_HEADER_NAME;}
+		/*{header-name}	{ return yy::parser::token::TOK_HEADER_NAME;}*/
 "if"			{ return yy::parser::token::TOK_IF;}
 "import"		{ return yy::parser::token::TOK_IMPORT;}
 "inline"		{ return yy::parser::token::TOK_INLINE;}
@@ -315,7 +333,8 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 
 [[:space:][:blank:]]+          { ; /* Ignore whitespace */}
 
-.				{ fprintf(stderr, "%d: ERROR! unexpected character `%c'\n", yylineno, yytext[0]); }
+.				{ fprintf(stderr, "%d: ERROR! unexpected character `%c'\n", yylineno, yytext[0]); 
+					return yy::parser::token::TOK_YYerror;}
 <<EOF>>			{ return yy::parser::token::TOK_YYEOF;}
 %%
 void yyerror(const string& str){
@@ -323,29 +342,32 @@ void yyerror(const string& str){
 }
 
 #ifdef LEXER_TEST
-
 #include "cplusplus.h"
+#include "driver.h"
 int main(int argc, char**argv){
-	using namespace yy;
-	
+	using namespace yy;	
 	extern FILE *yyin;
 	if (argc==2){
 		yyin=fopen(argv[1], "r");
 		if (yyin){
-			parser::symbol_type tk;
-			while (true){				
-				tk=yylex();			
-				if (tk.kind()==parser::symbol_kind::S_IDENTIFIER){
-					cout<<"token:\t"<<"IDENTIFIER";
-				}else if (tk.kind()==parser::symbol_kind::S_LITERAL){
-					cout<<"token:\t"<<"LITERAL";
-				}else if (tk.kind()==parser::symbol_kind::S_STRING_LITERAL){
-					cout<<"token:\t"<<"STRING_LITERAL";
-				}else{
-					cout<<"token: UNKNOWN\t";
+			parser::token_kind_type tk;
+			parser::value_type node;
+			do{				
+				tk=yylex(&node);			
+				if (tk==parser::token_kind_type::TOK_IDENTIFIER){
+					cout<<"token:\t"<<yytext<<"\tIDENTIFIER";
+				}else if (tk==parser::token_kind_type::TOK_INTEGER_LITERAL){
+					cout<<"token:\t"<<yytext<<"\tINTEGER_LITERAL";
+				}else if (tk==parser::token_kind_type::TOK_STRING_LITERAL){
+					cout<<"token:\t"<<yytext<<"\tSTRING_LITERAL";
+				}else if (tk==parser::token::TOK_HEADER_NAME){
+					cout<<"token:\t"<<yytext<<"\tHEADER_NAME";					
+				}else if (tk==parser::token_kind_type::TOK_YYerror){
+					cout<<"token:\t"<<yytext<<"\tYYerror";	
+					break;
 				}
-				cout<<"\tline_number:"<<yylineno<<endl;							
-			}
+				cout<<endl;							
+			}while (tk != parser::token_kind_type::TOK_YYEOF);
 		}
 	}
 }
