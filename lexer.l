@@ -79,9 +79,7 @@ hexadecimal-floating-point-literal	{hexadecimal-prefix}({hexadecimal-fractional-
 	/********************************start string literals*******************************/
 %x 				START_RAW_STRING
 %x				END_RAW_STRING
-%x				START_EXPORT
-%x				START_IMPORT
-%x				START_HEADER_NAME
+%x				START_ATTRIBUTE
 basic-s-char			[^"\\\n]
 h-char					[^\n>]
 q-char					[^\n"]						 
@@ -94,8 +92,9 @@ quoted-schar-seq		["]{schar-seq}["]
 
 identifier			[_a-zA-Z][_a-zA-Z0-9]*
 ud-suffix			{identifier}
-
-
+spacetab			[ \t]*
+word				[^(),]+
+parameter-list      {word}(,{word})*
 %%
 		size_t delim_len, delim_offset; 
 	/********************************start integer literal*******************************/
@@ -327,11 +326,20 @@ R\"{dchar-seq}*\(    	{ delim_offset=2; delim_len = yyleng - delim_offset-1; yym
 "xor_eq"		|
 "^="			{ return yy::parser::token::TOK_XOR_EQ;}
 
+	/*ignore GNU attribute */
+	/*"__attribute__"[\\s]*\([\\s]*\([\\s]*{identifier}[\\s]*\)[\\s]*\)	*/	/*{ ; }*/
+"__attribute__"{spacetab}\({spacetab}\({spacetab}\){spacetab}\) 						{ ; }
+"__attribute__"{spacetab}\({spacetab}\({spacetab}{identifier}{spacetab}\){spacetab}\) 	{ ; }
+"__attribute__"{spacetab}\({spacetab}\({spacetab}{identifier}{spacetab}\({spacetab}{parameter-list}{spacetab}\){spacetab}\){spacetab}\) 	{ ; }
+[#][[:space:]]*"pragma"[^\n]*[\n]		; /*GCC has #pragma GCC visibility noise */	
+
 {identifier}	{ return yy::parser::token::TOK_IDENTIFIER;}
 
-[#][[:space:]]*"pragma"[^\n]*[\n]		; /*GCC has #pragma GCC visibility noise */		
+	
 
 [[:space:][:blank:]]+          { ; /* Ignore whitespace */}
+
+
 
 .				{ fprintf(stderr, "%d: ERROR! unexpected character `%c'\n", yylineno, yytext[0]); 
 					return yy::parser::token::TOK_YYerror;}
@@ -354,19 +362,19 @@ int main(int argc, char**argv){
 			parser::value_type node;
 			do{				
 				tk=yylex(&node);			
-				if (tk==parser::token_kind_type::TOK_IDENTIFIER){
-					cout<<"token:\t"<<yytext<<"\tIDENTIFIER";
-				}else if (tk==parser::token_kind_type::TOK_INTEGER_LITERAL){
-					cout<<"token:\t"<<yytext<<"\tINTEGER_LITERAL";
-				}else if (tk==parser::token_kind_type::TOK_STRING_LITERAL){
-					cout<<"token:\t"<<yytext<<"\tSTRING_LITERAL";
-				}else if (tk==parser::token::TOK_HEADER_NAME){
-					cout<<"token:\t"<<yytext<<"\tHEADER_NAME";					
-				}else if (tk==parser::token_kind_type::TOK_YYerror){
-					cout<<"token:\t"<<yytext<<"\tYYerror";	
-					break;
+//				if (tk==parser::token_kind_type::TOK_IDENTIFIER){
+//					cout<<"token:\t"<<yytext<<"\tIDENTIFIER";
+//				}else if (tk==parser::token_kind_type::TOK_INTEGER_LITERAL){
+//					cout<<"token:\t"<<yytext<<"\tINTEGER_LITERAL";
+//				}else if (tk==parser::token_kind_type::TOK_STRING_LITERAL){
+//					cout<<"token:\t"<<yytext<<"\tSTRING_LITERAL";
+//				}else if (tk==parser::token::TOK_HEADER_NAME){
+//					cout<<"token:\t"<<yytext<<"\tHEADER_NAME";					
+//				}else 
+				if (tk==parser::token::TOK_YYerror){
+					cout<<"token:\t"<<yytext<<"\tYYerror"<<endl;						
 				}
-				cout<<endl;							
+										
 			}while (tk != parser::token_kind_type::TOK_YYEOF);
 		}
 	}
