@@ -5,7 +5,7 @@ CPP=/home/nick/opt/gcc-10.2.0/bin/g++
 all: cplusplus.exe
 
 cplusplus.exe: bnf.exe lexer.exe
-	${CPP} -std=c++20 -I. -g -O0 cplusplus.c lexer.c -o cplusplus.exe
+	${CPP} -std=c++20 -I. -g -O0 -DYYMAXDEPTH=80000 cplusplus.c lexer.c -o cplusplus.exe
 		
 bnf.exe: grammar.txt bnf.cpp
 	${CPP} -std=c++20 -g -O0 -I. -static-libstdc++ bnf.cpp -o bnf.exe	

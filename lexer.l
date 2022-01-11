@@ -358,7 +358,7 @@ int main(int argc, char**argv){
 	if (argc==2){
 		yyin=fopen(argv[1], "r");
 		if (yyin){
-			parser::token_kind_type tk;
+			parser::token_kind_type tk;			
 			parser::value_type node;
 			do{				
 				tk=yylex(&node);			
@@ -372,8 +372,11 @@ int main(int argc, char**argv){
 //					cout<<"token:\t"<<yytext<<"\tHEADER_NAME";					
 //				}else 
 				if (tk==parser::token::TOK_YYerror){
-					cout<<"token:\t"<<yytext<<"\tYYerror"<<endl;						
+					cout<<"["<<yylineno<<"]:\t"<<yytext<<"\tYYerror"<<endl;						
+				}else{
+					cout<<".";
 				}
+				
 										
 			}while (tk != parser::token_kind_type::TOK_YYEOF);
 		}

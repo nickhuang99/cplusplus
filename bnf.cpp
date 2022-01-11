@@ -375,14 +375,15 @@ void outputBisonInput(const string& bisonFile, auto rules, const map<string, str
 #include "driver.h"
 #include "cplusplus.h"
 using namespace std;
+extern int yylineno;
 Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1);
 }
 )delim";
 
 	string strEpilogue=R"delim(
-void yy::parser::error (const std::string& m)
+void yy::parser::error (const std::string& msg)
 {
-  std::cerr << m << '\n';
+	std::cerr <<"Error["<<yylineno<<"]:"<< msg << endl;
 }
 Node* merge_function (yy::parser::value_type x0, yy::parser::value_type x1)
 {
@@ -448,7 +449,6 @@ int main(int argc, char**argv){
 //	%left DOT DEREF PLUS_PLUS MINUS_MINUS
 //	%left SCOPE
 	string strPrecedence=R"delim(
-
 )delim";
 	ofstream out(bisonFile);
 	out<<strDeclaration;
